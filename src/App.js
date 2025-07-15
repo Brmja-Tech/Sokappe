@@ -1,24 +1,26 @@
-import logo from './logo.svg';
+import { BrowserRouter } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import AppRoutes from "./routes/AppRoutes";
+import { ToastContainer } from "react-toastify";
+// import ScrollToTop from "./components/scrollToTop/ScrollToTop";
 import './App.css';
-
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { useEffect } from 'react';
 function App() {
+  useEffect(() => {
+    AOS.init({ duration: 600 });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+      <AppRoutes />
+      </BrowserRouter>
+      <ToastContainer autoClose={2000}/>
+      {/* <ScrollToTop /> */}
+    </>
   );
 }
 
