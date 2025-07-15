@@ -19,9 +19,8 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const isMobile = window.innerWidth <= 768;
       const scrolled = window.scrollY >= 100;
-      setIsMobileScrolled(isMobile && scrolled);
+      setIsMobileScrolled(scrolled);
     };
 
     handleScroll(); // initial check
@@ -107,14 +106,14 @@ const Navbar = () => {
                 aria-labelledby="navbarDropdown"
               >
                 
-                <Link className="dropdown-item" style={{ fontSize: "13px" }}>
-                  --
+                <Link className="dropdown-item" style={{ fontSize: `${i18n.language === "ar" ? "12px":"14px"}` }}>
+                  {t("navbar.professionalMarket")}
                 </Link>
-                <Link className="dropdown-item" style={{ fontSize: "13px" }}>
-                  --
+                <Link className="dropdown-item" style={{ fontSize: `${i18n.language === "ar" ? "12px":"14px"}` }}>
+                  {t("navbar.usedMarket")}
                 </Link>
-                <Link className="dropdown-item" style={{ fontSize: "13px" }}>
-                  --
+                <Link className="dropdown-item" style={{ fontSize: `${i18n.language === "ar" ? "12px":"14px"}` }}>
+                  {t("navbar.servicesMarket")}
                 </Link>
               </div>
             </li>
@@ -180,7 +179,8 @@ const Navbar = () => {
               <li>
                 <button
                   onClick={() => changeLanguage("en")}
-                  className="dropdown-item text-xs"
+                  className="dropdown-item"
+                  style={{ fontSize: `${i18n.language === "ar" ? "12px":"14px"}` }}
                 >
                   {i18n.language === "en" ? "English" : "الإنجليزية"}
                 </button>
@@ -188,7 +188,8 @@ const Navbar = () => {
               <li>
                 <button
                   onClick={() => changeLanguage("ar")}
-                  className="dropdown-item text-xs"
+                  className="dropdown-item"
+                  style={{ fontSize: `${i18n.language === "ar" ? "12px":"14px"}` }}
                 >
                   {i18n.language === "ar" ? "العربية" : "Arabic"}
                 </button>

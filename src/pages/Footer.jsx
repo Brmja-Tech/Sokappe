@@ -19,21 +19,23 @@ const Footer = () => {
   };
 }, []);
   return (
-    <div className="footer py-5">
+    <div className="footer pt-5 pb-2">
       <div className="container">
         <div className="row">
           <div className="col-xl-3 col-lg-3 col-md-6">
             <div className="logo">
-              <Link><img src="/logo-white.png" alt="--" /></Link>
+              <Link className="text-white">
+                <h4>Sokappe</h4>
+              </Link>
             </div>
-            <p className="line-height">{t("footer.description")}</p>
+            <p className="line-height">{t("footer.aboutPlatform")}</p>
             <div className="flex_contact d-flex my-2">
               <div className="d-block">
                 <i className="bi bi-chat-text-fill"></i>
               </div>
               <div className="mx-2 d-block">
                 <span className="d-block">{t("footer.support")}</span>
-                <b className="d-block text-sm">info@gmail.com</b>
+                <small className="d-block text-sm">info@gmail.com</small>
               </div>
             </div>
             <div className="flex_contact d-flex my-2">
@@ -42,7 +44,7 @@ const Footer = () => {
               </div>
               <div className="mx-2 d-block">
                 <span className="d-block">{t("footer.contact")}</span>
-                <b className="d-block text-sm">755. 002. 3005. 905</b>
+                <small className="d-block text-sm">755. 002. 3005. 905</small>
               </div>
             </div>
           </div>
@@ -51,7 +53,7 @@ const Footer = () => {
               <b className="d-block">{t("footer.quickLinks")}</b>
               <ul className="list-unstyled p-0">
                 <li className="mb-2">
-                  <Link>{t("footer.company")}</Link>
+                  <Link>{t("footer.home")}</Link>
                 </li>
                 <li className="mb-2">
                   <Link>{t("footer.services")}</Link>
@@ -60,7 +62,7 @@ const Footer = () => {
                   <Link>{t("footer.categories")}</Link>
                 </li>
                 <li className="mb-2">
-                  <Link to="/faq">{t("footer.faq")}</Link>
+                  <Link>{t("footer.aboutUs")}</Link>
                 </li>
               </ul>
             </div>
@@ -70,19 +72,10 @@ const Footer = () => {
               <b className="d-block">{t("footer.myAccount")}</b>
               <ul className="list-unstyled p-0">
                 <li className="mb-2">
-                  <Link to="/about">{t("pages.about")}</Link>
-                </li>
-                <li className="mb-2">
-                  <Link to="/how_it_works">{t("pages.howItWorks")}</Link>
-                </li>
-                <li className="mb-2">
                   <Link>{t("footer.terms")}</Link>
                 </li>
                 <li className="mb-2">
                   <Link>{t("footer.privacy")}</Link>
-                </li>
-                <li className="mb-2">
-                  <Link to="/help_center">{t("pages.helpCenter.helpCenter")}</Link>
                 </li>
               </ul>
             </div>
@@ -93,7 +86,7 @@ const Footer = () => {
               <ul className="list-unstyled p-0">
                 <li className="mb-2">
                   <Link>
-                    <FaXTwitter className="me-2 mx-2"/>
+                    <FaXTwitter className="me-2 mx-2" />
                     {t("footer.social.twitter")}
                   </Link>
                 </li>
@@ -124,22 +117,20 @@ const Footer = () => {
               </ul>
             </div>
           </div>
-          <div className="col-xl-12 col-lg-12 col-md-12">
-            <div className="copyright py-2 text-center">
-              <span>
-                &copy; {new Date().getFullYear()} {t("footer.copyright")}
-              </span>{" "}
-              <a
-                className="main-color"
-                href="https://brmja.tech/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t("footer.poweredBy")}
-              </a>
-            </div>
-          </div>
         </div>
+      </div>
+      <div className="copyright py-2 text-sm text-center">
+        <span>
+          &copy; {new Date().getFullYear()} {t("footer.copyright")}
+        </span>{" "}
+        <a
+          href="https://brmja.tech/"
+          style={{ color: "orange" }}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t("footer.poweredBy")}
+        </a>
       </div>
     </div>
   );

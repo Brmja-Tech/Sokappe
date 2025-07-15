@@ -17,10 +17,10 @@ const Products = () => {
     <div className="products py-5">
       <div className="container">
         <div className="row">
-          <div className="col-xl-5 col-lg-5 col-md-5 col-12">
-            <h4 className="mb-4 main-color">{t("products.title")}</h4>
+          <div className="col-xl-5 col-lg-4 col-md-12 col-12">
+            <h4 className="mb-4 main-color title"><img src="/layout.gif" alt="--"/> {t("products.title")}</h4>
           </div>
-          <div className="col-xl-7 col-lg-7 col-md-7 col-12">
+          <div className="col-xl-7 col-lg-8 col-md-12 col-12">
             <ul className="nav nav-tabs mb-4 justify-content-center" id="myTab" role="tablist">
               <li className="nav-item" role="presentation">
                 <button

@@ -10,7 +10,10 @@
     "services": "Services",
     "aboutUs": "About Us?",
     "contactUs": "Contact Us",
-    "add": "Add"
+    "add": "Add",
+    "professionalMarket": "Professional Market",
+    "usedMarket": "Used Market",
+    "servicesMarket": "Services & Deals Market"
   },
   "sign": {
     "login": "Login",
@@ -61,7 +64,7 @@
     "used": "Used",
     "services": "Services & Deals",
     "searchPlaceholder": "Search here ....",
-    "searchButton": "Searrrrrch"
+    "searchButton": "Search"
   },
   "products": {
     "title": "All Products",
@@ -73,5 +76,63 @@
      "popularServices": "Popular Services",
   "bestSelling": "Best Selling",
   "usedOffers": "Used Offers"
+  },
+  "services":{
+    "title":"Services",
+    "yourFeedback": "Your feedback is extremely valuable and the result of great effort...",
+    "categories": {
+      "jobs": "Jobs",
+      "mobilesTablets": "Mobiles & Tablets",
+      "realEstate": "Real Estate",
+      "cars": "Cars & Spare Parts",
+      "pets": "Pets & Aquarium",
+      "furniture": "Home & Office Furniture",
+      "babyStuff": "Baby Supplies",
+      "business": "Business & Industry",
+      "electronics": "Electronics",
+      "fashion": "Fashion & Beauty",
+      "hobbies": "Hobbies",
+      "services": "Services"
+    }
+  },
+  "features":{
+    "platformFeatures": "Platform Features",
+    "commissionSystem": "Commission System",
+    "livePreview": "Live Preview",
+    "guarantees": "Guarantees",
+    "easierMarketing": "Easier Marketing",
+    "marketingDescription": "We provide smart tools to help you market your products or services easily, along with a referral and rewards system for marketers and influencers to boost reach and visibility.",
+    "fromCustomerTrust": "From Customer Trust"
+  },
+  "testimonials": {
+    "sectionTitle": "Customer Testimonials",
+    "sectionSubtitle": "Your feedback is incredibly valuable and reflects great effort...",
+    "feedback": "The platform is excellent and has made it easy for us to communicate with customers quickly and directly. The comment system is clear and smooth, helping to build trust and credibility in our products or services. Image and rating support was also a great addition that enhanced the user experience.",
+    "name": "Customer Name",
+    "date": "12-12-2025"
+  },
+   "footer": {
+    "aboutPlatform": "An integrated platform that combines selling new products, trading used items, and offering services and deals — all in one place. Whether you're a seller, buyer, or service provider, everything you need is here — easily and securely.",
+    "home": "Home",
+    "categories": "Categories",
+    "services": "Services",
+    "aboutUs": "About Us?",
+    "contactUs": "Contact Us",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "contact": "Contact Us",
+    "support": "Get Support",
+    "copyright": "All rights reserved",
+    "social": {
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "behance": "Behance",
+      "facebook": "Facebook",
+      "youtube": "Youtube"
+    },
+    "poweredBy": "Brmja.tech",
+    "quickLinks": "Quick Links",
+    "myAccount": "My Account",
+    "socialMedia": "Social Media"
   }
 } 

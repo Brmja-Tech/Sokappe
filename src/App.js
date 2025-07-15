@@ -4,7 +4,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import AppRoutes from "./routes/AppRoutes";
 import { ToastContainer } from "react-toastify";
-// import ScrollToTop from "./components/scrollToTop/ScrollToTop";
+import ScrollToTop from "./component/ScrollToTop/ScrollToTop";
 import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -19,7 +19,7 @@ function App() {
       <AppRoutes />
       </BrowserRouter>
       <ToastContainer autoClose={2000}/>
-      {/* <ScrollToTop /> */}
+      <ScrollToTop />
     </>
   );
 }

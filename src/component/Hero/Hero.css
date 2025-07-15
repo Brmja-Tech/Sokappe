@@ -62,7 +62,8 @@
 }
 /* dir ltr*/
 [dir='ltr']  {
-.hero form svg {left: 11px;right: unset;top: 15px;}
+    .hero h3 {font-size: 30px;font-weight: bold;}
+.hero form svg {left: 11px;right: unset;top: 13px;}
 .hero form button {padding: 7px 17px;}
 .hero form input {width: 84%;}
 
@@ -74,5 +75,11 @@
     .hero .forms form input {background-color: var(--sub-dark-color);}
     .hero .nav-tabs .nav-link {color: var(--basic-color);}
     .hero .nav-tabs .nav-link.active {border-color: var(--dark-color);}
-    .hero .forms form {border-color: #333;} 
+    .hero .forms form {border-color: #0e1b2f55;} 
+}
+@media(max-width:414px) 
+{
+    .hero .forms {
+    padding: 20px 0;
+}
 }

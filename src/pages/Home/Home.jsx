@@ -3,6 +3,9 @@ import "./home.css";
 import Hero from "../../component/Hero/Hero";
 import Ads from "../../component/Ads/Ads";
 import Products from "../../component/Products/Products";
+import Services from "../../component/Services/Services";
+import Features from "../../component/Features/Features";
+import Testimonials from "../../component/Testimonials/Testimonials";
 
 const Home = () => {
   return (
@@ -10,6 +13,9 @@ const Home = () => {
       <Hero />
       <Ads/>
       <Products/>
+      <Services/>
+      <Features/>
+      <Testimonials/>
     </>
   );
 };

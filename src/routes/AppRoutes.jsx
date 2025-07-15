@@ -40,7 +40,7 @@ export default function Applayout() {
 
 
       </Routes>
-      {/* {!shouldHideNavbarFooter && <Footer />} */}
+      {!shouldHideNavbarFooter && <Footer />}
     </>
   );
 }

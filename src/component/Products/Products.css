@@ -48,8 +48,8 @@
     font-weight: bold;
 }
 [data-theme='dark'] {
-    .products {background-color: var(--dark-color);}
-    .product_card {background-color: var(--sub-dark-color);color: var(--basic-color);border-color: var(--sub-dark-color) !important;}
+    .products {background-color: var(--sub-dark-color);}
+    .product_card {background-color: var(--dark-color);color: var(--basic-color);border-color: var(--sub-dark-color) !important;}
      .products .nav-tabs .nav-link {color: var(--basic-color);}
    .products .nav-tabs .nav-link.active {
     color: var(--main-color);
