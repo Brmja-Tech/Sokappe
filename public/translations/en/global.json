@@ -75,7 +75,13 @@
     "showMore": "Show More",
      "popularServices": "Popular Services",
   "bestSelling": "Best Selling",
-  "usedOffers": "Used Offers"
+  "usedOffers": "Used Offers",
+  "newmarket":"New Market",
+  "openmarket":"Open Market",
+  "services": "Services and deals market",
+  "allcategories": "All categories",
+  "bestseller" : "Best Seller",
+  "ouroffers" : "Our offers"
   },
   "services":{
     "title":"Services",
@@ -134,5 +140,24 @@
     "quickLinks": "Quick Links",
     "myAccount": "My Account",
     "socialMedia": "Social Media"
+  },
+  "ads":{
+    "newmarket":"New Market",
+    "services":"Services and deals market",
+    "openmarket":"Open Market"
+  },
+  "OfferRequestService": {
+    "title": "Offer or Request a Service",
+    "offerIconAlt": "Offer service icon",
+    "offerTitle": "Do you offer a service?",
+    "offerDescription": "Join our professional network",
+    "requestIconAlt": "Request service icon",
+    "requestTitle": "Have an exclusive deal?",
+    "requestDescription": "Find the best professionals",
+    "clientsReady": "Here you'll find clients ready to pay for your work",
+    "offerBtn": "Offer a service",
+    "requestBtn": "Request a service",
+    "offerBtn1": "Offer a deel",
+    "requestBtn1": "Request a deel"
   }
 } 

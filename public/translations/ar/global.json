@@ -75,7 +75,13 @@
     "showMore": "عرض المزيد",
     "popularServices": "خدمات مطلوبة بكثرة",
   "bestSelling": "الافضل مبيعًا",
-  "usedOffers": "عروض على المستعمل"
+  "usedOffers": "عروض على المستعمل",
+  "newmarket": "السوق الجديد",
+  "openmarket": "السوق المفتوح",
+  "services": "سوق الخدمات والعروض",
+  "allcategories": "جميع الفئات",
+  "bestseller" : "الاكثر مبيعا",
+  "ouroffers" : "عروضنا "
   },
   "services":{
     "title":"خدماتنا",
@@ -134,5 +140,22 @@
     "quickLinks": "روابط سريعة",
     "myAccount": "حسابي",
     "socialMedia": "التواصل الاجتماعي"
+  },
+  "ads": {
+    "newmarket": "السوق الجديد",
+    "services": "سوق الخدمات والعروض",
+    "openmarket": "السوق المفتوح"
+  },
+    "OfferRequestService": {
+    "title": "سوقك الخاص للخدمات والصفقات قدم او اطلب بخطوه واحدة",
+    "offerIconAlt": "أيقونة عرض الخدمة",
+    "offerTitle": "بتقدم خدمة؟",
+    "requestIconAlt": "أيقونة طلب الخدمة",
+    "requestTitle": "عندك صفقة حصرية؟",
+    "clientsReady": "هنا تلاقي عملاء جايين ومستعدين يدفعو تمن شغلك",
+    "offerBtn": "اعرض خدمة",
+    "requestBtn": "اطلب خدمة",
+    "offerBtn1": "اعرض صفقة",
+    "requestBtn1": "اطلب صفقة"
   }
 }

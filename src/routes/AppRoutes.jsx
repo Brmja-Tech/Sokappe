@@ -7,8 +7,10 @@ import Navbar from "../pages/Navbar";
 import Footer from "../pages/Footer";
 
 // import Profile from "../components/Profile/Profile";
-// import Login from "../pages/Login/Login";
-// import Register from "../pages/Register/Register";
+import Login from "../pages/Login/Login";
+import Register from "../pages/Register/Register";
+import OfferRequestService from "../pages/OfferRequestService/OfferRequestService";
+import RequestService from "../pages/RequestService/RequestService";
 
 export default function Applayout() {
   const location = useLocation();
@@ -30,13 +32,16 @@ export default function Applayout() {
       {!shouldHideNavbarFooter && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/otp" element={<OTP />} />
+        <Route path="/offer-request-service" element={<OfferRequestService />} />
+        <Route path="/requestservice" element={<RequestService />} />
+
+         {/* <Route path="/otp" element={<OTP />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/otp-reset" element={<OTPReset />} />
-        <Route path="/verify-account" element={<VerifyAccount />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/change-password" element={<ChangePassword />} /> */}
+        {/* <Route path="/otp-reset" element={<OTPReset />} /> */}
+        {/* <Route path="/verify-account" element={<VerifyAccount />} /> */}
+        {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
+        {/* <Route path="/change-password" element={<ChangePassword />} />  */}
 
 
       </Routes>

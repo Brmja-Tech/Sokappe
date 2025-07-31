@@ -59,3 +59,32 @@
 [dir='ltr'] {
   .product_services .show_more {padding: 7px 20px 5px;}
 }
+
+
+.btn-categories {
+  padding: 8px 25px;
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+/* التأكد من المحاذاة الصحيحة في كلا الاتجاهين */
+[dir='rtl'] .btn-categories-container {
+  float: left !important;
+  margin-right: auto !important;
+}
+[dir='ltr'] .btn-categories-container {
+  float: right !important;
+  margin-left: auto !important;
+}
+
+/* حل بديل باستخدام CSS فقط */
+.align-by-direction {
+  margin-inline-start: auto !important;
+  display: block !important;
+}
