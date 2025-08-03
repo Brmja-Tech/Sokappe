@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import './AdsServices.css';
+import { Link } from 'react-router-dom';
 
 const AdsServices = () => {
   const { t, i18n } = useTranslation("global");
@@ -20,7 +21,8 @@ const AdsServices = () => {
     <div className="ads py-5">
       <div className="container">
       <h2 className='mb-3'>{t("ads.services")}</h2>
-        <Swiper
+      <Link to="/Offer-Request-Service">
+      <Swiper
           modules={[Pagination, Autoplay]}
           slidesPerView={1}
           spaceBetween={20}
@@ -44,6 +46,8 @@ const AdsServices = () => {
             </SwiperSlide>
           ))}
         </Swiper>
+      </Link>
+       
       </div>
     </div>
   );

@@ -26,11 +26,11 @@ export default function OfferRequestService() {
                 {t("OfferRequestService.clientsReady")}
               </p>
              <div className='d-flex justify-content-center'>
-             <Link to="/offer-service" className="service-btn mx-2">
+             <Link to="/" className="service-btn mx-2">
                 {t("OfferRequestService.offerBtn")}
               </Link>
 
-              <Link to="/request-service" className="service-btn">
+              <Link to="/requestservice" className="service-btn">
                 {t("OfferRequestService.requestBtn")}
               </Link>
 
@@ -49,11 +49,11 @@ export default function OfferRequestService() {
                 {t("OfferRequestService.clientsReady")}
               </p>
               <div className='d-flex justify-content-center'>
-             <Link to="/offer-service" className="service-btn mx-2">
+             <Link to="/" className="service-btn mx-2">
                 {t("OfferRequestService.offerBtn1")}
               </Link>
 
-              <Link to="/request-service" className="service-btn">
+              <Link to="/requestservice" className="service-btn">
                 {t("OfferRequestService.requestBtn1")}
               </Link>
 

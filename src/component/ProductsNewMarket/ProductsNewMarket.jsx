@@ -58,6 +58,8 @@ const ProductsNewMarket = () => {
         >
           {cards.map((item, index) => (
             <SwiperSlide key={index}>
+              <Link to="/productdetalis">
+
               <div className="product_card border rounded-4 overflow-hidden">
                 <img
                   src="/car.png"
@@ -100,6 +102,8 @@ const ProductsNewMarket = () => {
                   </div>
                 </div>
               </div>
+              </Link>
+              
             </SwiperSlide>
           ))}
         </Swiper>

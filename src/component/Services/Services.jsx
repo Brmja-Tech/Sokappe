@@ -94,7 +94,7 @@ const Services = () => {
                   className="col-xl-3 col-lg-3 col-md-4 col-12"
                   key={cat.id || index}
                 >
-                  <Link className="category_card">
+                  <Link to="/filterproducts" className="category_card">
                     <div>
                       <img src={cat.img} alt={cat.label} />
                     </div>

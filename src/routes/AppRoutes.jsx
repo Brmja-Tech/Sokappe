@@ -11,6 +11,10 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import OfferRequestService from "../pages/OfferRequestService/OfferRequestService";
 import RequestService from "../pages/RequestService/RequestService";
+import FilterProducts from "../pages/FilterProducts/FilterProducts";
+import ProductsDetalis from "../pages/ProductsDetalis/ProductsDetalis";
+import AboutUS from "../pages/AboutUS/AboutUS";
+import ContactUS from "../pages/ContactUS/ContactUS";
 
 export default function Applayout() {
   const location = useLocation();
@@ -34,6 +38,10 @@ export default function Applayout() {
         <Route path="/" element={<Home />} />
         <Route path="/offer-request-service" element={<OfferRequestService />} />
         <Route path="/requestservice" element={<RequestService />} />
+        <Route path="/filterproducts" element={<FilterProducts />} />
+        <Route path="/productdetalis" element={<ProductsDetalis />} />
+        <Route path="/aboutus" element={<AboutUS />} />
+        <Route path="/contactus" element={<ContactUS />} />
 
          {/* <Route path="/otp" element={<OTP />} /> */}
         <Route path="/login" element={<Login />} />

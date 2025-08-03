@@ -81,7 +81,11 @@
   "services": "Services and deals market",
   "allcategories": "All categories",
   "bestseller" : "Best Seller",
-  "ouroffers" : "Our offers"
+  "ouroffers" : "Our offers",
+   "latop": "Laptops",
+   "productsDetalis": "Product Details",
+        "similarproduct": "Similar Products"
+
   },
   "services":{
     "title":"Services",
@@ -159,5 +163,97 @@
     "requestBtn": "Request a service",
     "offerBtn1": "Offer a deel",
     "requestBtn1": "Request a deel"
+  },
+  "tabs": {
+    "latop": "Laptop",
+    "computer": "Computer",
+    "printers": "Printers & Accessories",
+    "parts": "Parts",
+    "modem": "Modem - Router",
+    "accessories": "Accessories",
+    "monitors": "Monitors"
+  },
+  "filter": {
+    "sortby": "Sort By",
+    "categories": "Categories",
+    "governorate": "Filter by Governorate",
+    "price": "Filter by Price",
+    "brand": "Brand",
+    "from": "From",
+    "to": "To"
+  },
+  "sort": {
+    "latest": "Latest",
+    "lowest": "Lowest Price",
+    "highest": "Highest Price",
+    "topRated": "Top Rated"
+  },
+  "categories": {
+    "latop": "Laptops",
+    "accessories": "Accessories",
+    "phones": "Phones"
+  },
+  "cities": {
+    "cairo": "Cairo",
+    "giza": "Giza",
+    "alex": "Alexandria",
+    "mansoura": "Mansoura"  
+  },
+  "product": {
+    "title": "Laptop in very good condition, lightly used",
+    "posted": "12 hours ago",
+    "details": "HP, Windows, 15.6\", 8GB",
+    "delivery": "Delivery Available",
+    "location": "Cairo, Egypt",
+    "chat": "Chat",
+    "price": "5,000 EGP"
+  },
+  "productsDetalis": "Product Details",
+  "productDetails": {
+    "share": "Share Ad",
+    "addToFavorites": "Add to Favorites",
+    "highlight": "Highlight Ad",
+    "repost": "Repost Ad",
+    "shipping": "Shipping Service",
+    "contactSeller": "Contact the Service Provider",
+    "generalTips": "General Tips",
+    "tips": [
+      "Meet in public places only",
+      "Don't send money in advance",
+      "Inspect the product carefully before buying"
+    ],
+    "information": "Information",
+    "deliveryService": "Do you have delivery service?",
+    "warranty": "Is there a warranty?",
+    "usedMarket": "Used Market",
+    "description": "Description",
+    "seller": "Ad Owner",
+    "location": "Location",
+    "posted": "Posted {{hours}} hours ago"
+  },
+  "aboutus": "About Us",
+  "about": {
+    "title": "Your Trusted E-Commerce Platform",
+    "paragraph1": "We offer you the best products from top brands at competitive prices with a safe and easy shopping experience. Discover everything you need and shop with a click, wherever you are.",
+    "paragraph2": "Customer satisfaction is our top priority. We constantly improve our services and expand our offerings to give you an exceptional shopping experience that meets all your needs.",
+    "featuresTitle": "What We Offer You",
+    "features": [
+      "Exclusive deals and discounts year-round",
+      "24/7 technical support and customer service",
+      "Easy and flexible return and exchange policy",
+      "Multiple payment options (cards, bank transfer, cash on delivery)"
+    ]
+  },
+  "contactPage": {
+    "customRequest": "Submit a Custom Request",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "subject": "Subject",
+    "message": "Enter your message",
+    "submit": "Submit",
+    "stayInTouch": "Stay in Touch",
+    "address": "Address: Nasr City, Cairo, Egypt",
+    "workingHours": "Working Hours: 10 AM to 10 PM"
   }
 } 

@@ -123,12 +123,12 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/" className="nav-link">
+              <Link to="/aboutus" className="nav-link">
                 {t("navbar.aboutUs")}
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/" className="nav-link">
+              <Link to="/contactus" className="nav-link">
                 {t("navbar.contactUs")}
               </Link>
             </li>

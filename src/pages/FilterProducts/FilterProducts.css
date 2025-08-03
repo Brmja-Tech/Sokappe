@@ -1,0 +1,77 @@
+.tabs-container {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 0 1rem 1.5rem;
+    overflow-x: auto;
+    padding: 10px 15px;
+  }
+  
+  .tabs-container .tab {
+    border: none;
+    background-color: transparent;
+    padding: 6px 16px;
+    font-weight: 500;
+    color: #333;
+    border-radius: 20px;
+    margin: 4px;
+    transition: 0.2s;
+  }
+  
+  .tabs-container .tab.active,
+  .tabs-container .tab:hover {
+    background-color: #198754;
+    color: white;
+  }
+  
+  .filters-box {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 12px;
+  }
+  
+  .filter-block {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background: #fff;
+  }
+  
+  .product-card .card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 10px;
+  }
+  
+  .product-img {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .pagination .page-link {
+    color: #198754;
+    border-radius: 50%;
+    margin: 0 3px;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+  }
+
+  .chat{
+    border: 1px solid  #0A6E58;
+    padding: 5px;
+    border-radius:30px ;
+  }
+  .heart{
+    border: 1px solid  #FF0000;
+    padding: 5px;
+    border-radius:30px ;
+  }
+  
