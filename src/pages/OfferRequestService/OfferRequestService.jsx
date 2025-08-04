@@ -15,7 +15,6 @@ export default function OfferRequestService() {
         <h5 className="text-center mb-5">{t("OfferRequestService.title")}</h5>
         
         <div className="row justify-content-center align-items-center g-4">
-          {/* الكارت الأولى */}
           <div className="col-lg-6">
             <div className="service-card">
               <div className="card-icon">
@@ -26,7 +25,7 @@ export default function OfferRequestService() {
                 {t("OfferRequestService.clientsReady")}
               </p>
              <div className='d-flex justify-content-center'>
-             <Link to="/" className="service-btn mx-2">
+             <Link to="/addservice" className="service-btn mx-2">
                 {t("OfferRequestService.offerBtn")}
               </Link>
 

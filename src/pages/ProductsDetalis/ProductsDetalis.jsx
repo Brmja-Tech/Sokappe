@@ -7,6 +7,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { Link } from 'react-router-dom';
 
 // Icons
 import share from "../../assests/imgs/share.svg";
@@ -85,7 +86,6 @@ export default function ProductsDetalis() {
           </div>
         </div>
 
-        {/* الصف الأول (الصور والمعلومات الأساسية) */}
         <div className="product-row">
           <div className="product-col-8">
             <div className="product-images">
@@ -147,6 +147,7 @@ export default function ProductsDetalis() {
           </div>
           
           <div className="product-col-4">
+            <Link to="/adownerprofile">
             <div className="seller-box">
               <h4>{t("productDetails.seller")}</h4>
               <div className="seller-header">
@@ -164,7 +165,7 @@ export default function ProductsDetalis() {
                 </div>
               </div>
             </div>
-            
+            </Link>
             <div className="location-box">
               <h4>{t("productDetails.location")}</h4>
               <p className="location-text">{product.seller.location}</p>

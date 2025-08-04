@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { FiUser, FiSearch } from "react-icons/fi";
 import { FiChevronDown } from "react-icons/fi";
 import { useRef } from "react";
+import logo from "../assests/imgs/logo.svg";
 const Navbar = () => {
   const { t, i18n } = useTranslation("global");
   const [isMobileScrolled, setIsMobileScrolled] = useState(false);
@@ -54,7 +55,7 @@ const Navbar = () => {
     >
       <div className="container d-flex justify-content-between align-items-center">
         <Link className="navbar-brand main-color fw-bold" to="/">
-          Sokappe
+          <img src={logo} style={{width: "75px"}} alt="logo" />
         </Link>
 
         <button
@@ -118,11 +119,6 @@ const Navbar = () => {
               </div>
             </li>
             <li className="nav-item">
-              <Link to="/" className="nav-link">
-                {t("navbar.services")}
-              </Link>
-            </li>
-            <li className="nav-item">
               <Link to="/aboutus" className="nav-link">
                 {t("navbar.aboutUs")}
               </Link>
@@ -138,8 +134,8 @@ const Navbar = () => {
 
         <ul className="actions list-unstyled p-0 d-flex align-items-center gap-3 m-0">
           <li>
-            <Link className="add" to="/publish_ad">
-              <i className="bi bi-plus"></i> {t("navbar.add")}
+            <Link className="add" to="/addad">
+              <i className="bi bi-plus"></i> {t("navbar.addAd")}
             </Link>
           </li>
           <li>|</li>

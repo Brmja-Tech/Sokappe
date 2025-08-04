@@ -4,13 +4,38 @@
     "logout": "تسجيل خروج",
     "logoutSuccess": "تم تسجيل الخروج بنجاح"
   },
+  "profile": {
+    "name": "الاسم",
+    "age": "العمر",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الجوال",
+    "nationalId": "الرقم القومي",
+    "bio": "نبذة تعريفية",
+    "jobTitle": "المسمى الوظيفي",
+    "editProfile": "تعديل الملف الشخصي",
+    "saveChanges": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "uploadPhoto": "رفع صورة",
+    "changePhoto": "تغيير الصورة",
+    "removePhoto": "حذف الصورة",
+    "personalInfo": "المعلومات الشخصية",
+    "contactInfo": "معلومات التواصل",
+    "accountSettings": "إعدادات الحساب",
+    "privacySettings": "إعدادات الخصوصية",
+    "notifications": "الإشعارات",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "darkMode": "الوضع المظلم",
+    "lightMode": "الوضع الفاتح",
+    "autoMode": "تلقائي"
+  },
   "navbar": {
     "home": "الرئيسية",
     "categories": "الأقسام",
-    "services": "خدماتنا",
+    "addService": "اضف خدمة",
     "aboutUs": "من نحن؟",
     "contactUs": "اتصل بنا",
-    "add": "إضافـة",
+    "addAd": "إضافة إعلان",
     "professionalMarket": "السوق الاحترافي",
     "usedMarket": "سوق المستعمل",
     "servicesMarket": "سوق الخدمات والصفقات"
@@ -30,7 +55,7 @@
     "loading": "جار التسجيل...",
     "fillFields": "يرجى ملء الحقول",
     "confirmPassword": "تأكيد كلمة المرور",
-    "changePassword": "تغيير كلمة المرور",
+    "changePassword": "تعيين كلمة المرور الجديدة",
     "phone": "رقم الجوال",
     "selectRole": "اختر صلاحية",
     "role": "الصلاحية",
@@ -46,8 +71,8 @@
     "checkEmailAndEnterCode": "تحقق من بريدك الإلكتروني وأدخل رمز التأكيد",
     "confirmationCode": "رمز التأكيد",
     "resendConfirmationCode": "إعادة إرسال رمز التأكيد",
-    "confirm":"تأكيد",
-    "resetPassword":"إعادة تعيين كلمة المرور",
+    "confirm": "تأكيد",
+    "resetPassword": "إعادة تعيين كلمة المرور",
     "weWillHelpYouReset": "سوف نساعدك في إعادة تعيين كلمة المرور الخاصة بك",
     "rememberPassword": "تذكرت كلمة المرور",
     "reset": "إعادة كلمة المرور",
@@ -55,9 +80,20 @@
     "company": "شركة",
     "company_name": "اسم الشركة",
     "account_username": "اسم مستخدم الحساب",
-    "company_type": "نوع الشركة"
+    "company_type": "نوع الشركة",
+    "next": "التالي",
+    "previous": "السابق",
+    "taxNumber": "الرقم الضريبي",
+    "companyLogo": "شعار الشركة",
+    "uploadLogo": "رفع الشعار",
+    "taxRecord": "السجل الضريبي",
+    "taxRecordFront": "السجل الضريبي من الأمام",
+    "taxRecordBack": "السجل الضريبي من الخلف",
+    "taxCard": "البطاقة الضريبية",
+    "taxCardFront": "البطاقة الضريبية من الأمام",
+    "taxCardBack": "البطاقة الضريبية من الخلف"
   },
-  "hero":{
+  "hero": {
     "headline": "تشتري جديد؟ تبيع مستعمل؟ محتاج خدمة؟...كله في مكان واحد",
     "subheadline": "منتجات مميزة، عروض مستعملة، وخدمات بين إيديك...",
     "shop": "تسوق",
@@ -74,21 +110,20 @@
     "currency": "جنية",
     "showMore": "عرض المزيد",
     "popularServices": "خدمات مطلوبة بكثرة",
-  "bestSelling": "الافضل مبيعًا",
-  "usedOffers": "عروض على المستعمل",
-  "newmarket": "السوق الجديد",
-  "openmarket": "السوق المفتوح",
-  "services": "سوق الخدمات والعروض",
-  "allcategories": "جميع الفئات",
-  "bestseller" : "الاكثر مبيعا",
-  "ouroffers" : "عروضنا ",
+    "bestSelling": "الافضل مبيعًا",
+    "usedOffers": "عروض على المستعمل",
+    "newmarket": "السوق الجديد",
+    "openmarket": "السوق المفتوح",
+    "services": "سوق الخدمات والعروض",
+    "allcategories": "جميع الفئات",
+    "bestseller": "الاكثر مبيعا",
+    "ouroffers": "عروضنا ",
     "latop": "لابتوبات",
-        "productsDetalis": "تفاصيل المنتج",
-        "similarproduct": "منتجات مشابهة"
-
+    "productsDetalis": "تفاصيل المنتج",
+    "similarproduct": "منتجات مشابهة"
   },
-  "services":{
-    "title":"خدماتنا",
+  "services": {
+    "title": "خدماتنا",
     "yourFeedback": "أرائكم قيّمة للغاية، وهي نتيجة لجهد كبير...",
     "categories": {
       "jobs": "وظائف",
@@ -105,7 +140,7 @@
       "services": "خدمات"
     }
   },
-  "features":{
+  "features": {
     "platformFeatures": "مميزات المنصة",
     "commissionSystem": "نظام العمولة",
     "livePreview": "المعاينة المباشرة",
@@ -150,7 +185,7 @@
     "services": "سوق الخدمات والعروض",
     "openmarket": "السوق المفتوح"
   },
-    "OfferRequestService": {
+  "OfferRequestService": {
     "title": "سوقك الخاص للخدمات والصفقات قدم او اطلب بخطوه واحدة",
     "offerIconAlt": "أيقونة عرض الخدمة",
     "offerTitle": "بتقدم خدمة؟",
@@ -253,5 +288,22 @@
     "stayInTouch": "ابقَ على تواصل",
     "address": "العنوان: مدينة نصر، القاهرة، مصر",
     "workingHours": "ساعات العمل: من 10 صباحًا إلى 10 مساءً"
+  },
+  "addAd": {
+    "title": "أضف إعلانك الجديد",
+    "uploadImage": "رفع صورة",
+    "publishAd": "نشر الإعلان"
+  },
+  "addService": {
+    "section": "القسم",
+    "category": "الفئة",
+    "location": "الموقع",
+    "Price": "السعر",
+    "status": "الحالة",
+    "city": "المدينة",
+    "region": "المنطقة",
+    "deliveryservice": "خدمة التوصيل",
+    "description": "الوصف",
+    "addService": "اضافة"
   }
 }

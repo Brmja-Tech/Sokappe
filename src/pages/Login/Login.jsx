@@ -1,31 +1,64 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import "./Login.css";
+import logo from "../../assests/imgs/logo.svg";
 
 const Login = () => {
-    const {t,i18n} = useTranslation('global');
-    return (
-        <div className='registration_forms py-4' style={{backgroundImage: "url('/login-bg.jpg')"}}>
-            <form>
-                <img className='logo' src="/logo-white.png" alt="--" />
-                <h5 className='text-center mt-2 mb-3 fw-bold'>{t("sign.login")}</h5>
-                <div className='text-sm text-center'>
-                    <span>{t("sign.noAccount")}</span>
-                    <span className='fw-bold mx-1'>{t("sign.createAccount")}</span>
-                </div>
-                <label>{t("sign.email")}</label>
-                <input autoComplete='off' type="email" name="email" placeholder={t("sign.email")} />
-                <label>{t("sign.password")}</label>
-                <input autoComplete='off' type="password" name="password" placeholder={t("sign.password")} />
-                <div className='my-2'>
-                    <Link className='main-color text-sm'> {t("sign.forgotPassword")} </Link>
-                </div>
-                <div className='text-center'>
-                    <button type='submit'>{t("sign.login")}</button>
-                </div>
-            </form>
+  const { t, i18n } = useTranslation("global");
+  const isRTL = i18n.language === "ar";
+
+  return (
+    <div className="login-page" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="login-container">
+        <img className="login-logo" src={logo} alt="Logo" />
+        <h5 className="login-title">{t("sign.login")}</h5>
+
+        <div className="login-subtitle">
+          <span>{t("sign.noAccount")}</span>
+          <Link to="/register" className="create-account mx-1">
+            {t("sign.createAccount")}
+          </Link>
         </div>
-    );
-}
+
+        <form className="login-form">
+          <div className="form-group">
+            <label className="form-label">{t("sign.email")}</label>
+            <input
+              className="form-input"
+              autoComplete="off"
+              type="email"
+              name="email"
+              placeholder={t("sign.email")}
+              dir={isRTL ? "rtl" : "ltr"}
+              style={{ textAlign: isRTL ? "right" : "left" }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">{t("sign.password")}</label>
+            <input
+              className="form-input"
+              autoComplete="off"
+              type="password"
+              name="password"
+              placeholder={t("sign.password")}
+              dir={isRTL ? "rtl" : "ltr"}
+              style={{ textAlign: isRTL ? "right" : "left" }}
+            />
+          </div>
+
+          <Link to="/forgot-password" className="forgot-password">
+            {t("sign.forgotPassword")}
+          </Link>
+
+          <button type="submit" className="login-button">
+            {t("sign.login")}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export default Login;

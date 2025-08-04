@@ -2,15 +2,15 @@
   "topnav": {
     "profile": "Profile",
     "logout": "Logout",
-    "logoutSuccess": "Logout Successfully"
+    "logoutSuccess": "Logged out successfully"
   },
   "navbar": {
     "home": "Home",
     "categories": "Categories",
-    "services": "Services",
+    "addService": "Add Service",
     "aboutUs": "About Us?",
     "contactUs": "Contact Us",
-    "add": "Add",
+    "addAd": "Add Ad",
     "professionalMarket": "Professional Market",
     "usedMarket": "Used Market",
     "servicesMarket": "Services & Deals Market"
@@ -30,7 +30,7 @@
     "loading": "Loading...",
     "fillFields": "Please Fill Fields",
     "confirmPassword": "Confirm Password",
-    "changePassword": "Change Password",
+    "changePassword": "Set New Password",
     "phone": "Phone",
     "selectRole": "Select Role",
     "role": "Role",
@@ -46,8 +46,8 @@
     "checkEmailAndEnterCode": "Check your email and enter the confirmation code",
     "confirmationCode": "Confirmation Code",
     "resendConfirmationCode": "Resend Confirmation Code",
-    "confirm":"Confirm",
-    "resetPassword":"Reset Password",
+    "confirm": "Confirm",
+    "resetPassword": "Reset Password",
     "weWillHelpYouReset": "We will help you reset your password",
     "rememberPassword": "I remembered my password",
     "reset": "Reset Password",
@@ -55,9 +55,20 @@
     "company": "Company",
     "company_name": "Company Name",
     "account_username": "Account Username",
-    "company_type": "Company Type"
+    "company_type": "Company Type",
+    "next": "Next",
+    "previous": "Previous",
+    "taxNumber": "Tax Number",
+    "companyLogo": "Company Logo",
+    "uploadLogo": "Upload Logo",
+    "taxRecord": "Tax Record",
+    "taxRecordFront": "Tax Record Front",
+    "taxRecordBack": "Tax Record Back",
+    "taxCard": "Tax Card",
+    "taxCardFront": "Tax Card Front",
+    "taxCardBack": "Tax Card Back"
   },
-  "hero":{
+  "hero": {
     "headline": "Buying new? Selling used? Need a service?... All in one place",
     "subheadline": "Featured products, used deals, and services at your fingertips...",
     "shop": "Shop",
@@ -73,22 +84,21 @@
     "startingFrom": "Starting from",
     "currency": "EGP",
     "showMore": "Show More",
-     "popularServices": "Popular Services",
-  "bestSelling": "Best Selling",
-  "usedOffers": "Used Offers",
-  "newmarket":"New Market",
-  "openmarket":"Open Market",
-  "services": "Services and deals market",
-  "allcategories": "All categories",
-  "bestseller" : "Best Seller",
-  "ouroffers" : "Our offers",
-   "latop": "Laptops",
-   "productsDetalis": "Product Details",
-        "similarproduct": "Similar Products"
-
+    "popularServices": "Popular Services",
+    "bestSelling": "Best Selling",
+    "usedOffers": "Used Offers",
+    "newmarket": "New Market",
+    "openmarket": "Open Market",
+    "services": "Services and deals market",
+    "allcategories": "All categories",
+    "bestseller": "Best Seller",
+    "ouroffers": "Our offers",
+    "latop": "Laptops",
+    "productsDetalis": "Product Details",
+    "similarproduct": "Similar Products"
   },
-  "services":{
-    "title":"Services",
+  "services": {
+    "title": "Services",
     "yourFeedback": "Your feedback is extremely valuable and the result of great effort...",
     "categories": {
       "jobs": "Jobs",
@@ -105,7 +115,7 @@
       "services": "Services"
     }
   },
-  "features":{
+  "features": {
     "platformFeatures": "Platform Features",
     "commissionSystem": "Commission System",
     "livePreview": "Live Preview",
@@ -121,7 +131,7 @@
     "name": "Customer Name",
     "date": "12-12-2025"
   },
-   "footer": {
+  "footer": {
     "aboutPlatform": "An integrated platform that combines selling new products, trading used items, and offering services and deals — all in one place. Whether you're a seller, buyer, or service provider, everything you need is here — easily and securely.",
     "home": "Home",
     "categories": "Categories",
@@ -145,10 +155,10 @@
     "myAccount": "My Account",
     "socialMedia": "Social Media"
   },
-  "ads":{
-    "newmarket":"New Market",
-    "services":"Services and deals market",
-    "openmarket":"Open Market"
+  "ads": {
+    "newmarket": "New Market",
+    "services": "Services and deals market",
+    "openmarket": "Open Market"
   },
   "OfferRequestService": {
     "title": "Offer or Request a Service",
@@ -197,7 +207,7 @@
     "cairo": "Cairo",
     "giza": "Giza",
     "alex": "Alexandria",
-    "mansoura": "Mansoura"  
+    "mansoura": "Mansoura"
   },
   "product": {
     "title": "Laptop in very good condition, lightly used",
@@ -255,5 +265,58 @@
     "stayInTouch": "Stay in Touch",
     "address": "Address: Nasr City, Cairo, Egypt",
     "workingHours": "Working Hours: 10 AM to 10 PM"
+  },
+  "addAd": {
+    "title": "Add Your New Ad",
+    "uploadImage": "Upload Image",
+    "publishAd": "Publish Ad"
+  },
+  "addService": {
+    "section": "Section",
+    "category": "Category",
+    "location": "Location",
+    "Price": "Price",
+    "status": "Status",
+    "city": "City",
+    "region": "Region",
+    "deliveryservice": "Delivery Service",
+    "description": "Description",
+    "addService": "Add"
+  },
+  "otpVerification": {
+    "title": "OTP Verification",
+    "description": "Please enter the OTP code sent to your email address.",
+    "enterCode": "Enter Code",
+    "resendCode": "Resend Code",
+    "codeSent": "Code Sent",
+    "codeNotSent": "Code Not Sent",
+    "invalidCode": "Invalid Code",
+    "codeExpired": "Code Expired",
+    "submit": "Submit"
+  },
+  "profile": {
+    "name": "Name",
+    "age": "Age",
+    "email": "Email",
+    "phone": "Phone",
+    "nationalId": "National ID",
+    "bio": "Bio",
+    "jobTitle": "Job Title",
+    "editProfile": "Edit Profile",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "uploadPhoto": "Upload Photo",
+    "changePhoto": "Change Photo",
+    "removePhoto": "Remove Photo",
+    "personalInfo": "Personal Information",
+    "contactInfo": "Contact Information",
+    "accountSettings": "Account Settings",
+    "privacySettings": "Privacy Settings",
+    "notifications": "Notifications",
+    "language": "Language",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "autoMode": "Auto"
   }
-} 
+}

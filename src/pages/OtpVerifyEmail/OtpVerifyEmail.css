@@ -1,0 +1,197 @@
+/* OTP Verify Email Page Styles */
+.otp-verify-page {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)),
+    url("../../assests/imgs/otp.svg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.otp-verify-container {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.otp-verify-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.otp-verify-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0a6e58;
+  margin-bottom: 10px;
+}
+
+.otp-verify-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.otp-verify-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  text-align: left;
+}
+
+/* RTL support for form groups */
+[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* OTP Input Container */
+.otp-input-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+/* RTL support for OTP container */
+[dir="rtl"] .otp-input-container {
+  flex-direction: row-reverse;
+}
+
+/* Individual OTP Input */
+.otp-input {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: #fff;
+  color: #333;
+  outline: none;
+}
+
+.otp-input:focus {
+  border-color: #0a6e58;
+  box-shadow: 0 0 0 3px rgba(10, 110, 88, 0.1);
+  transform: scale(1.05);
+}
+
+.otp-input:not(:placeholder-shown) {
+  border-color: #0a6e58;
+  background: #f8fffe;
+}
+
+/* Hide number input arrows */
+.otp-input::-webkit-outer-spin-button,
+.otp-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.otp-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.resend-code-link {
+  color: #0a6e58;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: 500;
+  margin: 10px 0;
+  display: inline-block;
+}
+
+.resend-code-link:hover {
+  text-decoration: underline;
+}
+
+.otp-verify-button {
+  background: #0a6e58;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.otp-verify-button:hover {
+  background: #088f6e;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(10, 110, 88, 0.3);
+}
+
+.otp-verify-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .otp-verify-container {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+
+  .otp-verify-logo {
+    width: 100px;
+  }
+
+  .otp-verify-title {
+    font-size: 20px;
+  }
+
+  .otp-verify-subtitle {
+    font-size: 14px;
+  }
+
+  .otp-input {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+
+  .otp-input-container {
+    gap: 8px;
+  }
+}
+
+/* Animation for OTP inputs */
+@keyframes otpPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.otp-input:focus {
+  animation: otpPulse 0.3s ease-in-out;
+}

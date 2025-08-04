@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { FaLinkedin, FaBehance, FaFacebook, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import logo from "../assests/imgs/logo.svg";
 const Footer = () => {
   const { t } = useTranslation("global");
    const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
@@ -25,7 +26,7 @@ const Footer = () => {
           <div className="col-xl-3 col-lg-3 col-md-6">
             <div className="logo">
               <Link className="text-white">
-                <h4>Sokappe</h4>
+              <img src={logo} style={{width: "100px"}} alt="logo" />
               </Link>
             </div>
             <p className="line-height">{t("footer.aboutPlatform")}</p>
