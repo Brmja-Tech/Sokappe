@@ -19,7 +19,7 @@ const AdsOpenMarket = () => {
   return (
     <div className="ads py-5">
       <div className="container">
-      <h2 className='mb-3'>{t("ads.openmarket")}</h2>
+      <h4 className='mb-3'>{t("ads.openmarket")}</h4>
         <Swiper
           modules={[Pagination, Autoplay]}
           slidesPerView={1}

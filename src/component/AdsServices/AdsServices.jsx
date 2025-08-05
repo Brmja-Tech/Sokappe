@@ -20,7 +20,7 @@ const AdsServices = () => {
   return (
     <div className="ads py-5">
       <div className="container">
-      <h2 className='mb-3'>{t("ads.services")}</h2>
+      <h4 className='mb-3'>{t("ads.services")}</h4>
       <Link to="/Offer-Request-Service">
       <Swiper
           modules={[Pagination, Autoplay]}

@@ -22,6 +22,8 @@ import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import OtpVerifyEmail from "../pages/OtpVerifyEmail/OtpVerifyEmail";
 import ChangePassword from "../pages/ChangePassword/ChangePassword";
 import AdOwnerProfile from "../pages/AdOwnerProfile/AdOwnerProfile";
+import IndividualProfile from "../pages/IndividualProfile/IndividualProfile";
+import CompanyProfile from "../pages/CompanyProfile/CompanyProfile";
 
 export default function Applayout() {
   const location = useLocation();
@@ -52,6 +54,8 @@ export default function Applayout() {
         <Route path="/addad" element={<AddAd />} />
         <Route path="/addservice" element={<AddService />} />
         <Route path="/adownerprofile" element={<AdOwnerProfile />} />
+        <Route path="/individualprofile" element={<IndividualProfile />} />
+        <Route path="/companyprofile" element={<CompanyProfile />} />
          {/* <Route path="/otp" element={<OTP />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

@@ -38,7 +38,8 @@
     "addAd": "إضافة إعلان",
     "professionalMarket": "السوق الاحترافي",
     "usedMarket": "سوق المستعمل",
-    "servicesMarket": "سوق الخدمات والصفقات"
+    "servicesMarket": "سوق الخدمات والصفقات",
+    "Profile": "الملف الشخصي"
   },
   "sign": {
     "login": "تسجيل الدخول",
@@ -305,5 +306,45 @@
     "deliveryservice": "خدمة التوصيل",
     "description": "الوصف",
     "addService": "اضافة"
-  }
+  },
+  "settings": {
+  "title": "الإعدادات",
+  "profileTab": "الملف الشخصي",
+  "notificationsTab": "الإشعارات",
+  "name": "الاسم",
+  "namePlaceholder": "ادخل اسمك",
+  "age": "العمر",
+  "agePlaceholder": "ادخل عمرك",
+  "email": "البريد الإلكتروني",
+  "emailPlaceholder": "ادخل بريدك الإلكتروني",
+  "phone": "رقم التواصل",
+  "phonePlaceholder": "ادخل رقم التواصل",
+  "jobTitle": "المسمى الوظيفي",
+  "jobTitlePlaceholder": "ادخل المسمى الوظيفي",
+  "accountType": "نوع الحساب",
+  "accountTypeIndividual": "فردي",
+  "accountTypeCompany": "شركة",
+  "bio": "نبذة تعريفية",
+  "bioPlaceholder": "اكتب نبذة عنك",
+  "saveBtn": "حفظ",
+  "notificationsEmpty": "لا توجد إشعارات حالياً",
+  "notificationsEmail": "البريد الإلكتروني",
+  "notificationsEmailPlaceholder": "ادخل بريدك الإلكتروني",
+  "notificationsDesc": "أرسل لبريدي الالكتروني خدمات مميزة مختارة لي",
+   "identityTab": "توثيق الهوية",
+  "myServicesTab": "خدماتي"
+},
+"identity": {
+  "taxNumber": "الرقم الضريبي",
+  "taxNumberPlaceholder": "ادخل الرقم الضريبي",
+  "companyLogo": "لوجو الشركة",
+  "uploadLogo": "ارفع لوجو الشركة",
+  "taxRecord": "السجل الضريبي",
+  "taxRecordFront": "السجل الضريبي (أمامي)",
+  "taxRecordBack": "السجل الضريبي (خلفي)",
+  "taxCard": "البطاقة الضريبية",
+  "taxCardFront": "البطاقة الضريبية (أمامي)",
+  "taxCardBack": "البطاقة الضريبية (خلفي)",
+  "submitBtn": "إرسال"
+}
 }

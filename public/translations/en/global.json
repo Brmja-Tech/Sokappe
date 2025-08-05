@@ -13,7 +13,8 @@
     "addAd": "Add Ad",
     "professionalMarket": "Professional Market",
     "usedMarket": "Used Market",
-    "servicesMarket": "Services & Deals Market"
+    "servicesMarket": "Services & Deals Market",
+    "Profile": "Profile"
   },
   "sign": {
     "login": "Login",
@@ -318,5 +319,45 @@
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "autoMode": "Auto"
-  }
+  },
+  "settings": {
+    "title": "Settings",
+    "profileTab": "Profile",
+    "notificationsTab": "Notifications",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "age": "Age",
+    "agePlaceholder": "Enter your age",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "phone": "Phone",
+    "phonePlaceholder": "Enter your phone",
+    "jobTitle": "Job Title",
+    "jobTitlePlaceholder": "Enter your job title",
+    "accountType": "Account Type",
+    "accountTypeIndividual": "Individual",
+    "accountTypeCompany": "Company",
+    "bio": "Bio",
+    "bioPlaceholder": "Enter your bio",
+    "saveBtn": "Save",
+    "notificationsEmpty": "No notifications",
+    "notificationsEmail": "Email",
+    "notificationsEmailPlaceholder": "Enter your email",
+    "notificationsDesc": "Send me selected featured services to my email",
+      "identityTab": "Identity Verification",
+  "myServicesTab": "My Services"
+  },
+"identity": {
+  "taxNumber": "Tax Number",
+  "taxNumberPlaceholder": "Enter tax number",
+  "companyLogo": "Company Logo",
+  "uploadLogo": "Upload company logo",
+  "taxRecord": "Tax Record",
+  "taxRecordFront": "Tax Record (Front)",
+  "taxRecordBack": "Tax Record (Back)",
+  "taxCard": "Tax Card",
+  "taxCardFront": "Tax Card (Front)",
+  "taxCardBack": "Tax Card (Back)",
+  "submitBtn": "Submit"
+}
 }
