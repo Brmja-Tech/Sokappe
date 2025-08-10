@@ -24,6 +24,7 @@ import ChangePassword from "../pages/ChangePassword/ChangePassword";
 import AdOwnerProfile from "../pages/AdOwnerProfile/AdOwnerProfile";
 import IndividualProfile from "../pages/IndividualProfile/IndividualProfile";
 import CompanyProfile from "../pages/CompanyProfile/CompanyProfile";
+import OtpForgetPassword from "../pages/OtpForgetPassword/OtpForgetPassword";
 
 export default function Applayout() {
   const location = useLocation();
@@ -35,7 +36,18 @@ export default function Applayout() {
     document.documentElement.setAttribute("dir", dir);
   }, [i18n.language]);
 
-  const hideNavbarFooterPaths = ["/login", "/register", "/OTP", "/otp", '/verify-account', '/forgot-password', '/changepassword' ,'/createaccount' ,'/resetpassword'];
+  const hideNavbarFooterPaths = [
+    "/login",
+    "/register",
+    "/OTP",
+    "/otp",
+    "/verify-account",
+    "/forgot-password",
+    "/changepassword",
+    "/createaccount",
+    "/resetpassword",
+    "/otpforgetpassword",
+  ];
   const shouldHideNavbarFooter = hideNavbarFooterPaths.includes(
     location.pathname
   );
@@ -45,7 +57,10 @@ export default function Applayout() {
       {!shouldHideNavbarFooter && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/offer-request-service" element={<OfferRequestService />} />
+        <Route
+          path="/offer-request-service"
+          element={<OfferRequestService />}
+        />
         <Route path="/requestservice" element={<RequestService />} />
         <Route path="/filterproducts" element={<FilterProducts />} />
         <Route path="/productdetalis" element={<ProductsDetalis />} />
@@ -56,19 +71,18 @@ export default function Applayout() {
         <Route path="/adownerprofile" element={<AdOwnerProfile />} />
         <Route path="/individualprofile" element={<IndividualProfile />} />
         <Route path="/companyprofile" element={<CompanyProfile />} />
-         {/* <Route path="/otp" element={<OTP />} /> */}
+        {/* <Route path="/otp" element={<OTP />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/createaccount" element={<Createaccount />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/otp" element={<OtpVerifyEmail />} />
+        <Route path="/otpforgetpassword" element={<OtpForgetPassword />} />
         <Route path="/changepassword" element={<ChangePassword />} />
         {/* <Route path="/otp-reset" element={<OTPReset />} /> */}
         {/* <Route path="/verify-account" element={<VerifyAccount />} /> */}
         {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
         {/* <Route path="/change-password" element={<ChangePassword />} />  */}
-
-
       </Routes>
       {!shouldHideNavbarFooter && <Footer />}
     </>

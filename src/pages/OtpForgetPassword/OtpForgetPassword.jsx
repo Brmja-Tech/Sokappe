@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "./OtpVerifyEmail.css";
+import "./OtpForgetPassword.css";
 import logo from "../../assests/imgs/logo.svg";
 
-const OtpVerifyEmail = () => {
+const OtpForgetPassword = () => {
   const { t, i18n } = useTranslation("global");
   const isRTL = i18n.language === "ar";
   const navigate = useNavigate();
@@ -16,7 +16,6 @@ const OtpVerifyEmail = () => {
   const [timer, setTimer] = useState(60);
   const [isResendActive, setIsResendActive] = useState(false);
 
-  // ⏳ تشغيل العداد
   useEffect(() => {
     let interval;
     if (timer > 0) {
@@ -34,7 +33,6 @@ const OtpVerifyEmail = () => {
       newOtp[index] = value;
       setOtp(newOtp);
 
-      // Auto-focus to next input if value is entered
       if (value && index < 5) {
         inputRefs.current[index + 1]?.focus();
       }
@@ -42,7 +40,6 @@ const OtpVerifyEmail = () => {
   };
 
   const handleKeyDown = (e, index) => {
-    // Handle backspace - go to previous input
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -62,7 +59,6 @@ const OtpVerifyEmail = () => {
       });
       setOtp(newOtp);
 
-      // Focus on the next empty input or the last one
       const nextEmptyIndex = newOtp.findIndex((val) => !val);
       if (nextEmptyIndex !== -1 && nextEmptyIndex < 6) {
         inputRefs.current[nextEmptyIndex]?.focus();
@@ -89,15 +85,14 @@ const OtpVerifyEmail = () => {
       );
 
       toast.success(res.data.message || t("sign.verificationSuccess"));
-      navigate("/register");
+      navigate("/changepassword");
     } catch (err) {
       toast.error(err.response?.data?.message || t("sign.errorOccurred"));
     }
   };
 
-  // 📩 إعادة إرسال الكود
   const handleResend = async () => {
-    const email = localStorage.getItem("registerEmail");
+    const email = localStorage.getItem("resetEmail");
 
     if (!email) {
       toast.error(t("sign.emailMissing"));
@@ -106,12 +101,12 @@ const OtpVerifyEmail = () => {
 
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/register/start`,
+        `${process.env.REACT_APP_BASE_URL}/resend-otp`,
         { email }
       );
 
       toast.success(res.data.message || t("sign.emailSent"));
-      setTimer(60); // إعادة تشغيل العداد
+      setTimer(60);
     } catch (err) {
       toast.error(err.response?.data?.message || t("sign.errorOccurred"));
     }
@@ -174,4 +169,4 @@ const OtpVerifyEmail = () => {
   );
 };
 
-export default OtpVerifyEmail;
+export default OtpForgetPassword;
