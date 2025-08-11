@@ -403,7 +403,9 @@
     "notificationsEmailPlaceholder": "Enter your email",
     "notificationsDesc": "Send me selected featured services to my email",
     "identityTab": "Identity Verification",
-    "myServicesTab": "My Services"
+    "myServicesTab": "My Services",
+    "arabic": "Arabic",
+    "english": "English"
   },
   "identity": {
     "taxNumber": "Tax Number",
@@ -417,5 +419,7 @@
     "taxCardFront": "Tax Card (Front)",
     "taxCardBack": "Tax Card (Back)",
     "submitBtn": "Submit"
-  }
+  },
+  "physical": "Product seller",
+  "service": "Service provider"
 }

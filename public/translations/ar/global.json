@@ -390,7 +390,9 @@
     "notificationsEmailPlaceholder": "ادخل بريدك الإلكتروني",
     "notificationsDesc": "أرسل لبريدي الالكتروني خدمات مميزة مختارة لي",
     "identityTab": "توثيق الهوية",
-    "myServicesTab": "خدماتي"
+    "myServicesTab": "خدماتي",
+    "arabic": "العربية",
+    "english": "الانجليزية"
   },
   "identity": {
     "taxNumber": "الرقم الضريبي",
@@ -404,5 +406,7 @@
     "taxCardFront": "البطاقة الضريبية (أمامي)",
     "taxCardBack": "البطاقة الضريبية (خلفي)",
     "submitBtn": "إرسال"
-  }
+  },
+   "physical": "بائع منتجات ",
+      "service": "مقدم خدمة"
 }

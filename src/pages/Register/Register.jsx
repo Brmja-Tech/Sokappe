@@ -14,6 +14,7 @@ const Register = () => {
   const [tab, setTab] = useState("individual");
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [accountType, setAccountType] = useState("physical");
 
   // API Data States
   const [countries, setCountries] = useState([]);
@@ -23,6 +24,7 @@ const Register = () => {
   // Form Data States
   const [formData, setFormData] = useState({
     type: "individual",
+    account_type: "physical",
     email: "",
     username: { ar: "", en: "" },
     national_id: "",
@@ -55,6 +57,7 @@ const Register = () => {
   const resetForm = () => {
     setFormData({
       type: tab,
+      account_type: "physical",
       email: "",
       username: { ar: "", en: "" },
       national_id: "",
@@ -89,6 +92,7 @@ const Register = () => {
     setFormData((prev) => ({
       ...prev,
       type: tab,
+      account_type: tab === "individual" ? "physical" : "physical", // Reset to physical for non-individual types
     }));
   }, [tab]);
 
@@ -180,6 +184,11 @@ const Register = () => {
 
       // Add type
       formDataToSend.append("type", formData.type);
+
+      // Only add account_type for company and individual_vendor, not for individual
+      if (formData.type !== "individual") {
+        formDataToSend.append("account_type", formData.account_type);
+      }
 
       // Add common fields for all types
       if (formData.email) {
@@ -348,12 +357,6 @@ const Register = () => {
       setLoading(false);
     }
   };
-
-  const companyTypeOptions = [
-    { value: "1", label: "شركة تجارية" },
-    { value: "2", label: "شركة صناعية" },
-    { value: "3", label: "شركة خدمات" },
-  ];
 
   const renderIndividualForm = () => (
     <form className="register-form" onSubmit={handleSubmit}>
@@ -1615,6 +1618,34 @@ const Register = () => {
             {t("sign.individual_vendor")}
           </button>
         </div>
+
+        {/* Account Type Tabs for Company and Individual Vendor */}
+        {(tab === "company" || tab === "individual_vendor") && (
+          <div className="account-type-tabs">
+            <button
+              className={`account-tab-button ${
+                accountType === "physical" ? "active" : ""
+              }`}
+              onClick={() => {
+                setAccountType("physical");
+                setFormData((prev) => ({ ...prev, account_type: "physical" }));
+              }}
+            >
+              {t("physical")}
+            </button>
+            <button
+              className={`account-tab-button ${
+                accountType === "service" ? "active" : ""
+              }`}
+              onClick={() => {
+                setAccountType("service");
+                setFormData((prev) => ({ ...prev, account_type: "service" }));
+              }}
+            >
+              {t("service")}
+            </button>
+          </div>
+        )}
 
         {tab === "individual"
           ? renderIndividualForm()

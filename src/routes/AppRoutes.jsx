@@ -25,6 +25,7 @@ import AdOwnerProfile from "../pages/AdOwnerProfile/AdOwnerProfile";
 import IndividualProfile from "../pages/IndividualProfile/IndividualProfile";
 import CompanyProfile from "../pages/CompanyProfile/CompanyProfile";
 import OtpForgetPassword from "../pages/OtpForgetPassword/OtpForgetPassword";
+import VendorProfile from "../pages/VendorProfile/VendorProfile";
 
 export default function Applayout() {
   const location = useLocation();
@@ -71,6 +72,7 @@ export default function Applayout() {
         <Route path="/adownerprofile" element={<AdOwnerProfile />} />
         <Route path="/individualprofile" element={<IndividualProfile />} />
         <Route path="/companyprofile" element={<CompanyProfile />} />
+        <Route path="/vendorprofile" element={<VendorProfile />} />
         {/* <Route path="/otp" element={<OTP />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

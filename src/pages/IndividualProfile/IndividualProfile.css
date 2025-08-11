@@ -19,8 +19,8 @@
 .profile-settings-title {
   font-size: 1.3rem;
   font-weight: bold;
-  color: #0A6E58;
-  border-bottom: 2px solid #0A6E58;
+  color: #0a6e58;
+  border-bottom: 2px solid #0a6e58;
   padding-bottom: 12px;
   margin-bottom: 24px;
   letter-spacing: 1px;
@@ -36,7 +36,7 @@
 .profile-settings-tab-btn {
   background: none;
   border: none;
-  color: #0A6E58;
+  color: #0a6e58;
   font-weight: 600;
   font-size: 1.08rem;
   padding: 10px 0;
@@ -49,7 +49,7 @@
 .profile-settings-tab-btn:hover {
   background: #0a6e5812;
   color: #fff;
-  background: linear-gradient(90deg, #0A6E58 60%, #0A6E58 100%);
+  background: linear-gradient(90deg, #0a6e58 60%, #0a6e58 100%);
 }
 
 .profile-settings-content {
@@ -71,13 +71,13 @@
   height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #0A6E58;
-  box-shadow: 0 2px 8px #0A6E5820;
+  border: 3px solid #0a6e58;
+  box-shadow: 0 2px 8px #0a6e5820;
   background: #fff;
 }
 
 .profile-settings-form .profile-settings-label {
-  color: #0A6E58;
+  color: #0a6e58;
   font-weight: 600;
   margin-bottom: 6px;
   display: block;
@@ -86,7 +86,7 @@
 
 .profile-settings-input {
   border-radius: 8px !important;
-  border: 1.5px solid #0A6E5830 !important;
+  border: 1.5px solid #0a6e5830 !important;
   font-size: 1rem;
   color: #222;
   background: #f8f9fa;
@@ -95,13 +95,13 @@
 }
 
 .profile-settings-input:focus {
-  border-color: #0A6E58 !important;
-  box-shadow: 0 0 0 2px #0A6E5820;
+  border-color: #0a6e58 !important;
+  box-shadow: 0 0 0 2px #0a6e5820;
   background: #fff;
 }
 
 .profile-settings-save-btn {
-  background: #0A6E58;
+  background: #0a6e58;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -109,12 +109,39 @@
   font-size: 1.1rem;
   font-weight: 700;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px #0A6E5820;
+  box-shadow: 0 2px 8px #0a6e5820;
 }
 
 .profile-settings-save-btn:hover {
-  background: #095C4A;
+  background: #095c4a;
   color: #fff;
+}
+
+/* Loading spinner */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #0a6e58;
+}
+
+/* Disabled input styles */
+.profile-settings-input:disabled {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.profile-settings-input:read-only {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+}
+
+/* Loading state for save button */
+.profile-settings-save-btn:disabled {
+  background: #6c757d !important;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 @media (max-width: 991px) {
