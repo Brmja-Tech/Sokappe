@@ -36,6 +36,7 @@
     "aboutUs": "من نحن؟",
     "contactUs": "اتصل بنا",
     "addAd": "إضافة إعلان",
+    "offerRequest": "عرض/طلب خدمة",
     "professionalMarket": "السوق الاحترافي",
     "usedMarket": "سوق المستعمل",
     "servicesMarket": "سوق الخدمات والصفقات",
@@ -392,7 +393,15 @@
     "identityTab": "توثيق الهوية",
     "myServicesTab": "خدماتي",
     "arabic": "العربية",
-    "english": "الانجليزية"
+    "english": "الانجليزية",
+    "companyName": "اسم الشركة",
+    "companyNamePlaceholder": "ادخل اسم الشركة",
+    "companyType": "نوع الشركة",
+    "companyTypePlaceholder": "ادخل نوع الشركة",
+    "whatsappNumber": "رقم الواتساب",
+    "whatsappNumberPlaceholder": "ادخل رقم الواتساب",
+    "storeName": "اسم المتجر",
+    "storeNamePlaceholder": "ادخل اسم المتجر"
   },
   "identity": {
     "taxNumber": "الرقم الضريبي",
@@ -405,8 +414,17 @@
     "taxCard": "البطاقة الضريبية",
     "taxCardFront": "البطاقة الضريبية (أمامي)",
     "taxCardBack": "البطاقة الضريبية (خلفي)",
-    "submitBtn": "إرسال"
+    "submitBtn": "إرسال",
+    "changeLogo": "تغيير اللوجو",
+    "documents": "الوثائق المطلوبة",
+    "noImage": "لا يوجد صورة",
+    "storeImage": "صورة المتجر",
+    "changeStoreImage": "تغيير صورة المتجر",
+    "uploadStoreImage": "رفع صورة المتجر",
+    "nationalIdFront": "الهوية الوطنية من الأمام",
+    "nationalIdBack": "الهوية الوطنية من الخلف",
+    "commercialRecord": "السجل التجاري"
   },
-   "physical": "بائع منتجات ",
-      "service": "مقدم خدمة"
+  "physical": "بائع منتجات ",
+  "service": "مقدم خدمة"
 }

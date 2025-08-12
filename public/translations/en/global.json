@@ -11,6 +11,7 @@
     "aboutUs": "About Us?",
     "contactUs": "Contact Us",
     "addAd": "Add Ad",
+    "offerRequest": "Offer/Request Service",
     "professionalMarket": "Professional Market",
     "usedMarket": "Used Market",
     "servicesMarket": "Services & Deals Market",
@@ -405,7 +406,15 @@
     "identityTab": "Identity Verification",
     "myServicesTab": "My Services",
     "arabic": "Arabic",
-    "english": "English"
+    "english": "English",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Enter company name",
+    "companyType": "Company Type",
+    "companyTypePlaceholder": "Enter company type",
+    "whatsappNumber": "WhatsApp Number",
+    "whatsappNumberPlaceholder": "Enter WhatsApp number",
+    "storeName": "Store Name",
+    "storeNamePlaceholder": "Enter store name"
   },
   "identity": {
     "taxNumber": "Tax Number",
@@ -418,7 +427,16 @@
     "taxCard": "Tax Card",
     "taxCardFront": "Tax Card (Front)",
     "taxCardBack": "Tax Card (Back)",
-    "submitBtn": "Submit"
+    "submitBtn": "Submit",
+    "changeLogo": "Change Logo",
+    "documents": "Identity Documents",
+    "noImage": "No Image",
+    "storeImage": "Store Image",
+    "changeStoreImage": "Change Store Image",
+    "uploadStoreImage": "Upload Store Image",
+    "nationalIdFront": "National ID Front",
+    "nationalIdBack": "National ID Back",
+    "commercialRecord": "Commercial Record"
   },
   "physical": "Product seller",
   "service": "Service provider"

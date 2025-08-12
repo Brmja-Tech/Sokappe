@@ -20,7 +20,7 @@ const ChangePassword = () => {
     const email = localStorage.getItem("resetEmail"); // الإيميل اللي مخزنينه
     if (!email) {
       toast.error(t("sign.emailMissing"));
-      return navigate("/reset-password");
+      return navigate("/resetpassword"); 
     }
 
     if (password !== confirmPassword) {

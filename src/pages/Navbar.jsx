@@ -235,10 +235,156 @@ const Navbar = () => {
                 {t("navbar.contactUs")}
               </Link>
             </li>
+
+            {/* Mobile Only - Action Items */}
+            <li className="d-lg-none">
+              <Link className="add" to="/addad">
+                <i className="bi bi-plus"></i> {t("navbar.addAd")}
+              </Link>
+            </li>
+            <li className="d-lg-none">
+              <Link className="add" to="/offer-request-service">
+                <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
+              </Link>
+            </li>
+
+            {/* Mobile Only - Profile Dropdown */}
+            <li className="nav-item dropdown d-lg-none">
+              <button
+                className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                aria-label="Profile"
+                style={{
+                  color: `${theme === "dark" ? "var(--basic-color)" : "#000"}`,
+                }}
+              >
+                <FiUser />
+              </button>
+              <ul
+                className="dropdown-menu custom-dropdown"
+                style={{
+                  backgroundColor: `${
+                    theme === "dark"
+                      ? "var(--dark-color)"
+                      : "var(--basic-color)"
+                  }`,
+                }}
+                data-bs-popper="static"
+              >
+                {isAuthenticated ? (
+                  <>
+                    <li>
+                      <Link
+                        to={getProfileRoute()}
+                        className="dropdown-item"
+                        style={{
+                          fontSize: `${
+                            i18n.language === "ar" ? "12px" : "14px"
+                          }`,
+                        }}
+                      >
+                        {t("topnav.profile")}
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="dropdown-item"
+                        style={{
+                          fontSize: `${
+                            i18n.language === "ar" ? "12px" : "14px"
+                          }`,
+                        }}
+                      >
+                        {t("topnav.logout")}
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li>
+                    <Link
+                      to="/login"
+                      className="dropdown-item"
+                      style={{
+                        fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                      }}
+                    >
+                      {t("sign.login")}
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </li>
+
+            {/* Mobile Only - Language Switcher */}
+            <li className="nav-item dropdown d-lg-none">
+              <button
+                className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                aria-label="Language"
+              >
+                {i18n.language === "ar" ? "العربية" : "English"}
+                <FiChevronDown />
+              </button>
+              <ul
+                className="dropdown-menu custom-dropdown"
+                style={{
+                  backgroundColor: `${
+                    theme === "dark"
+                      ? "var(--dark-color)"
+                      : "var(--basic-color)"
+                  }`,
+                }}
+                data-bs-popper="static"
+              >
+                <li>
+                  <button
+                    onClick={() => changeLanguage("en")}
+                    className="dropdown-item"
+                    style={{
+                      fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                    }}
+                  >
+                    {i18n.language === "en" ? "English" : "الإنجليزية"}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => changeLanguage("ar")}
+                    className="dropdown-item"
+                    style={{
+                      fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                    }}
+                  >
+                    {i18n.language === "ar" ? "العربية" : "Arabic"}
+                  </button>
+                </li>
+              </ul>
+            </li>
+
+            {/* Mobile Only - Theme Switch */}
+            <li className="nav-item d-lg-none">
+              <div className="switch">
+                <input
+                  type="checkbox"
+                  className="switch__input"
+                  id="Switch"
+                  onChange={toggleTheme}
+                  checked={theme === "dark"}
+                />
+                <label className="switch__label" htmlFor="Switch">
+                  <span className="switch__indicator"></span>
+                  <span className="switch__decoration"></span>
+                </label>
+              </div>
+            </li>
           </ul>
         </div>
 
-        <ul className="actions list-unstyled p-0 d-flex align-items-center gap-3 m-0">
+        {/* Desktop Only - Action Items */}
+        <ul className="actions list-unstyled p-0 d-none d-lg-flex align-items-center gap-3 m-0">
           <li>
             <Link className="add" to="/addad">
               <i className="bi bi-plus"></i> {t("navbar.addAd")}
@@ -246,10 +392,12 @@ const Navbar = () => {
           </li>
           <li>|</li>
           <li>
-            <FiSearch />
+            <Link className="add" to="/offer-request-service">
+              <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
+            </Link>
           </li>
 
-          {/* Profile Dropdown */}
+          {/* Desktop Only - Profile Dropdown */}
           <li className="nav-item dropdown">
             <button
               className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
@@ -312,7 +460,7 @@ const Navbar = () => {
             </ul>
           </li>
 
-          {/* Language Switcher */}
+          {/* Desktop Only - Language Switcher */}
           <li className="nav-item dropdown">
             <button
               className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
@@ -357,7 +505,7 @@ const Navbar = () => {
             </ul>
           </li>
 
-          {/* Custom Theme Switch */}
+          {/* Desktop Only - Theme Switch */}
           <li>
             <div className="switch">
               <input

@@ -517,16 +517,42 @@ a {
   margin-inline: 2px;
   cursor: pointer;
 }
-.navbar .actions .add {
+.navbar .actions .add,
+.navbar .navbar-nav .add {
   background-color: var(--main-color);
   color: var(--basic-color);
   padding: 5px 13px 6px;
   border-radius: 25px;
   font-size: small;
   white-space: nowrap;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.navbar .actions .add:hover,
+.navbar .navbar-nav .add:hover {
+  background-color: var(--main-color);
+  color: var(--basic-color);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(10, 110, 88, 0.3);
 }
 .navbar .dropdown-toggle::after {
   display: none;
+}
+
+/* Mobile Menu Buttons Styling */
+.navbar .navbar-nav .d-lg-none {
+  margin: 8px 0;
+  text-align: center;
+}
+
+.navbar .navbar-nav .d-lg-none .add {
+  margin: 4px 0;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
 }
 
 /* RTL Support */
