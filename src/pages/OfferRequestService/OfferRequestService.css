@@ -1,108 +1,135 @@
 /* التنسيق العام للسكشن */
 .section-OfferRequestService {
-    background-color: #F9F9F9;
-    padding: 60px 0;
-  }
-  
-  .section-OfferRequestService h4 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
-  }
-  
-  /* تنسيق الكروت */
-  .service-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 30px;
-    text-align: center;
-    height: 100%;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
-  }
-  
-  .service-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  /* الأيقونات */
-  .card-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
+  background-color: #f9f9f9;
+  padding: 60px 0;
+}
+
+.section-OfferRequestService h4 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* تنسيق الكروت */
+.service-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  height: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+}
+
+/* الأيقونات */
+.card-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.card-icon img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+/* النصوص */
+.service-card h5 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.service-card .description {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.service-card .highlight-text {
+  font-size: 16px;
+  color: var(--main-color);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* الأزرار */
+.service-btn {
+  display: inline-block;
+  padding: 10px 25px;
+  background-color: var(--main-color);
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.service-btn:hover {
+  background-color: #2a7f3f; /* لون أخضر أغمق */
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* تنسيق حاوية الأزرار */
+.service-card .d-flex {
+  gap: 10px;
+}
+
+.service-card .d-flex .service-btn {
+  margin: 5px;
+  flex: 0 0 auto;
+}
+
+/* التنسيق للوضع الداكن */
+[data-theme="dark"] .section-OfferRequestService {
+  background-color: var(--sub-dark-color);
+}
+
+[data-theme="dark"] .service-card {
+  background-color: var(--dark-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .service-card h5,
+[data-theme="dark"] .section-OfferRequestService h4 {
+  color: white;
+}
+
+[data-theme="dark"] .service-card .description {
+  color: #ccc;
+}
+
+/* التنسيق للغة العربية */
+[dir="rtl"] .service-card {
+  text-align: center;
+}
+
+/* Responsive design for buttons */
+@media (max-width: 768px) {
+  .service-card .d-flex {
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
   }
-  
-  .card-icon img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
+
+  .service-card .d-flex .service-btn {
+    margin: 5px 0;
+    width: 100%;
+    max-width: 200px;
   }
-  
-  /* النصوص */
-  .service-card h5 {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #333;
-  }
-  
-  .service-card .description {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
-  .service-card .highlight-text {
-    font-size: 16px;
-    color: var(--main-color);
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  
-  /* الأزرار */
-  .service-btn {
-    display: inline-block;
-    padding: 10px 25px;
-    background-color: var(--main-color);
-    color: white;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 400;
-    transition: all 0.3s ease;
-  }
-  
-  .service-btn:hover {
-    background-color: #2a7f3f; /* لون أخضر أغمق */
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  
-  /* التنسيق للوضع الداكن */
-  [data-theme='dark'] .section-OfferRequestService {
-    background-color: var(--sub-dark-color);
-  }
-  
-  [data-theme='dark'] .service-card {
-    background-color: var(--dark-color);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  }
-  
-  [data-theme='dark'] .service-card h5,
-  [data-theme='dark'] .section-OfferRequestService h4 {
-    color: white;
-  }
-  
-  [data-theme='dark'] .service-card .description {
-    color: #ccc;
-  }
-  
-  /* التنسيق للغة العربية */
-  [dir='rtl'] .service-card {
-    text-align: center;
-  }
+}

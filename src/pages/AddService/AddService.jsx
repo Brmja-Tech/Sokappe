@@ -2,6 +2,7 @@ import React from "react";
 import PageHead from "../../component/PageHead/PageHead";
 import { useTranslation } from "react-i18next";
 import { FiCamera, FiPlus } from "react-icons/fi";
+import "./AddService.css";
 
 export default function AddService() {
   const { t } = useTranslation("global");
