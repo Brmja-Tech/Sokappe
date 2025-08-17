@@ -16,7 +16,7 @@ const OtpVerifyEmail = () => {
   const [timer, setTimer] = useState(60);
   const [isResendActive, setIsResendActive] = useState(false);
 
-  // ⏳ تشغيل العداد
+  // ⏳ Timer countdown
   useEffect(() => {
     let interval;
     if (timer > 0) {
@@ -95,7 +95,7 @@ const OtpVerifyEmail = () => {
     }
   };
 
-  // 📩 إعادة إرسال الكود
+  // 📩 Resend code
   const handleResend = async () => {
     const email = localStorage.getItem("registerEmail");
 
@@ -111,61 +111,64 @@ const OtpVerifyEmail = () => {
       );
 
       toast.success(res.data.message || t("sign.emailSent"));
-      setTimer(60); // إعادة تشغيل العداد
+      setTimer(60); // Reset timer
     } catch (err) {
       toast.error(err.response?.data?.message || t("sign.errorOccurred"));
     }
   };
 
   return (
-    <div className="otp-verify-page" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="otp-verify-container">
-        <img className="otp-verify-logo" src={logo} alt="Logo" />
-        <h5 className="otp-verify-title">{t("sign.emailConfirmation")}</h5>
+    <div className={`otp-verification ${isRTL ? "rtl" : "ltr"}`}>
+      <div className="otp-verification__card">
+        <img className="otp-verification__logo" src={logo} alt="Logo" />
+        <h2 className="otp-verification__title">{t("sign.emailConfirmation")}</h2>
 
-        <div className="otp-verify-subtitle">
+        <p className="otp-verification__subtitle">
           {t("sign.checkEmailAndEnterCode")}
-        </div>
+        </p>
 
-        <form className="otp-verify-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">{t("sign.confirmationCode")}</label>
-            <div className="otp-input-container">
+        <form className="otp-verification__form" onSubmit={handleSubmit}>
+          <div className="otp-verification__form-group">
+            <label className="otp-verification__label">
+              {t("sign.confirmationCode")}
+            </label>
+            <div className="otp-verification__inputs">
               {otp.map((value, index) => (
                 <input
                   key={index}
                   ref={(el) => (inputRefs.current[index] = el)}
-                  className="otp-input"
+                  className="otp-verification__input"
                   type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   maxLength="1"
                   value={value}
                   onChange={(e) => handleChange(e.target.value, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
                   onPaste={handlePaste}
-                  autoComplete="off"
+                  autoComplete="one-time-code"
                   dir={isRTL ? "rtl" : "ltr"}
-                  style={{ textAlign: "center" }}
                 />
               ))}
             </div>
           </div>
 
-          {/* عداد أو زر إعادة الإرسال */}
+          {/* Timer or resend button */}
           {isResendActive ? (
             <button
               type="button"
-              className="resend-code-link"
+              className="otp-verification__resend"
               onClick={handleResend}
             >
               {t("sign.resendConfirmationCode")}
             </button>
           ) : (
-            <p className="timer-text">
+            <p className="otp-verification__timer">
               {t("sign.resendAfter")} {timer} {t("sign.seconds")}
             </p>
           )}
 
-          <button type="submit" className="otp-verify-button">
+          <button type="submit" className="otp-verification__submit">
             {t("sign.confirm")}
           </button>
         </form>

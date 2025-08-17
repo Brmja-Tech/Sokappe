@@ -61,6 +61,24 @@ export default function OfferRequestService() {
     }
   };
 
+  // Handle button click for guest and individual users
+  const handleGuestButtonClick = (action, type) => {
+    if (action === "buy" && type === "service") {
+      // For buy service, redirect to requestservice regardless of user type
+      navigate("/requestservice");
+    } else if (action === "buy" && type === "product") {
+      // For buy product, redirect to requestproduct regardless of user type
+      navigate("/requestproduct");
+    } else if (action === "sell") {
+      // For sell actions, redirect to create account or register
+      if (!isAuthenticated) {
+        navigate("/createaccount");
+      } else if (userData.type === "individual") {
+        navigate("/register");
+      }
+    }
+  };
+
   const shouldShowButton = (action, type) => {
     if (!isAuthenticated || userData?.type === "individual") {
       return true; // Show all buttons for guests and individual users
@@ -117,7 +135,16 @@ export default function OfferRequestService() {
                 <div className="d-flex justify-content-center flex-wrap gap-2">
                   {shouldShowButton("buy", "service") && (
                     <button
-                      onClick={() => handleButtonClick("buy", "service")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("buy", "service");
+                        } else {
+                          handleButtonClick("buy", "service");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.buyService")}
@@ -126,7 +153,16 @@ export default function OfferRequestService() {
 
                   {shouldShowButton("sell", "service") && (
                     <button
-                      onClick={() => handleButtonClick("sell", "service")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("sell", "service");
+                        } else {
+                          handleButtonClick("sell", "service");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.sellService")}
@@ -135,7 +171,16 @@ export default function OfferRequestService() {
 
                   {shouldShowButton("buy", "product") && (
                     <button
-                      onClick={() => handleButtonClick("buy", "product")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("buy", "product");
+                        } else {
+                          handleButtonClick("buy", "product");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.buyProduct")}
@@ -144,7 +189,16 @@ export default function OfferRequestService() {
 
                   {shouldShowButton("sell", "product") && (
                     <button
-                      onClick={() => handleButtonClick("sell", "product")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("sell", "product");
+                        } else {
+                          handleButtonClick("sell", "product");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.sellProduct")}
@@ -170,7 +224,16 @@ export default function OfferRequestService() {
                 <div className="d-flex justify-content-center flex-wrap gap-2">
                   {shouldShowButton("buy", "service") && (
                     <button
-                      onClick={() => handleButtonClick("buy", "service")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("buy", "service");
+                        } else {
+                          handleButtonClick("buy", "service");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.buyService")}
@@ -179,7 +242,16 @@ export default function OfferRequestService() {
 
                   {shouldShowButton("sell", "service") && (
                     <button
-                      onClick={() => handleButtonClick("sell", "service")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("sell", "service");
+                        } else {
+                          handleButtonClick("sell", "service");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.sellService")}
@@ -188,7 +260,16 @@ export default function OfferRequestService() {
 
                   {shouldShowButton("buy", "product") && (
                     <button
-                      onClick={() => handleButtonClick("buy", "product")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("buy", "product");
+                        } else {
+                          handleButtonClick("buy", "product");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.buyProduct")}
@@ -197,7 +278,16 @@ export default function OfferRequestService() {
 
                   {shouldShowButton("sell", "product") && (
                     <button
-                      onClick={() => handleButtonClick("sell", "product")}
+                      onClick={() => {
+                        if (
+                          !isAuthenticated ||
+                          userData?.type === "individual"
+                        ) {
+                          handleGuestButtonClick("sell", "product");
+                        } else {
+                          handleButtonClick("sell", "product");
+                        }
+                      }}
                       className="service-btn mx-2"
                     >
                       {t("OfferRequestService.sellProduct")}

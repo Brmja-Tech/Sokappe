@@ -113,24 +113,24 @@ const OtpForgetPassword = () => {
   };
 
   return (
-    <div className="otp-verify-page" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="otp-verify-container">
-        <img className="otp-verify-logo" src={logo} alt="Logo" />
-        <h5 className="otp-verify-title">{t("sign.emailConfirmation")}</h5>
+    <div className="auth-code-verification" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="auth-code-card">
+        <img className="auth-code-logo" src={logo} alt="Logo" />
+        <h2 className="auth-code-heading">{t("sign.emailConfirmation")}</h2>
 
-        <div className="otp-verify-subtitle">
+        <p className="auth-code-instruction">
           {t("sign.checkEmailAndEnterCode")}
-        </div>
+        </p>
 
-        <form className="otp-verify-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">{t("sign.confirmationCode")}</label>
-            <div className="otp-input-container">
+        <form className="auth-code-form" onSubmit={handleSubmit}>
+          <div className="auth-code-field">
+            <label className="auth-code-label">{t("sign.confirmationCode")}</label>
+            <div className="auth-code-inputs">
               {otp.map((value, index) => (
                 <input
                   key={index}
                   ref={(el) => (inputRefs.current[index] = el)}
-                  className="otp-input"
+                  className="auth-code-digit"
                   type="text"
                   maxLength="1"
                   value={value}
@@ -139,28 +139,28 @@ const OtpForgetPassword = () => {
                   onPaste={handlePaste}
                   autoComplete="off"
                   dir={isRTL ? "rtl" : "ltr"}
-                  style={{ textAlign: "center" }}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                 />
               ))}
             </div>
           </div>
 
-          {/* عداد أو زر إعادة الإرسال */}
           {isResendActive ? (
             <button
               type="button"
-              className="resend-code-link"
+              className="auth-code-resend"
               onClick={handleResend}
             >
               {t("sign.resendConfirmationCode")}
             </button>
           ) : (
-            <p className="timer-text">
+            <p className="auth-code-timer">
               {t("sign.resendAfter")} {timer} {t("sign.seconds")}
             </p>
           )}
 
-          <button type="submit" className="otp-verify-button">
+          <button type="submit" className="auth-code-submit">
             {t("sign.confirm")}
           </button>
         </form>

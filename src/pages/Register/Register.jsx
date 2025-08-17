@@ -53,6 +53,19 @@ const Register = () => {
     store_image: null,
   });
 
+  // Image Preview States
+  const [imagePreviews, setImagePreviews] = useState({
+    national_id_front: null,
+    national_id_back: null,
+    company_logo_image: null,
+    tax_record_front: null,
+    tax_record_back: null,
+    tax_card_front: null,
+    tax_card_back: null,
+    commercial_record_image: null,
+    store_image: null,
+  });
+
   // Reset form when tab changes
   const resetForm = () => {
     setFormData({
@@ -84,6 +97,20 @@ const Register = () => {
       commercial_record_image: null,
       store_image: null,
     });
+
+    // Clear image previews
+    setImagePreviews({
+      national_id_front: null,
+      national_id_back: null,
+      company_logo_image: null,
+      tax_record_front: null,
+      tax_record_back: null,
+      tax_card_front: null,
+      tax_card_back: null,
+      commercial_record_image: null,
+      store_image: null,
+    });
+
     setStep(1);
   };
 
@@ -114,6 +141,18 @@ const Register = () => {
       fetchCenterGovernorates(formData.governorate_id);
     }
   }, [formData.governorate_id]);
+
+  // Cleanup image preview URLs on unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup all image preview URLs
+      Object.values(imagePreviews).forEach((url) => {
+        if (url) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, []);
 
   const fetchCountries = async () => {
     try {
@@ -946,66 +985,164 @@ const Register = () => {
 
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.companyLogo")}</h6>
-        <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.uploadLogo")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("company_logo_image", e.target.files[0])
-                  }
-                  required
-                />
+        <div className="upload-row">
+          <div className="upload-button">
+            <div className="card-upload">
+              <div className="card-upload-body">
+                <div className="image-upload-container">
+                  <FiCamera className="camera-icon" />
+                  <p className="upload-text">{t("sign.uploadLogo")}</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="file-input"
+                    onChange={(e) => {
+                      handleFileChange("company_logo_image", e.target.files[0]);
+                      setImagePreviews((prev) => ({
+                        ...prev,
+                        company_logo_image: URL.createObjectURL(
+                          e.target.files[0]
+                        ),
+                      }));
+                    }}
+                    required
+                  />
+                </div>
               </div>
             </div>
           </div>
+          {imagePreviews.company_logo_image && (
+            <div className="inline-image-preview">
+              <img
+                src={imagePreviews.company_logo_image}
+                alt="Company Logo Preview"
+              />
+              <button
+                type="button"
+                className="inline-remove-btn"
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    company_logo_image: null,
+                  }));
+                  setImagePreviews((prev) => ({
+                    ...prev,
+                    company_logo_image: null,
+                  }));
+                }}
+              >
+                ×
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.taxRecord")}</h6>
         <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxRecordFront")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_record_front", e.target.files[0])
-                  }
-                  required
-                />
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxRecordFront")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_record_front", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_record_front: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.tax_record_front && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.tax_record_front}
+                  alt="Tax Record Front Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      tax_record_front: null,
+                    }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      tax_record_front: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxRecordBack")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_record_back", e.target.files[0])
-                  }
-                  required
-                />
+
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxRecordBack")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_record_back", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_record_back: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.tax_record_back && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.tax_record_back}
+                  alt="Tax Record Back Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      tax_record_back: null,
+                    }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      tax_record_back: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1013,41 +1150,103 @@ const Register = () => {
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.taxCard")}</h6>
         <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxCardFront")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_card_front", e.target.files[0])
-                  }
-                  required
-                />
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxCardFront")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_card_front", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_card_front: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.tax_card_front && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.tax_card_front}
+                  alt="Tax Card Front Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      tax_card_front: null,
+                    }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      tax_card_front: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxCardBack")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_card_back", e.target.files[0])
-                  }
-                  required
-                />
+
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxCardBack")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_card_back", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_card_back: URL.createObjectURL(e.target.files[0]),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.tax_card_back && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.tax_card_back}
+                  alt="Tax Card Back Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({ ...prev, tax_card_back: null }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      tax_card_back: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1391,41 +1590,111 @@ const Register = () => {
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.nationalId")}</h6>
         <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.nationalIdFront")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("national_id_front", e.target.files[0])
-                  }
-                  required
-                />
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.nationalIdFront")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange(
+                          "national_id_front",
+                          e.target.files[0]
+                        );
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          national_id_front: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.national_id_front && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.national_id_front}
+                  alt="National ID Front Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      national_id_front: null,
+                    }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      national_id_front: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.nationalIdBack")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("national_id_back", e.target.files[0])
-                  }
-                  required
-                />
+
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.nationalIdBack")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("national_id_back", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          national_id_back: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.national_id_back && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.national_id_back}
+                  alt="National ID Back Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      national_id_back: null,
+                    }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      national_id_back: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1433,40 +1702,129 @@ const Register = () => {
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.taxRecord")}</h6>
         <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxRecordFront")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_record_front", e.target.files[0])
-                  }
-                  required
-                />
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxRecordFront")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_record_front", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_record_front: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            <div
+              className={`upload-preview ${
+                imagePreviews.tax_record_front ? "has-image" : ""
+              }`}
+            >
+              {imagePreviews.tax_record_front ? (
+                <>
+                  <img
+                    src={imagePreviews.tax_record_front}
+                    alt="Tax Record Front Preview"
+                    className="upload-preview-image"
+                  />
+                  <button
+                    type="button"
+                    className="remove-image-btn"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        tax_record_front: null,
+                      }));
+                      setImagePreviews((prev) => ({
+                        ...prev,
+                        tax_record_front: null,
+                      }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </>
+              ) : (
+                <div className="upload-preview-placeholder">
+                  {t("sign.noImageSelected") || "لم يتم اختيار صورة"}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxRecordBack")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_record_back", e.target.files[0])
-                  }
-                  required
-                />
+
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxRecordBack")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_record_back", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_record_back: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
+            </div>
+            <div
+              className={`upload-preview ${
+                imagePreviews.tax_record_back ? "has-image" : ""
+              }`}
+            >
+              {imagePreviews.tax_record_back ? (
+                <>
+                  <img
+                    src={imagePreviews.tax_record_back}
+                    alt="Tax Record Back Preview"
+                    className="upload-preview-image"
+                  />
+                  <button
+                    type="button"
+                    className="remove-image-btn"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        tax_record_back: null,
+                      }));
+                      setImagePreviews((prev) => ({
+                        ...prev,
+                        tax_record_back: null,
+                      }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </>
+              ) : (
+                <div className="upload-preview-placeholder">
+                  {t("sign.noImageSelected") || "لم يتم اختيار صورة"}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1475,40 +1833,124 @@ const Register = () => {
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.taxCard")}</h6>
         <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxCardFront")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_card_front", e.target.files[0])
-                  }
-                  required
-                />
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxCardFront")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_card_front", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_card_front: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            <div
+              className={`upload-preview ${
+                imagePreviews.tax_card_front ? "has-image" : ""
+              }`}
+            >
+              {imagePreviews.tax_card_front ? (
+                <>
+                  <img
+                    src={imagePreviews.tax_card_front}
+                    alt="Tax Card Front Preview"
+                    className="upload-preview-image"
+                  />
+                  <button
+                    type="button"
+                    className="remove-image-btn"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        tax_card_front: null,
+                      }));
+                      setImagePreviews((prev) => ({
+                        ...prev,
+                        tax_card_front: null,
+                      }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </>
+              ) : (
+                <div className="upload-preview-placeholder">
+                  {t("sign.noImageSelected") || "لم يتم اختيار صورة"}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.taxCardBack")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("tax_card_back", e.target.files[0])
-                  }
-                  required
-                />
+
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.taxCardBack")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("tax_card_back", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          tax_card_back: URL.createObjectURL(e.target.files[0]),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
+            </div>
+            <div
+              className={`upload-preview ${
+                imagePreviews.tax_card_back ? "has-image" : ""
+              }`}
+            >
+              {imagePreviews.tax_card_back ? (
+                <>
+                  <img
+                    src={imagePreviews.tax_card_back}
+                    alt="Tax Card Back Preview"
+                    className="upload-preview-image"
+                  />
+                  <button
+                    type="button"
+                    className="remove-image-btn"
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, tax_card_back: null }));
+                      setImagePreviews((prev) => ({
+                        ...prev,
+                        tax_card_back: null,
+                      }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </>
+              ) : (
+                <div className="upload-preview-placeholder">
+                  {t("sign.noImageSelected") || "لم يتم اختيار صورة"}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1517,28 +1959,61 @@ const Register = () => {
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.commercialRecord")}</h6>
         <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">
-                  {t("sign.uploadCommercialRecord")}
-                </p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange(
-                      "commercial_record_image",
-                      e.target.files[0]
-                    )
-                  }
-                  required
-                />
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">
+                      {t("sign.uploadCommercialRecord")}
+                    </p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange(
+                          "commercial_record_image",
+                          e.target.files[0]
+                        );
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          commercial_record_image: URL.createObjectURL(
+                            e.target.files[0]
+                          ),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.commercial_record_image && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.commercial_record_image}
+                  alt="Commercial Record Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      commercial_record_image: null,
+                    }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      commercial_record_image: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1546,23 +2021,51 @@ const Register = () => {
       <div className="upload-section">
         <h6 className="upload-title">{t("sign.storeImage")}</h6>
         <div className="upload-container">
-          <div className="card-upload">
-            <div className="card-upload-body">
-              <div className="image-upload-container">
-                <FiCamera className="camera-icon" />
-                <p className="upload-text">{t("sign.uploadStoreImage")}</p>
-                <FiPlus className="plus-icon" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input"
-                  onChange={(e) =>
-                    handleFileChange("store_image", e.target.files[0])
-                  }
-                  required
-                />
+          <div className="upload-row">
+            <div className="upload-button">
+              <div className="card-upload">
+                <div className="card-upload-body">
+                  <div className="image-upload-container">
+                    <FiCamera className="camera-icon" />
+                    <p className="upload-text">{t("sign.uploadStoreImage")}</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input"
+                      onChange={(e) => {
+                        handleFileChange("store_image", e.target.files[0]);
+                        setImagePreviews((prev) => ({
+                          ...prev,
+                          store_image: URL.createObjectURL(e.target.files[0]),
+                        }));
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            {imagePreviews.store_image && (
+              <div className="inline-image-preview">
+                <img
+                  src={imagePreviews.store_image}
+                  alt="Store Image Preview"
+                />
+                <button
+                  type="button"
+                  className="inline-remove-btn"
+                  onClick={() => {
+                    setFormData((prev) => ({ ...prev, store_image: null }));
+                    setImagePreviews((prev) => ({
+                      ...prev,
+                      store_image: null,
+                    }));
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

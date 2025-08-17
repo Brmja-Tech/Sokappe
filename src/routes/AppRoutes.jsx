@@ -27,6 +27,7 @@ import CompanyProfile from "../pages/CompanyProfile/CompanyProfile";
 import OtpForgetPassword from "../pages/OtpForgetPassword/OtpForgetPassword";
 import VendorProfile from "../pages/VendorProfile/VendorProfile";
 import AddProduct from "../pages/AddProduct/AddProduct";
+import ServiceDetalis from "../pages/ServiceDetalis/ServiceDetalis";
 
 export default function Applayout() {
   const location = useLocation();
@@ -66,6 +67,7 @@ export default function Applayout() {
         <Route path="/requestservice" element={<RequestService />} />
         <Route path="/filterproducts" element={<FilterProducts />} />
         <Route path="/productdetalis" element={<ProductsDetalis />} />
+        <Route path="/servicedetails/:id" element={<ServiceDetalis />} />
         <Route path="/aboutus" element={<AboutUS />} />
         <Route path="/contactus" element={<ContactUS />} />
         <Route path="/addad" element={<AddAd />} />
