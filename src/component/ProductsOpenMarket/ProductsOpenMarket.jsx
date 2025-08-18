@@ -1,108 +1,173 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/pagination";
 import "./ProductsOpenMarket.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const ProductsOpenMarket = () => {
   const { t, i18n } = useTranslation("global");
   const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
   const isRTL = i18n.language === "ar";
-  // You can map this if dynamic
-  const cards = [1, 2, 3, 4, 5, 6, 7, 8];
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchProducts = useCallback(
+    async (page = 1) => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/products`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Accept-Language": i18n.language,
+            },
+          }
+        );
+        if (res.data?.status === 200) {
+          // Handle different possible data structures
+          const productsData = res.data.data?.data || res.data.data || [];
+          setProducts(productsData);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setProducts([]); // Set empty array on error
+      } finally {
+        setLoading(false);
+      }
+    },
+    [i18n.language]
+  );
+
+  useEffect(() => {
+    fetchProducts();
+  }, [i18n.language]);
 
   return (
     <div className="products py-5">
       <div className="container">
         <div className="row">
           <div className="col-xl-5 col-lg-4 col-md-12 col-12">
-            <h4 className="mb-4 main-color title"><img src="/layout.gif" alt="--"/> {t("products.openmarket")}</h4>
+            <h4 className="mb-4 main-color title">
+              <img src="/layout.gif" alt="--" /> {t("products.openmarket")}
+            </h4>
           </div>
           <div className="col-xl-7 col-lg-8 col-md-12 col-12 text-end">
-    <div className={`d-inline-block ${i18n.language === 'ar' ? 'float-start' : 'float-end'}`}>
-      <button className="btn btn-categories">
-        {t("products.allcategories")}
-      </button>
-    </div>
-  </div>
+            <div
+              className={`d-inline-block ${
+                i18n.language === "ar" ? "float-start" : "float-end"
+              }`}
+            >
+              <button className="btn btn-categories">
+                {t("products.allcategories")}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="container-fluid">
-        <Swiper
-          modules={[Autoplay]}
-          spaceBetween={20}
-          loop={true}
-          key={swiperKey}
-          dir={isRTL ? "rtl" : "ltr"}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
-          pagination={{ clickable: true }}
-          breakpoints={{
-            0: {
-              slidesPerView: 1,
-            },
-            576: {
-              slidesPerView: 2,
-            },
-            768: {
-              slidesPerView: 3,
-            },
-            992: {
-              slidesPerView: 4,
-            },
-          }}
-        >
-          {cards.map((item, index) => (
-            <SwiperSlide key={index}>
-              <div className="product_card border rounded-4 overflow-hidden">
-                <img
-                  src="/car.png"
-                  alt="--"
-                  className="img-fluid mb-3 rounded-4"
-                />
-                <div className="p-3">
-                  <p className="line-height mb-1">
-                    Mercedes-Benz GLA 200 AMG 2023
-                  </p>
-                  <small className="mb-2 d-block main-color fw-bold">
-                    Nine One One
-                  </small>
-                  <div className="d-inline-block mb-2 rates">
-                    <i className="bi bi-star-fill text-warning"></i>
-                    <i className="bi bi-star-fill text-warning"></i>
-                    <i className="bi bi-star-fill text-warning"></i>
-                    <i className="bi bi-star-fill text-warning"></i>
-                    <i className="bi bi-star-fill text-secondary"></i>
-                    <span className="mx-2">(16)</span>
-                  </div>
-                  <div className="text-sm d-flex justify-content-between align-items-center">
-                    <div>
-                      {t("products.startingFrom")}
-                      <span className="fw-bold mx-1 main-color">
-                        130 {t("products.currency")}
-                      </span>
+
+      <div className="products-container">
+        {loading ? (
+          <p className="loading-message">{t("loading")}...</p>
+        ) : products.length === 0 ? (
+          <p className="empty-message">No products available</p>
+        ) : (
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            spaceBetween={20}
+            loop={products.length > 4}
+            key={swiperKey}
+            dir={isRTL ? "rtl" : "ltr"}
+            autoplay={
+              products.length > 4
+                ? {
+                    delay: 2500,
+                    disableOnInteraction: false,
+                  }
+                : false
+            }
+            pagination={{ clickable: true, dynamicBullets: true }}
+            breakpoints={{
+              0: { slidesPerView: 1 },
+              576: { slidesPerView: 2 },
+              768: { slidesPerView: 3 },
+              992: { slidesPerView: 4 },
+            }}
+          >
+            {products.map((product) => (
+              <SwiperSlide key={product.id}>
+                <Link
+                  to={`/productdetalis/${product.id}`}
+                  className="product-link"
+                >
+                  <div className="product-card">
+                    <div className="product-image-wrapper">
+                      <img
+                        src={
+                          product.main_image ||
+                          product.other_images[0] ||
+                          "/placeholder.png"
+                        }
+                        alt={product.name}
+                        className="product-image"
+                        onError={(e) => {
+                          e.target.src = "/placeholder.png";
+                        }}
+                      />
                     </div>
-                    {/* <div>
-                      <Link className="view_details">
-                        <i
-                          className={`text-sm bi ${
-                            i18n.language === "ar"
-                              ? "bi-arrow-left"
-                              : "bi-arrow-right"
+                    <div className="product-content">
+                      <h3 className="product-title">{product.name}</h3>
+                      <div className="product-price">
+                        {product.price} {t("products.currency")}
+                      </div>
+                      <div className="product-meta">
+                        <span className="meta-item">
+                          <i className="bi bi-info-circle"></i>
+                          {product.condition}
+                        </span>
+                        <span className="meta-item">
+                          <i className="bi bi-geo-alt"></i>
+                          {product.address}
+                        </span>
+                      </div>
+                      <div className="product-badges">
+                        <span
+                          className={`badge ${
+                            product.has_delivery === "1"
+                              ? "delivery"
+                              : "no-delivery"
                           }`}
-                        ></i>
-                      </Link>
-                    </div> */}
+                        >
+                          <i className="bi bi-truck"></i>
+                          {product.has_delivery === "1"
+                            ? t("products.delivery")
+                            : t("products.noDelivery")}
+                        </span>
+                        <span
+                          className={`badge ${
+                            product.has_warranty === "1"
+                              ? "warranty"
+                              : "no-warranty"
+                          }`}
+                        >
+                          <i className="bi bi-shield-check"></i>
+                          {product.has_warranty === "1"
+                            ? t("products.warranty")
+                            : t("products.noWarranty")}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+                </Link>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </div>
     </div>
   );

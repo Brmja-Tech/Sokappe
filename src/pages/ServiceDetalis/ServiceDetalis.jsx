@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import ProductDetalisPageHead from "../../component/ProductDetalisPageHead/ProductDetalisPageHead";
-import "../ProductsDetalis/ProductsDetalis.css";
+import React, { useEffect, useState } from "react";
+import "./ServiceDetalis.css";
 import { useTranslation } from "react-i18next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -11,58 +10,53 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 // Icons
-import share from "../../assests/imgs/share.svg";
-import heart from "../../assests/imgs/heart.svg";
-import group from "../../assests/imgs/Group.svg";
-import retrun from "../../assests/imgs/return.svg";
-import car from "../../assests/imgs/car.svg";
-import latop from "../../assests/imgs/22.svg";
 import ProductsServices from "../../component/ProductsServices/ProductsServices";
 
 export default function ServiceDetalis() {
   const { t, i18n } = useTranslation("global");
   const { id } = useParams();
-
-  // State for service data
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Fetch service details
-  useEffect(() => {
-    const fetchServiceDetails = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/services/${id}`,
-          {
-            headers: {
-              Accept: "application/json",
-              "Accept-Language": i18n.language,
-            },
-          }
-        );
-
-        if (response.data.status === 200) {
-          setService(response.data.data);
+  const fetchServiceDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/services/show/${id}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
         }
-      } catch (error) {
-        console.error("Error fetching service details:", error);
-        setError("Failed to load service details");
-      } finally {
-        setLoading(false);
-      }
-    };
+      );
 
+      if (response.data?.status === 200) {
+        const serviceData = {
+          ...response.data.data.service,
+          related: response.data.data.related || [],
+        };
+        setService(serviceData);
+      }
+    } catch (error) {
+      console.error("Error fetching service details:", error);
+      setError("Failed to load service details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (id) {
       fetchServiceDetails();
     }
   }, [id, i18n.language]);
 
-  // Loading state
   if (loading) {
     return (
-      <div className="text-center py-5">
+      <div className="container text-center py-5">
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -70,195 +64,223 @@ export default function ServiceDetalis() {
     );
   }
 
-  // Error state
   if (error || !service) {
     return (
-      <div className="text-center py-5">
-        <p className="text-danger">{error || "Service not found"}</p>
+      <div className="container text-center py-5">
+        <div className="alert alert-danger">{error || "Service not found"}</div>
       </div>
     );
   }
 
-  // Prepare images array
-  const images = service.main_image
-    ? [service.main_image, ...(service.other_images || [])]
-    : [latop]; // fallback image
+  // Prepare images array (main image + other images)
+  const allImages = [
+    service.main_image,
+    ...(service.other_images || []),
+  ].filter(Boolean);
 
   return (
     <>
-      <ProductDetalisPageHead
-        services={t("products.newmarket")}
-        flitercategory={t("products.latop")}
-        Products={t("productsDetalis")}
-      />
+      <section className="mainContainer">
+        <h1 className="title">{service.name}</h1>
 
-      <section className="container products-details-container">
-        <h4 className="product-title">{service.name}</h4>
-
-        <div className="d-flex justify-content-between align-items-center flex-wrap">
-          <div className="action-buttons">
-            <button className="action-button">
-              <img src={share} alt="Share" />
-              {t("productDetails.share")}
-            </button>
-            <button className="action-button">
-              <img src={heart} alt="Favorite" />
-              {t("productDetails.addToFavorites")}
-            </button>
-            <button className="action-button">
-              <img src={group} alt="Highlight" />
-              {t("productDetails.highlight")}
-            </button>
-            <button className="action-button">
-              <img src={retrun} alt="Repost" />
-              {t("productDetails.repost")}
-            </button>
-          </div>
-
-          <div className="d-flex align-items-center">
-            <button className="action-button">
-              <img src={car} alt="Shipping" />
-              {t("productDetails.shipping")}
-            </button>
-            <div className="time-posted ms-2">
-              {t("productDetails.posted", { hours: 12 })}
-            </div>
-          </div>
-        </div>
-
-        <div className="product-row">
-          <div className="product-col-8">
-            <div className="product-images">
+        <div className="contentGrid">
+          <div className="gallerySection">
+            <div className="swiperContainer">
               <Swiper
                 modules={[Navigation, Pagination]}
-                spaceBetween={50}
+                spaceBetween={20}
                 slidesPerView={1}
                 navigation
                 pagination={{ clickable: true }}
+                className="mainSwiper"
               >
-                {images.map((img, index) => (
+                {allImages.map((img, index) => (
                   <SwiperSlide key={index}>
-                    <img src={img} alt={`Product ${index + 1}`} />
+                    <div className="imageFrame">
+                      <img
+                        src={img}
+                        alt={`${service.name} - عرض ${index + 1}`}
+                        className="mainImg"
+                        onError={(e) =>
+                          (e.target.src = "/placeholder-product.png")
+                        }
+                      />
+                    </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
             </div>
           </div>
 
-          <div className="product-col-4">
-            <div className="product-info-box">
-              <h4 className="price">
-                {service.price} {t("products.currency")}
-              </h4>
-              <button className="contact-seller">
-                {t("productDetails.contactSeller")}
+          <div className="sidePanel">
+            <div className="infoCard">
+              <div className="priceBox">
+                {service.discount_price &&
+                service.discount_price !== service.price ? (
+                  <div>
+                    <span className="oldPrice">
+                      {service.price} {t("servicePage.currency")}
+                    </span>
+                    <span className="currentPrice">
+                      {service.discount_price} {t("servicePage.currency")}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="currentPrice">
+                    {service.price} {t("servicePage.currency")}
+                  </span>
+                )}
+              </div>
+
+              <button className="contactBtn">
+                <i className={`bi bi-envelope-fill btnIcon`}></i>
+                {t("servicePage.contactSeller")}
               </button>
 
-              <div className="general-tips">
-                <h5>{t("productDetails.generalTips")}</h5>
-                <ul>
-                  {Array.isArray(
-                    t("productDetails.tips", { returnObjects: true })
-                  ) ? (
-                    t("productDetails.tips", { returnObjects: true }).map(
-                      (tip, index) => <li key={index}>{tip}</li>
-                    )
-                  ) : (
-                    <>
-                      <li>{t("productDetails.tip1")}</li>
-                      <li>{t("productDetails.tip2")}</li>
-                      <li>{t("productDetails.tip3")}</li>
-                    </>
-                  )}
+              <div className="safetyTips">
+                <h3 className="tipsHeading">
+                  <i className={`bi bi-lightbulb tipsIcon`}></i>
+                  {t("servicePage.generalTips")}
+                </h3>
+                <ul className="tipsList">
+                  <li className="tipItem">
+                    <i className={`bi bi-check-circle-fill tipBullet`}></i>
+                    {t("servicePage.tips.1")}
+                  </li>
+                  <li className="tipItem">
+                    <i className={`bi bi-check-circle-fill tipBullet`}></i>
+                    {t("servicePage.tips.2")}
+                  </li>
+                  <li className="tipItem">
+                    <i className={`bi bi-check-circle-fill tipBullet`}></i>
+                    {t("servicePage.tips.3")}
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="product-row">
-          <div className="product-col-8">
-            <div className="details-section">
-              <h4>{t("productDetails.information")}</h4>
-              <div className="details-row">
-                <div className="detail-col-6">
-                  <div className="detail-item">
-                    <span>{t("productDetails.category")}</span>
-                    <span>{service.category?.name || "Service"}</span>
-                  </div>
+        <div className="detailsGrid">
+          <div className="specsSection">
+            <div className="specsCard">
+              <h2 className="sectionHeader">
+                <i className={`bi bi-info-circle-fill sectionIcon`}></i>
+                {t("servicePage.information")}
+              </h2>
+              <div className="specsTable">
+                <div className="specRow">
+                  <span className="specLabel">
+                    {t("servicePage.serviceCountry")}:
+                  </span>
+                  <span className="specValue">{service.country}</span>
                 </div>
-                <div className="detail-col-6">
-                  <div className="detail-item">
-                    <span>{t("productDetails.price")}</span>
-                    <span>
-                      {service.price} {t("products.currency")}
+                <div className="specRow">
+                  <span className="specLabel">
+                    {t("servicePage.serviceGovernorate")}:
+                  </span>
+                  <span className="specValue">{service.governorate}</span>
+                </div>
+                <div className="specRow">
+                  <span className="specLabel">
+                    {t("servicePage.serviceCenterGov")}:
+                  </span>
+                  <span className="specValue">{service.centerGov}</span>
+                </div>
+                <div className="specRow">
+                  <span className="specLabel">
+                    {t("servicePage.serviceAddress")}:
+                  </span>
+                  <span className="specValue">{service.address}</span>
+                </div>
+                <div className="specRow">
+                  <span className="specLabel">
+                    {t("servicePage.serviceDelivery")}:
+                  </span>
+                  <span className="specValue">
+                    {service.delivery_days} {t("servicePage.days")}
+                  </span>
+                </div>
+                {service.discount_expires_at && (
+                  <div className="specRow">
+                    <span className="specLabel">
+                      {t("servicePage.serviceDiscountExpires")}:
+                    </span>
+                    <span className="specValue text-danger">
+                      {new Date(
+                        service.discount_expires_at
+                      ).toLocaleDateString()}
                     </span>
                   </div>
-                </div>
-                <div className="detail-col-6">
-                  <div className="detail-item">
-                    <span>{t("productDetails.deliveryDays")}</span>
-                    <span>{service.delivery_days || "N/A"}</span>
-                  </div>
-                </div>
-                <div className="detail-col-6">
-                  <div className="detail-item">
-                    <span>{t("productDetails.discountPrice")}</span>
-                    <span>{service.discount_price || "N/A"}</span>
-                  </div>
-                </div>
-                <div className="detail-col-6">
-                  <div className="detail-item">
-                    <span>{t("productDetails.country")}</span>
-                    <span>{service.country}</span>
-                  </div>
-                </div>
-                <div className="detail-col-6">
-                  <div className="detail-item">
-                    <span>{t("productDetails.governorate")}</span>
-                    <span>{service.governorate}</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
 
-            <div className="description-box">
-              <h4>{t("productDetails.description")}</h4>
-              <p>{service.description}</p>
+            <div className="descCard">
+              <h2 className="sectionHeader">
+                <i className={`bi bi-file-text-fill sectionIcon`}></i>
+                {t("servicePage.description")}
+              </h2>
+              <div className="descContent">
+                {service.description.split("\n").map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="product-col-4">
-            <Link to="/adownerprofile">
-              <div className="seller-box">
-                <h4>{t("productDetails.seller")}</h4>
-                <div className="seller-header">
-                  <img src={latop} alt="Seller" className="seller-avatar" />
-                  <div>
-                    <h6>Service Provider</h6>
-                    <div className="seller-rating">
-                      {[...Array(5)].map((_, i) => (
-                        <i
-                          key={i}
-                          className={`fa fa-star${i < 4 ? "" : "-o"}`}
-                        ></i>
-                      ))}
+          <div className="sellerSection">
+            <Link
+              to={`/vendorprofile/${service.owner.id}`}
+              className="sellerLink"
+            >
+              <div className="sellerCard">
+                <h3 className="sectionHeader">
+                  <i className={`bi bi-person-fill sectionIcon`}></i>
+                  {t("servicePage.seller")}
+                </h3>
+                <div className="sellerProfile">
+                  <img
+                    src={service.owner.avatar || "/avatar.webp"}
+                    alt={`${service.owner.username}`}
+                    className="sellerAvatar"
+                  />
+                  <div className="sellerInfo">
+                    <h4 className="sellerName">{service.owner.username}</h4>
+                    <div className="sellerMeta">
+                      <span className="sellerLocation">
+                        <i className={`bi bi-geo-alt-fill locationIcon`}></i>
+                        {service.owner.address}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
             </Link>
-            <div className="location-box">
-              <h4>{t("productDetails.location")}</h4>
-              <p className="location-text">
-                {service.country} - {service.governorate}
-              </p>
+
+            <div className="locationCard">
+              <h3 className="sectionHeader">
+                <i className={`bi bi-map-fill sectionIcon`}></i>
+                {t("servicePage.location")}
+              </h3>
+              <div className="addressBox">
+                <i className={`bi bi-geo-alt-fill addressIcon`}></i>
+                <span>{service.address}</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <ProductsServices tittle={t("products.similarproduct")} status={true} />
+      {service.related && service.related.length > 0 && (
+        <section className="my-5">
+          <ProductsServices
+            tittle={t("servicePage.similarproduct")}
+            status={true}
+            relatedServices={service.related}
+          />
+        </section>
+      )}
     </>
   );
 }

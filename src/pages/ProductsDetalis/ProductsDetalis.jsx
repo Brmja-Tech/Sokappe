@@ -1,181 +1,283 @@
-import React from 'react';
-import ProductDetalisPageHead from '../../component/ProductDetalisPageHead/ProductDetalisPageHead';
-import "../ProductsDetalis/ProductsDetalis.css";
-import { useTranslation } from 'react-i18next';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import styles from "./ProductsDetalis.module.css";
+import { useTranslation } from "react-i18next";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 // Icons
-import share from "../../assests/imgs/share.svg";
-import heart from "../../assests/imgs/heart.svg";
-import group from "../../assests/imgs/Group.svg";
-import retrun from "../../assests/imgs/return.svg";
-import car from "../../assests/imgs/car.svg";
-import latop from "../../assests/imgs/22.svg";
-import ProductsServices from '../../component/ProductsServices/ProductsServices';
+import ProductsServices from "../../component/ProductsServices/ProductsServices";
 
 export default function ProductsDetalis() {
   const { t, i18n } = useTranslation("global");
-  
-  const product = {
-    title: "لاب اتش بي حالة جيده استعمال خفيف",
-    price: "5000 جنيه مصري",
-    description: "لاب توب HP بحالة جيدة، استعمال خفيف، مواصفات عالية، يعمل بكفاءة.",
-    seller: {
-      name: "اسلام جمال",
-      avatar: latop,
-      rating: 4,
-      location: "الجيزة - الهرم"
-    },
-    details: [
-      { question: "هل لديك خدمة توصيل؟", answer: "لا" },
-      { question: "هل يوجد ضمان؟", answer: "نعم، 6 أشهر" },
-      { question: "الحالة", answer: "مستعمل - بحالة جيدة" },
-      { question: "القسم", answer: "لابتوب" },
-      { question: "الصيانة", answer: "متوفرة" },
-      { question: "سوق المستعمل", answer: "نعم" }
-    ],
-    postedHours: 12
-  };
+  const { id } = useParams();
 
-  const images = [latop, latop, latop, latop];
+  const [product, setProduct] = useState(null);
+  const [similarProducts, setSimilarProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch product details and similar products
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/products/showWithSimilar?id=${id}`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Accept-Language": i18n.language,
+            },
+          }
+        );
+
+        if (response.data?.status === 200) {
+          setProduct(response.data.data.product);
+          setSimilarProducts(response.data.data.similar_products);
+        }
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+        setError("Failed to load product details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProductDetails();
+    }
+  }, [id, i18n.language]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="container text-center py-5">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error || !product) {
+    return (
+      <div className="container text-center py-5">
+        <div className="alert alert-danger" role="alert">
+          {error || "Product not found"}
+        </div>
+      </div>
+    );
+  }
+
+  // Prepare images array
+  const images =
+    product.other_images && product.other_images.length > 0
+      ? [product.main_image, ...product.other_images].filter(Boolean)
+      : [product.main_image].filter(Boolean);
 
   return (
     <>
-      <ProductDetalisPageHead 
-        services={t("products.newmarket")} 
-        flitercategory={t("products.latop")} 
-        Products={t("productsDetalis")}
-      />
+      <section className={styles.mainContainer}>
+        <h1 className={styles.title}>{product.name}</h1>
 
-      <section className="container products-details-container">
-        <h4 className="product-title">{product.title}</h4>
-        
-        <div className="d-flex justify-content-between align-items-center flex-wrap">
-          <div className="action-buttons">
-            <button className="action-button">
-              <img src={share} alt="Share" />
-              {t("productDetails.share")}
-            </button>
-            <button className="action-button">
-              <img src={heart} alt="Favorite" />
-              {t("productDetails.addToFavorites")}
-            </button>
-            <button className="action-button">
-              <img src={group} alt="Highlight" />
-              {t("productDetails.highlight")}
-            </button>
-            <button className="action-button">
-              <img src={retrun} alt="Repost" />
-              {t("productDetails.repost")}
-            </button>
-          </div>
-
-          <div className="d-flex align-items-center">
-            <button className="action-button">
-              <img src={car} alt="Shipping" />
-              {t("productDetails.shipping")}
-            </button>
-            <div className="time-posted ms-2">
-              {t("productDetails.posted", { hours: product.postedHours })}
-            </div>
-          </div>
-        </div>
-
-        <div className="product-row">
-          <div className="product-col-8">
-            <div className="product-images">
+        <div className={styles.contentGrid}>
+          <div className={styles.gallerySection}>
+            <div className={styles.swiperContainer}>
               <Swiper
                 modules={[Navigation, Pagination]}
-                spaceBetween={50}
+                spaceBetween={20}
                 slidesPerView={1}
                 navigation
                 pagination={{ clickable: true }}
+                className={styles.mainSwiper}
               >
                 {images.map((img, index) => (
                   <SwiperSlide key={index}>
-                    <img src={img} alt={`Product ${index + 1}`} />
+                    <div className={styles.imageFrame}>
+                      <img
+                        src={img}
+                        alt={`${product.name} - عرض ${index + 1}`}
+                        className={styles.mainImg}
+                        onError={(e) =>
+                          (e.target.src = "/placeholder-product.png")
+                        }
+                      />
+                    </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
             </div>
           </div>
-          
-          <div className="product-col-4">
-            <div className="product-info-box">
-              <h4 className="price">{product.price}</h4>
-              <button className="contact-seller">
+
+          <div className={styles.sidePanel}>
+            <div className={styles.infoCard}>
+              <div className={styles.priceBox}>
+                <span className={styles.currentPrice}>
+                  {product.price} {t("products.currency")}
+                </span>
+              </div>
+
+              <button className={styles.contactBtn}>
+                <i className={`bi bi-envelope-fill ${styles.btnIcon}`}></i>
                 {t("productDetails.contactSeller")}
               </button>
-              
-              <div className="general-tips">
-                <h5>{t("productDetails.generalTips")}</h5>
-                <ul>
-                  {t("productDetails.tips", { returnObjects: true }).map((tip, index) => (
-                    <li key={index}>{tip}</li>
-                  ))}
+
+              <div className={styles.safetyTips}>
+                <h3 className={styles.tipsHeading}>
+                  <i className={`bi bi-lightbulb ${styles.tipsIcon}`}></i>
+                  {t("productDetails.generalTips")}
+                </h3>
+                <ul className={styles.tipsList}>
+                  <li className={styles.tipItem}>
+                    <i
+                      className={`bi bi-check-circle-fill ${styles.tipBullet}`}
+                    ></i>
+                    {t("productDetails.tips.1")}
+                  </li>
+                  <li className={styles.tipItem}>
+                    <i
+                      className={`bi bi-check-circle-fill ${styles.tipBullet}`}
+                    ></i>
+                    {t("productDetails.tips.2")}
+                  </li>
+                  <li className={styles.tipItem}>
+                    <i
+                      className={`bi bi-check-circle-fill ${styles.tipBullet}`}
+                    ></i>
+                    {t("productDetails.tips.3")}
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="product-row">
-          <div className="product-col-8">
-            <div className="details-section">
-              <h4>{t("productDetails.information")}</h4>
-              <div className="details-row">
-                {product.details.map((detail, index) => (
-                  <div className="detail-col-6" key={index}>
-                    <div className="detail-item">
-                      <span>{detail.question}</span>
-                      <span>{detail.answer}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="description-box">
-              <h4>{t("productDetails.description")}</h4>
-              <p>{product.description}</p>
-            </div>
-          </div>
-          
-          <div className="product-col-4">
-            <Link to="/adownerprofile">
-            <div className="seller-box">
-              <h4>{t("productDetails.seller")}</h4>
-              <div className="seller-header">
-                <img src={product.seller.avatar} alt="Seller" className="seller-avatar" />
-                <div>
-                  <h6>{product.seller.name}</h6>
-                  <div className="seller-rating">
-                    {[...Array(5)].map((_, i) => (
-                      <i 
-                        key={i} 
-                        className={`fa fa-star${i < product.seller.rating ? '' : '-o'}`}
-                      ></i>
-                    ))}
-                  </div>
+        <div className={styles.detailsGrid}>
+          <div className={styles.specsSection}>
+            <div className={styles.specsCard}>
+              <h2 className={styles.sectionHeader}>
+                <i
+                  className={`bi bi-info-circle-fill ${styles.sectionIcon}`}
+                ></i>
+                {t("productDetails.information")}
+              </h2>
+              <div className={styles.specsTable}>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>{t("condition")}:</span>
+                  <span className={styles.specValue}>{product.condition}</span>
+                </div>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>{t("category")}:</span>
+                  <span className={styles.specValue}>{product.category}</span>
+                </div>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>{t("hasDelivery")}:</span>
+                  <span className={styles.specValue}>
+                    {product.has_delivery === "1"
+                      ? t("products.delivery")
+                      : t("products.noDelivery")}
+                  </span>
+                </div>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>{t("hasWarranty")}:</span>
+                  <span className={styles.specValue}>
+                    {product.has_warranty === "1"
+                      ? product.warranty_period
+                      : t("products.noWarranty")}
+                  </span>
+                </div>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>{t("country")}:</span>
+                  <span className={styles.specValue}>{product.country}</span>
+                </div>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>{t("governorate")}:</span>
+                  <span className={styles.specValue}>
+                    {product.governorate}
+                  </span>
+                </div>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    {t("centerGovernorate")}:
+                  </span>
+                  <span className={styles.specValue}>{product.center_gov}</span>
+                </div>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>{t("address")}:</span>
+                  <span className={styles.specValue}>{product.address}</span>
                 </div>
               </div>
             </div>
+
+            <div className={styles.descCard}>
+              <h2 className={styles.sectionHeader}>
+                <i className={`bi bi-file-text-fill ${styles.sectionIcon}`}></i>
+                {t("productDetails.description")}
+              </h2>
+              <div className={styles.descContent}>{product.description}</div>
+            </div>
+          </div>
+
+          <div className={styles.sellerSection}>
+            <Link
+              to={`/adownerprofile/${product.owner.id}`}
+              className={styles.sellerLink}
+            >
+              <div className={styles.sellerCard}>
+                <h3 className={styles.sectionHeader}>
+                  <i className={`bi bi-person-fill ${styles.sectionIcon}`}></i>
+                  {t("productDetails.seller")}
+                </h3>
+                <div className={styles.sellerProfile}>
+                  <img
+                    src="/avatar.webp"
+                    alt={`${product.owner.username}`}
+                    className={styles.sellerAvatar}
+                  />
+                  <div className={styles.sellerInfo}>
+                    <h4 className={styles.sellerName}>
+                      {product.owner.username}
+                    </h4>
+                    <div className={styles.sellerMeta}>
+                      <span className={styles.sellerLocation}>
+                        <i
+                          className={`bi bi-geo-alt-fill ${styles.locationIcon}`}
+                        ></i>
+                        {product.owner.address}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Link>
-            <div className="location-box">
-              <h4>{t("productDetails.location")}</h4>
-              <p className="location-text">{product.seller.location}</p>
+
+            <div className={styles.locationCard}>
+              <h3 className={styles.sectionHeader}>
+                <i className={`bi bi-map-fill ${styles.sectionIcon}`}></i>
+                {t("productDetails.location")}
+              </h3>
+              <div className={styles.addressBox}>
+                <i className={`bi bi-geo-alt-fill ${styles.addressIcon}`}></i>
+                <span>{product.address}</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <ProductsServices tittle={t("products.similarproduct")}  status = {true}/>
-
+      <ProductsServices
+        tittle={t("products.similarproduct")}
+        status={true}
+        relatedServices={similarProducts}
+        dataType="products"
+      />
     </>
   );
 }

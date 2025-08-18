@@ -66,7 +66,7 @@ export default function Applayout() {
         />
         <Route path="/requestservice" element={<RequestService />} />
         <Route path="/filterproducts" element={<FilterProducts />} />
-        <Route path="/productdetalis" element={<ProductsDetalis />} />
+        <Route path="/productdetalis/:id" element={<ProductsDetalis />} />
         <Route path="/servicedetails/:id" element={<ServiceDetalis />} />
         <Route path="/aboutus" element={<AboutUS />} />
         <Route path="/contactus" element={<ContactUS />} />

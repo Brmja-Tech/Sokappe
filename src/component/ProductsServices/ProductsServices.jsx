@@ -8,7 +8,13 @@ import "./ProductsServices.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const ProductsServices = ({ status = false, ouroffers = false, tittle }) => {
+const ProductsServices = ({
+  status = false,
+  ouroffers = false,
+  tittle,
+  relatedServices = null,
+  dataType = "services", // "services" or "products"
+}) => {
   const { t, i18n } = useTranslation("global");
   const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
   const isRTL = i18n.language === "ar";
@@ -23,12 +29,17 @@ const ProductsServices = ({ status = false, ouroffers = false, tittle }) => {
   });
   const [loading, setLoading] = useState(false);
 
+  // Debug logging
+  console.log("ProductsServices render - relatedServices:", relatedServices);
+  console.log("ProductsServices render - services:", services);
+  console.log("ProductsServices render - loading:", loading);
+
   // fetch services
   const fetchServices = async (page = 1) => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/services/allServices?page=${page}`,
+        `${process.env.REACT_APP_BASE_URL}/services/allServices`,
         {
           headers: {
             Accept: "application/json",
@@ -37,7 +48,8 @@ const ProductsServices = ({ status = false, ouroffers = false, tittle }) => {
         }
       );
       if (res.data?.status === 200) {
-        setServices(res.data.data.data);
+        console.log("API response data:", res.data.data);
+        setServices(res.data.data.data || res.data.data || []);
         setPagination(res.data.data.pagination);
       }
     } catch (error) {
@@ -48,13 +60,44 @@ const ProductsServices = ({ status = false, ouroffers = false, tittle }) => {
   };
 
   useEffect(() => {
-    fetchServices(1);
-  }, [i18n.language]);
+    console.log("useEffect triggered - relatedServices:", relatedServices);
+    console.log("dataType:", dataType);
+
+    // If relatedServices are provided, use them directly
+    if (
+      relatedServices &&
+      Array.isArray(relatedServices) &&
+      relatedServices.length > 0
+    ) {
+      console.log("Using related data:", relatedServices);
+      setServices(relatedServices);
+      setLoading(false);
+    } else if (!relatedServices) {
+      // Only fetch from API if no related data is provided
+      console.log("Fetching data from API");
+      fetchServices(1);
+    } else {
+      console.log("No related data, fetching from API instead");
+      fetchServices(1);
+    }
+  }, [i18n.language, relatedServices, dataType]);
 
   // Handle page change
   const handlePageChange = (page) => {
-    fetchServices(page);
+    if (!relatedServices && dataType === "services") {
+      fetchServices(page);
+    }
   };
+
+  // If relatedServices are provided and empty, don't render anything
+  if (
+    relatedServices &&
+    Array.isArray(relatedServices) &&
+    relatedServices.length === 0
+  ) {
+    console.log("No related data, returning null");
+    return null;
+  }
 
   return (
     <div className="products py-5">
@@ -84,17 +127,25 @@ const ProductsServices = ({ status = false, ouroffers = false, tittle }) => {
       <div className="container-fluid">
         {loading ? (
           <p className="text-center py-5">{t("loading")}...</p>
+        ) : !Array.isArray(services) || services.length === 0 ? (
+          <p className="text-center py-5">No services available</p>
         ) : (
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={20}
-            loop={true}
+            loop={relatedServices ? false : services.length > 4}
             key={swiperKey}
             dir={isRTL ? "rtl" : "ltr"}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
+            autoplay={
+              relatedServices
+                ? false
+                : services.length > 4
+                ? {
+                    delay: 2500,
+                    disableOnInteraction: false,
+                  }
+                : false
+            }
             pagination={{
               clickable: true,
               dynamicBullets: true,
@@ -106,67 +157,86 @@ const ProductsServices = ({ status = false, ouroffers = false, tittle }) => {
               992: { slidesPerView: 4 },
             }}
           >
-            {services.map((service) => {
-              const hasOffers = ouroffers && service.discount_price;
-              const oldPrice = hasOffers ? service.price : null;
-              const currentPrice = hasOffers
-                ? service.discount_price
-                : service.price;
+            {Array.isArray(services) && services.length > 0 ? (
+              services.map((service) => {
+                const hasOffers = ouroffers && service.discount_price;
+                const oldPrice = hasOffers ? service.price : null;
+                const currentPrice = hasOffers
+                  ? service.discount_price
+                  : service.price;
 
-              return (
-                <SwiperSlide key={service.id}>
-                  <Link to={`/servicedetails/${service.id}`}>
-                    <div className="product_card border rounded-4 overflow-hidden position-relative">
-                      {hasOffers && (
-                        <div
-                          className="position-absolute text-white px-2 py-1 small"
-                          style={{
-                            top: "10px",
-                            [isRTL ? "right" : "left"]: "10px",
-                            backgroundColor: "#dc3545",
-                            borderRadius: "0.375rem",
-                            zIndex: 10,
-                          }}
-                        >
-                          {t("products.discount")} 65%
-                        </div>
-                      )}
+                return (
+                  <SwiperSlide key={service.id}>
+                    <Link
+                      to={
+                        dataType === "products"
+                          ? `/productdetalis/${service.id}`
+                          : `/servicedetails/${service.id}`
+                      }
+                    >
+                      <div className="product_card border rounded-4 overflow-hidden position-relative">
+                        {hasOffers && (
+                          <div
+                            className="position-absolute text-white px-2 py-1 small"
+                            style={{
+                              top: "10px",
+                              [isRTL ? "right" : "left"]: "10px",
+                              backgroundColor: "#dc3545",
+                              borderRadius: "0.375rem",
+                              zIndex: 10,
+                            }}
+                          >
+                            {t("products.discount")}{" "}
+                            {Math.round(
+                              ((parseFloat(service.price) -
+                                parseFloat(service.discount_price)) /
+                                parseFloat(service.price)) *
+                                100
+                            )}
+                            %
+                          </div>
+                        )}
 
-                      <img
-                        src={service.main_image || "/car.png"}
-                        alt={service.name}
-                        className="img-fluid mb-3 rounded-4"
-                      />
-                      <div className="p-3">
-                        <p className="line-height mb-1">{service.name}</p>
-                        <small className="mb-2 d-block main-color fw-bold">
-                          {service.country} - {service.governorate}
-                        </small>
-                        <div className="text-sm d-flex justify-content-between align-items-center">
-                          <div>
-                            {t("products.startingFrom")}
-                            {hasOffers && oldPrice ? (
-                              <>
-                                <span className="mx-1 text-muted text-decoration-line-through">
-                                  {oldPrice} {t("products.currency")}
-                                </span>
+                        <img
+                          src={service.main_image}
+                          alt={service.name}
+                          className="img-fluid mb-3 rounded-4"
+                        />
+                        <div className="p-3">
+                          <p className="line-height mb-1">{service.name}</p>
+                          <small className="mb-2 d-block main-color fw-bold">
+                            {service.country} - {service.governorate}
+                          </small>
+                          <div className="text-sm d-flex justify-content-between align-items-center">
+                            <div>
+                              {t("products.startingFrom")}
+                              {hasOffers && oldPrice ? (
+                                <>
+                                  <span className="mx-1 text-muted text-decoration-line-through">
+                                    {oldPrice} {t("products.currency")}
+                                  </span>
+                                  <span className="fw-bold mx-1 main-color">
+                                    {currentPrice} {t("products.currency")}
+                                  </span>
+                                </>
+                              ) : (
                                 <span className="fw-bold mx-1 main-color">
                                   {currentPrice} {t("products.currency")}
                                 </span>
-                              </>
-                            ) : (
-                              <span className="fw-bold mx-1 main-color">
-                                {currentPrice} {t("products.currency")}
-                              </span>
-                            )}
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                </SwiperSlide>
-              );
-            })}
+                    </Link>
+                  </SwiperSlide>
+                );
+              })
+            ) : (
+              <div className="text-center py-5">
+                <p>{t("loading")}...</p>
+              </div>
+            )}
           </Swiper>
         )}
       </div>
