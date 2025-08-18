@@ -88,6 +88,10 @@
   "selectCountry": "اختر البلد",
   "selectGovernorate": "اختر المحافظة",
   "selectCenterGovernorate": "اختر مركز المحافظة",
+  "noCategory": "لا توجد فئة",
+  "noCountry": "لا يوجد بلد",
+  "noGovernorate": "لا توجد محافظة",
+  "noCenterGovernorate": "لا يوجد مركز محافظة",
   "productNameAr": "اسم المنتج",
   "productNameEn": "Product Name",
   "serviceNameAr": "اسم الخدمة",
@@ -460,6 +464,7 @@
     "shipping": "خدمة التوصيل",
     "contactSeller": "تحدث مع مقدم الخدمة",
     "generalTips": "نصائح عامة",
+    "productDetails": "تفاصيل المنتج",
     "tips": {
       "1": "اجتمع في الأماكن العامة فقط",
       "2": "لا تقم بإرسال المال مسبقاً",

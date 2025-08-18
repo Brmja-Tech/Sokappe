@@ -879,28 +879,27 @@ export default function CompanyProfile() {
                                     <p className="company-logo-upload-text">
                                       {t("identity.changeLogo")}
                                     </p>
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      className="company-logo-file-input"
-                                      onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                          // Here you can handle the file upload
-                                          // For now, we'll just show a preview
-                                          const reader = new FileReader();
-                                          reader.onload = (e) => {
-                                            setCompanyImages((prev) => ({
-                                              ...prev,
-                                              company_logo_image:
-                                                e.target.result,
-                                            }));
-                                          };
-                                          reader.readAsDataURL(file);
-                                        }
-                                      }}
-                                    />
                                   </div>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="company-logo-file-input"
+                                    onChange={(e) => {
+                                      const file = e.target.files[0];
+                                      if (file) {
+                                        // Here you can handle the file upload
+                                        // For now, we'll just show a preview
+                                        const reader = new FileReader();
+                                        reader.onload = (e) => {
+                                          setCompanyImages((prev) => ({
+                                            ...prev,
+                                            company_logo_image: e.target.result,
+                                          }));
+                                        };
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }}
+                                  />
                                 </div>
                               ) : (
                                 <div className="company-logo-upload-placeholder">

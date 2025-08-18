@@ -19,6 +19,11 @@ const ProductsServices = ({
   const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
   const isRTL = i18n.language === "ar";
 
+  // Helper function to get display value for location fields
+  const getDisplayValue = (field) => {
+    return field?.name || field || "";
+  };
+
   // state
   const [services, setServices] = useState([]);
   const [pagination, setPagination] = useState({
@@ -205,7 +210,8 @@ const ProductsServices = ({
                         <div className="p-3">
                           <p className="line-height mb-1">{service.name}</p>
                           <small className="mb-2 d-block main-color fw-bold">
-                            {service.country} - {service.governorate}
+                            {getDisplayValue(service.country)} -{" "}
+                            {getDisplayValue(service.governorate)}
                           </small>
                           <div className="text-sm d-flex justify-content-between align-items-center">
                             <div>

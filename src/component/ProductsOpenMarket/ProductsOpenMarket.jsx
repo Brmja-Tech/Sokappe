@@ -16,6 +16,11 @@ const ProductsOpenMarket = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Helper function to check if delivery/warranty is available
+  const isAvailable = (value) => {
+    return value === "1" || value === 1 || value === true;
+  };
+
   const fetchProducts = useCallback(
     async (page = 1) => {
       try {
@@ -138,25 +143,25 @@ const ProductsOpenMarket = () => {
                       <div className="product-badges">
                         <span
                           className={`badge ${
-                            product.has_delivery === "1"
+                            isAvailable(product.has_delivery)
                               ? "delivery"
                               : "no-delivery"
                           }`}
                         >
                           <i className="bi bi-truck"></i>
-                          {product.has_delivery === "1"
+                          {isAvailable(product.has_delivery)
                             ? t("products.delivery")
                             : t("products.noDelivery")}
                         </span>
                         <span
                           className={`badge ${
-                            product.has_warranty === "1"
+                            isAvailable(product.has_warranty)
                               ? "warranty"
                               : "no-warranty"
                           }`}
                         >
                           <i className="bi bi-shield-check"></i>
-                          {product.has_warranty === "1"
+                          {isAvailable(product.has_warranty)
                             ? t("products.warranty")
                             : t("products.noWarranty")}
                         </span>

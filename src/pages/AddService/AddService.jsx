@@ -108,6 +108,18 @@ export default function AddService() {
     }
   }, [formData.governorate_id]);
 
+  // Clear location fields when use_profile_address changes to "1"
+  useEffect(() => {
+    if (formData.use_profile_address === "1") {
+      setFormData((prev) => ({
+        ...prev,
+        country_id: "",
+        governorate_id: "",
+        center_gov_id: "",
+      }));
+    }
+  }, [formData.use_profile_address]);
+
   // Update governorates when country changes in edit form
   useEffect(() => {
     if (editFormData.country_id) {
@@ -121,6 +133,18 @@ export default function AddService() {
       fetchCenterGovernorates(editFormData.governorate_id);
     }
   }, [editFormData.governorate_id]);
+
+  // Clear location fields when use_profile_address changes to "1" in edit form
+  useEffect(() => {
+    if (editFormData.use_profile_address === "1") {
+      setEditFormData((prev) => ({
+        ...prev,
+        country_id: "",
+        governorate_id: "",
+        center_gov_id: "",
+      }));
+    }
+  }, [editFormData.use_profile_address]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -599,6 +623,22 @@ export default function AddService() {
       return;
     }
 
+    // Validate location fields only if not using profile address
+    if (formData.use_profile_address === "0") {
+      if (!formData.country_id) {
+        toast.error(t("pleaseSelectCountry"));
+        return;
+      }
+      if (!formData.governorate_id) {
+        toast.error(t("pleaseSelectGovernorate"));
+        return;
+      }
+      if (!formData.center_gov_id) {
+        toast.error(t("pleaseSelectCenterGovernorate"));
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -761,6 +801,23 @@ export default function AddService() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    // Validate location fields only if not using profile address
+    if (editFormData.use_profile_address === "0") {
+      if (!editFormData.country_id) {
+        toast.error(t("pleaseSelectCountry"));
+        return;
+      }
+      if (!editFormData.governorate_id) {
+        toast.error(t("pleaseSelectGovernorate"));
+        return;
+      }
+      if (!editFormData.center_gov_id) {
+        toast.error(t("pleaseSelectCenterGovernorate"));
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -1246,61 +1303,6 @@ export default function AddService() {
 
         <div className="form-row">
           <div className="form-group">
-            <label>{t("country")}</label>
-            <select
-              value={formData.country_id}
-              onChange={(e) => handleInputChange("country_id", e.target.value)}
-              required
-            >
-              <option value="">{t("selectCountry")}</option>
-              {countries.map((country) => (
-                <option key={country.id} value={country.id}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>{t("governorate")}</label>
-            <select
-              value={formData.governorate_id}
-              onChange={(e) =>
-                handleInputChange("governorate_id", e.target.value)
-              }
-              required
-              disabled={!formData.country_id}
-            >
-              <option value="">{t("selectGovernorate")}</option>
-              {governorates.map((gov) => (
-                <option key={gov.id} value={gov.id}>
-                  {gov.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>{t("centerGovernorate")}</label>
-            <select
-              value={formData.center_gov_id}
-              onChange={(e) =>
-                handleInputChange("center_gov_id", e.target.value)
-              }
-              required
-              disabled={!formData.governorate_id}
-            >
-              <option value="">{t("selectCenterGovernorate")}</option>
-              {centerGovernorates.map((center) => (
-                <option key={center.id} value={center.id}>
-                  {center.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
             <label>{t("useProfileAddress")}</label>
             <select
               value={formData.use_profile_address}
@@ -1313,7 +1315,69 @@ export default function AddService() {
               <option value="1">{t("yes")}</option>
             </select>
           </div>
+          <div className="form-group">
+            <label>{t("country")}</label>
+            <select
+              value={formData.country_id}
+              onChange={(e) => handleInputChange("country_id", e.target.value)}
+              required={formData.use_profile_address === "0"}
+              disabled={formData.use_profile_address === "1"}
+            >
+              <option value="">{t("selectCountry")}</option>
+              {countries.map((country) => (
+                <option key={country.id} value={country.id}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        <div className="form-row">
+          
+          <div className="form-group">
+            <label>{t("governorate")}</label>
+            <select
+              value={formData.governorate_id}
+              onChange={(e) =>
+                handleInputChange("governorate_id", e.target.value)
+              }
+              required={formData.use_profile_address === "0"}
+              disabled={
+                formData.use_profile_address === "1" || !formData.country_id
+              }
+            >
+              <option value="">{t("selectGovernorate")}</option>
+              {governorates.map((gov) => (
+                <option key={gov.id} value={gov.id}>
+                  {gov.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>{t("centerGovernorate")}</label>
+            <select
+              value={formData.center_gov_id}
+              onChange={(e) =>
+                handleInputChange("center_gov_id", e.target.value)
+              }
+              required={formData.use_profile_address === "0"}
+              disabled={
+                formData.use_profile_address === "1" || !formData.governorate_id
+              }
+            >
+              <option value="">{t("selectCenterGovernorate")}</option>
+              {centerGovernorates.map((center) => (
+                <option key={center.id} value={center.id}>
+                  {center.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        
 
         <div className="form-row">
           <div className="form-group">
@@ -2231,72 +2295,6 @@ export default function AddService() {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>{t("country")}</label>
-                    <select
-                      value={editFormData.country_id || ""}
-                      onChange={(e) =>
-                        setEditFormData((prev) => ({
-                          ...prev,
-                          country_id: e.target.value,
-                        }))
-                      }
-                      required
-                    >
-                      <option value="">{t("selectCountry")}</option>
-                      {countries.map((country) => (
-                        <option key={country.id} value={country.id}>
-                          {country.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>{t("governorate")}</label>
-                    <select
-                      value={editFormData.governorate_id || ""}
-                      onChange={(e) =>
-                        setEditFormData((prev) => ({
-                          ...prev,
-                          governorate_id: e.target.value,
-                        }))
-                      }
-                      required
-                      disabled={!editFormData.country_id}
-                    >
-                      <option value="">{t("selectGovernorate")}</option>
-                      {governorates.map((gov) => (
-                        <option key={gov.id} value={gov.id}>
-                          {gov.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>{t("centerGovernorate")}</label>
-                    <select
-                      value={editFormData.center_gov_id || ""}
-                      onChange={(e) =>
-                        setEditFormData((prev) => ({
-                          ...prev,
-                          center_gov_id: e.target.value,
-                        }))
-                      }
-                      required
-                      disabled={!editFormData.governorate_id}
-                    >
-                      <option value="">{t("selectCenterGovernorate")}</option>
-                      {centerGovernorates.map((center) => (
-                        <option key={center.id} value={center.id}>
-                          {center.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
                     <label>{t("useProfileAddress")}</label>
                     <select
                       value={editFormData.use_profile_address || "0"}
@@ -2312,7 +2310,82 @@ export default function AddService() {
                       <option value="1">{t("yes")}</option>
                     </select>
                   </div>
+                  <div className="form-group">
+                    <label>{t("country")}</label>
+                    <select
+                      value={editFormData.country_id || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          country_id: e.target.value,
+                        }))
+                      }
+                      required={editFormData.use_profile_address === "0"}
+                      disabled={editFormData.use_profile_address === "1"}
+                    >
+                      <option value="">{t("selectCountry")}</option>
+                      {countries.map((country) => (
+                        <option key={country.id} value={country.id}>
+                          {country.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>{t("governorate")}</label>
+                    <select
+                      value={editFormData.governorate_id || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          governorate_id: e.target.value,
+                        }))
+                      }
+                      required={editFormData.use_profile_address === "0"}
+                      disabled={
+                        editFormData.use_profile_address === "1" ||
+                        !editFormData.country_id
+                      }
+                    >
+                      <option value="">{t("selectGovernorate")}</option>
+                      {governorates.map((gov) => (
+                        <option key={gov.id} value={gov.id}>
+                          {gov.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>{t("centerGovernorate")}</label>
+                    <select
+                      value={editFormData.center_gov_id || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          center_gov_id: e.target.value,
+                        }))
+                      }
+                      required={editFormData.use_profile_address === "0"}
+                      disabled={
+                        editFormData.use_profile_address === "1" ||
+                        !editFormData.governorate_id
+                      }
+                    >
+                      <option value="">{t("selectCenterGovernorate")}</option>
+                      {centerGovernorates.map((center) => (
+                        <option key={center.id} value={center.id}>
+                          {center.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+             
 
                 <div className="form-row">
                   <div className="form-group">
@@ -2525,6 +2598,28 @@ export default function AddService() {
                       </div>
                     )}
                 </div>
+
+                {/* Reset Location Fields Button */}
+                {editFormData.use_profile_address === "1" && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditFormData((prev) => ({
+                            ...prev,
+                            country_id: "",
+                            governorate_id: "",
+                            center_gov_id: "",
+                          }));
+                        }}
+                        className="reset-location-btn"
+                      >
+                        {t("resetLocationFields")}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="modal-actions">

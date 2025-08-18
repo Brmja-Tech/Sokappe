@@ -22,6 +22,16 @@ export default function ProductsDetalis() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Helper function to check if delivery/warranty is available
+  const isAvailable = (value) => {
+    return value === "1" || value === 1 || value === true;
+  };
+
+  // Helper function to get display value for location fields
+  const getDisplayValue = (field, fallbackKey) => {
+    return field?.name || field || t(fallbackKey);
+  };
+
   // Fetch product details and similar products
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -175,12 +185,14 @@ export default function ProductsDetalis() {
                 </div>
                 <div className={styles.specRow}>
                   <span className={styles.specLabel}>{t("category")}:</span>
-                  <span className={styles.specValue}>{product.category}</span>
+                  <span className={styles.specValue}>
+                    {getDisplayValue(product.category, "noCategory")}
+                  </span>
                 </div>
                 <div className={styles.specRow}>
                   <span className={styles.specLabel}>{t("hasDelivery")}:</span>
                   <span className={styles.specValue}>
-                    {product.has_delivery === "1"
+                    {isAvailable(product.has_delivery)
                       ? t("products.delivery")
                       : t("products.noDelivery")}
                   </span>
@@ -188,26 +200,30 @@ export default function ProductsDetalis() {
                 <div className={styles.specRow}>
                   <span className={styles.specLabel}>{t("hasWarranty")}:</span>
                   <span className={styles.specValue}>
-                    {product.has_warranty === "1"
+                    {isAvailable(product.has_warranty)
                       ? product.warranty_period
                       : t("products.noWarranty")}
                   </span>
                 </div>
                 <div className={styles.specRow}>
                   <span className={styles.specLabel}>{t("country")}:</span>
-                  <span className={styles.specValue}>{product.country}</span>
+                  <span className={styles.specValue}>
+                    {getDisplayValue(product.country, "noCountry")}
+                  </span>
                 </div>
                 <div className={styles.specRow}>
                   <span className={styles.specLabel}>{t("governorate")}:</span>
                   <span className={styles.specValue}>
-                    {product.governorate}
+                    {getDisplayValue(product.governorate, "noGovernorate")}
                   </span>
                 </div>
                 <div className={styles.specRow}>
                   <span className={styles.specLabel}>
                     {t("centerGovernorate")}:
                   </span>
-                  <span className={styles.specValue}>{product.center_gov}</span>
+                  <span className={styles.specValue}>
+                    {getDisplayValue(product.center_gov, "noCenterGovernorate")}
+                  </span>
                 </div>
                 <div className={styles.specRow}>
                   <span className={styles.specLabel}>{t("address")}:</span>

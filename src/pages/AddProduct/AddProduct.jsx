@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import PageHead from "../../component/PageHead/PageHead";
 import { useTranslation } from "react-i18next";
-import { FiCamera, FiPlus, FiEdit, FiTrash2, FiEye, FiX } from "react-icons/fi";
+import {
+  FiCamera,
+  FiPlus,
+  FiEdit,
+  FiTrash2,
+  FiEye,
+  FiX,
+  FiTruck,
+  FiShield,
+} from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -111,6 +120,18 @@ export default function AddProduct() {
     }
   }, [formData.governorate_id]);
 
+  // Clear location fields when use_profile_address changes to "1"
+  useEffect(() => {
+    if (formData.use_profile_address === "1") {
+      setFormData((prev) => ({
+        ...prev,
+        country_id: "",
+        governorate_id: "",
+        center_gov_id: "",
+      }));
+    }
+  }, [formData.use_profile_address]);
+
   // Update governorates when country changes in edit form
   useEffect(() => {
     if (editFormData.country_id) {
@@ -124,6 +145,18 @@ export default function AddProduct() {
       fetchCenterGovernorates(editFormData.governorate_id);
     }
   }, [editFormData.governorate_id]);
+
+  // Clear location fields in edit form when use_profile_address changes to "1"
+  useEffect(() => {
+    if (editFormData.use_profile_address === "1") {
+      setEditFormData((prev) => ({
+        ...prev,
+        country_id: "",
+        governorate_id: "",
+        center_gov_id: "",
+      }));
+    }
+  }, [editFormData.use_profile_address]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -602,6 +635,22 @@ export default function AddProduct() {
       return;
     }
 
+    // Validate location fields only if not using profile address
+    if (formData.use_profile_address === "0") {
+      if (!formData.country_id) {
+        toast.error(t("pleaseSelectCountry"));
+        return;
+      }
+      if (!formData.governorate_id) {
+        toast.error(t("pleaseSelectGovernorate"));
+        return;
+      }
+      if (!formData.center_gov_id) {
+        toast.error(t("pleaseSelectCenterGovernorate"));
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -690,6 +739,7 @@ export default function AddProduct() {
           value === "نعم" ||
           value === "Yes" ||
           value === "1" ||
+          value === 1 ||
           value === true
         )
           return "1";
@@ -798,6 +848,25 @@ export default function AddProduct() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Validate location fields only if not using profile address
+    if (editFormData.use_profile_address === "0") {
+      if (!editFormData.country_id) {
+        toast.error(t("pleaseSelectCountry"));
+        setLoading(false);
+        return;
+      }
+      if (!editFormData.governorate_id) {
+        toast.error(t("pleaseSelectGovernorate"));
+        setLoading(false);
+        return;
+      }
+      if (!editFormData.center_gov_id) {
+        toast.error(t("pleaseSelectCenterGovernorate"));
+        setLoading(false);
+        return;
+      }
+    }
 
     try {
       const token = localStorage.getItem("token");
@@ -958,7 +1027,11 @@ export default function AddProduct() {
   // Helper function to check if delivery/warranty is available
   const isAvailable = (value) => {
     return (
-      value === "نعم" || value === "Yes" || value === "1" || value === true
+      value === "نعم" ||
+      value === "Yes" ||
+      value === "1" ||
+      value === 1 ||
+      value === true
     );
   };
 
@@ -1332,61 +1405,6 @@ export default function AddProduct() {
 
         <div className="form-row">
           <div className="form-group">
-            <label>{t("country")}</label>
-            <select
-              value={formData.country_id}
-              onChange={(e) => handleInputChange("country_id", e.target.value)}
-              required
-            >
-              <option value="">{t("selectCountry")}</option>
-              {countries.map((country) => (
-                <option key={country.id} value={country.id}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>{t("governorate")}</label>
-            <select
-              value={formData.governorate_id}
-              onChange={(e) =>
-                handleInputChange("governorate_id", e.target.value)
-              }
-              required
-              disabled={!formData.country_id}
-            >
-              <option value="">{t("selectGovernorate")}</option>
-              {governorates.map((gov) => (
-                <option key={gov.id} value={gov.id}>
-                  {gov.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>{t("centerGovernorate")}</label>
-            <select
-              value={formData.center_gov_id}
-              onChange={(e) =>
-                handleInputChange("center_gov_id", e.target.value)
-              }
-              required
-              disabled={!formData.governorate_id}
-            >
-              <option value="">{t("selectCenterGovernorate")}</option>
-              {centerGovernorates.map((center) => (
-                <option key={center.id} value={center.id}>
-                  {center.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
             <label>{t("useProfileAddress")}</label>
             <select
               value={formData.use_profile_address}
@@ -1399,7 +1417,69 @@ export default function AddProduct() {
               <option value="1">{t("yes")}</option>
             </select>
           </div>
+          <div className="form-group">
+            <label>{t("country")}</label>
+            <select
+              value={formData.country_id}
+              onChange={(e) => handleInputChange("country_id", e.target.value)}
+              required={formData.use_profile_address === "0"}
+              disabled={formData.use_profile_address === "1"}
+            >
+              <option value="">{t("selectCountry")}</option>
+              {countries.map((country) => (
+                <option key={country.id} value={country.id}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        <div className="form-row">
+         
+          <div className="form-group">
+            <label>{t("governorate")}</label>
+            <select
+              value={formData.governorate_id}
+              onChange={(e) =>
+                handleInputChange("governorate_id", e.target.value)
+              }
+              required={formData.use_profile_address === "0"}
+              disabled={
+                formData.use_profile_address === "1" || !formData.country_id
+              }
+            >
+              <option value="">{t("selectGovernorate")}</option>
+              {governorates.map((gov) => (
+                <option key={gov.id} value={gov.id}>
+                  {gov.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>{t("centerGovernorate")}</label>
+            <select
+              value={formData.center_gov_id}
+              onChange={(e) =>
+                handleInputChange("center_gov_id", e.target.value)
+              }
+              required={formData.use_profile_address === "0"}
+              disabled={
+                formData.use_profile_address === "1" || !formData.governorate_id
+              }
+            >
+              <option value="">{t("selectCenterGovernorate")}</option>
+              {centerGovernorates.map((center) => (
+                <option key={center.id} value={center.id}>
+                  {center.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        
 
         <div className="form-row">
           <div className="form-group">
@@ -1618,20 +1698,26 @@ export default function AddProduct() {
               <p className="address">{product.address}</p>
               <div className="product-meta">
                 <span
-                  className={`delivery ${
-                    isAvailable(product.has_delivery) ? "yes" : "no"
+                  className={`delivery-badge ${
+                    isAvailable(product.has_delivery)
+                      ? "available"
+                      : "unavailable"
                   }`}
                 >
+                  <FiTruck className="meta-icon" />
                   {getLocalizedText(
                     isAvailable(product.has_delivery),
                     "delivery"
                   )}
                 </span>
                 <span
-                  className={`warranty ${
-                    isAvailable(product.has_warranty) ? "yes" : "no"
+                  className={`warranty-badge ${
+                    isAvailable(product.has_warranty)
+                      ? "available"
+                      : "unavailable"
                   }`}
                 >
+                  <FiShield className="meta-icon" />
                   {getLocalizedText(
                     isAvailable(product.has_warranty),
                     "warranty"
@@ -1909,6 +1995,17 @@ export default function AddProduct() {
     }
   };
 
+  // Reset edit location fields
+  const resetEditLocationFields = () => {
+    setEditFormData((prev) => ({
+      ...prev,
+      country_id: "",
+      governorate_id: "",
+      center_gov_id: "",
+      use_profile_address: "0",
+    }));
+  };
+
   // Get edit category name by ID
   const getEditCategoryName = (categoryId, level) => {
     const levelData = editCategoryLevels.find((l) => l.level === level);
@@ -1939,7 +2036,7 @@ export default function AddProduct() {
               className={`tab-btn ${activeTab === "add" ? "active" : ""}`}
               onClick={() => setActiveTab("add")}
             >
-              {t("addProduct")}
+              {t("navbar.addProduct")}
             </button>
             <button
               className={`tab-btn ${activeTab === "products" ? "active" : ""}`}
@@ -1995,7 +2092,7 @@ export default function AddProduct() {
                       </div>
                     </div>
 
-                    {/* Reset Button */}
+                    {/* Reset Buttons */}
                     <div className="form-row">
                       <div className="form-group">
                         <button
@@ -2004,6 +2101,15 @@ export default function AddProduct() {
                           className="reset-category-btn"
                         >
                           {t("resetCategories")}
+                        </button>
+                      </div>
+                      <div className="form-group">
+                        <button
+                          type="button"
+                          onClick={resetEditLocationFields}
+                          className="reset-location-btn"
+                        >
+                          {t("resetLocation")}
                         </button>
                       </div>
                     </div>
@@ -2361,72 +2467,6 @@ export default function AddProduct() {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>{t("country")}</label>
-                    <select
-                      value={editFormData.country_id || ""}
-                      onChange={(e) =>
-                        setEditFormData((prev) => ({
-                          ...prev,
-                          country_id: e.target.value,
-                        }))
-                      }
-                      required
-                    >
-                      <option value="">{t("selectCountry")}</option>
-                      {countries.map((country) => (
-                        <option key={country.id} value={country.id}>
-                          {country.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>{t("governorate")}</label>
-                    <select
-                      value={editFormData.governorate_id || ""}
-                      onChange={(e) =>
-                        setEditFormData((prev) => ({
-                          ...prev,
-                          governorate_id: e.target.value,
-                        }))
-                      }
-                      required
-                      disabled={!editFormData.country_id}
-                    >
-                      <option value="">{t("selectGovernorate")}</option>
-                      {governorates.map((gov) => (
-                        <option key={gov.id} value={gov.id}>
-                          {gov.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>{t("centerGovernorate")}</label>
-                    <select
-                      value={editFormData.center_gov_id || ""}
-                      onChange={(e) =>
-                        setEditFormData((prev) => ({
-                          ...prev,
-                          center_gov_id: e.target.value,
-                        }))
-                      }
-                      required
-                      disabled={!editFormData.governorate_id}
-                    >
-                      <option value="">{t("selectCenterGovernorate")}</option>
-                      {centerGovernorates.map((center) => (
-                        <option key={center.id} value={center.id}>
-                          {center.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
                     <label>{t("useProfileAddress")}</label>
                     <select
                       value={editFormData.use_profile_address || "0"}
@@ -2442,7 +2482,81 @@ export default function AddProduct() {
                       <option value="1">{t("yes")}</option>
                     </select>
                   </div>
+                  <div className="form-group">
+                    <label>{t("country")}</label>
+                    <select
+                      value={editFormData.country_id || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          country_id: e.target.value,
+                        }))
+                      }
+                      required={editFormData.use_profile_address === "0"}
+                      disabled={editFormData.use_profile_address === "1"}
+                    >
+                      <option value="">{t("selectCountry")}</option>
+                      {countries.map((country) => (
+                        <option key={country.id} value={country.id}>
+                          {country.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
+
+                <div className="form-row">
+                  
+                  <div className="form-group">
+                    <label>{t("governorate")}</label>
+                    <select
+                      value={editFormData.governorate_id || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          governorate_id: e.target.value,
+                        }))
+                      }
+                      required={editFormData.use_profile_address === "0"}
+                      disabled={
+                        editFormData.use_profile_address === "1" ||
+                        !editFormData.country_id
+                      }
+                    >
+                      <option value="">{t("selectGovernorate")}</option>
+                      {governorates.map((gov) => (
+                        <option key={gov.id} value={gov.id}>
+                          {gov.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>{t("centerGovernorate")}</label>
+                    <select
+                      value={editFormData.center_gov_id || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          center_gov_id: e.target.value,
+                        }))
+                      }
+                      required={editFormData.use_profile_address === "0"}
+                      disabled={
+                        editFormData.use_profile_address === "1" ||
+                        !editFormData.governorate_id
+                      }
+                    >
+                      <option value="">{t("selectCenterGovernorate")}</option>
+                      {centerGovernorates.map((center) => (
+                        <option key={center.id} value={center.id}>
+                          {center.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
 
                 <div className="form-row">
                   <div className="form-group">
@@ -2679,7 +2793,7 @@ export default function AddProduct() {
         <div className="modal-overlay">
           <div className="modal view-modal">
             <div className="modal-header">
-              <h3>{t("productDetails")}</h3>
+              <h3>{t("productDetails.productDetails")}</h3>    
               <button
                 onClick={() => setShowViewModal(false)}
                 className="close-btn"
@@ -2754,7 +2868,9 @@ export default function AddProduct() {
                       <div className="detail-row">
                         <span className="detail-label">{t("category")}:</span>
                         <span className="detail-value">
-                          {viewingProduct.category}
+                          {viewingProduct.category?.name ||
+                            viewingProduct.category ||
+                            t("noCategory")}
                         </span>
                       </div>
                       <div className="detail-row">
@@ -2798,7 +2914,9 @@ export default function AddProduct() {
                       <div className="detail-row">
                         <span className="detail-label">{t("country")}:</span>
                         <span className="detail-value">
-                          {viewingProduct.country}
+                          {viewingProduct.country?.name ||
+                            viewingProduct.country ||
+                            t("noCountry")}
                         </span>
                       </div>
                       <div className="detail-row">
@@ -2806,7 +2924,9 @@ export default function AddProduct() {
                           {t("governorate")}:
                         </span>
                         <span className="detail-value">
-                          {viewingProduct.governorate}
+                          {viewingProduct.governorate?.name ||
+                            viewingProduct.governorate ||
+                            t("noGovernorate")}
                         </span>
                       </div>
                       <div className="detail-row">
@@ -2814,7 +2934,9 @@ export default function AddProduct() {
                           {t("centerGovernorate")}:
                         </span>
                         <span className="detail-value">
-                          {viewingProduct.center_gov}
+                          {viewingProduct.center_gov?.name ||
+                            viewingProduct.center_gov ||
+                            t("noCenterGovernorate")}
                         </span>
                       </div>
                       <div className="detail-row">
@@ -2833,9 +2955,7 @@ export default function AddProduct() {
                         </span>
                         <span
                           className={`detail-value ${
-                            isAvailable(viewingProduct.has_delivery)
-                              ? "yes"
-                              : "no"
+                            isAvailable(viewingProduct.has_delivery) ? "1" : "0"
                           }`}
                         >
                           {getLocalizedText(
@@ -2850,9 +2970,7 @@ export default function AddProduct() {
                         </span>
                         <span
                           className={`detail-value ${
-                            isAvailable(viewingProduct.has_warranty)
-                              ? "yes"
-                              : "no"
+                            isAvailable(viewingProduct.has_warranty) ? "1" : "0"
                           }`}
                         >
                           {getLocalizedText(

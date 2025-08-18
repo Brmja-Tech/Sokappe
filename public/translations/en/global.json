@@ -63,6 +63,10 @@
   "selectCountry": "Select Country",
   "selectGovernorate": "Select Governor",
   "selectCenterGovernorate": "Select Center Governorate",
+  "noCategory": "No Category",
+  "noCountry": "No Country",
+  "noGovernorate": "No Governorate",
+  "noCenterGovernorate": "No Center Governorate",
   "productNameAr": "اسم المنتج",
   "productNameEn": "Product Name",
   "serviceNameAr": "اسم الخدمة",
@@ -427,7 +431,7 @@
     "chat": "Chat",
     "price": "5,000 EGP"
   },
-  "productsDetalis": "Product Details",
+  "productDetails": "Product Details",
   "productDetails": {
     "share": "Share Ad",
     "addToFavorites": "Add to Favorites",
@@ -436,6 +440,7 @@
     "shipping": "Shipping Service",
     "contactSeller": "Contact the Product Seller",
     "generalTips": "General Tips",
+    "productDetails": "Product Details",
     "tips": {
       "1": "Meet in public places only",
       "2": "Don't send money in advance",

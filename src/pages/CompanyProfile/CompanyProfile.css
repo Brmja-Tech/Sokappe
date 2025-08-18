@@ -303,6 +303,10 @@
 /* --- Company Logo Upload --- */
 .company-logo-upload-container {
   margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  height: 120px;
 }
 
 .company-logo-preview {
@@ -311,6 +315,8 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(10, 110, 88, 0.1);
+  width: 120px;
+  height: 120px;
 }
 
 .company-logo-preview-image {
@@ -362,6 +368,12 @@
   cursor: pointer;
   top: 0;
   left: 0;
+  z-index: 1;
+  pointer-events: auto;
+  overflow: hidden;
+  border-radius: 12px;
+  max-width: 120px;
+  max-height: 120px;
 }
 
 .company-logo-upload-placeholder {
@@ -376,6 +388,7 @@
   background: #f8f9fa;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .company-logo-upload-placeholder:hover {
