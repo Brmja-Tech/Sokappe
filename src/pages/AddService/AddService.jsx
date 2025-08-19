@@ -1538,7 +1538,7 @@ export default function AddService() {
       </div>
 
       <button type="submit" className="submit-btn" disabled={loading}>
-        {loading ? t("addingService") : t("addService")}
+        {loading ? t("addingService") : t("navbar.addService")}
       </button>
     </form>
   );
@@ -1893,7 +1893,7 @@ export default function AddService() {
               className={`tab-btn ${activeTab === "add" ? "active" : ""}`}
               onClick={() => setActiveTab("add")}
             >
-              {t("addService")}
+              {t("navbar.addService")}
             </button>
             <button
               className={`tab-btn ${activeTab === "products" ? "active" : ""}`}

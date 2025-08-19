@@ -1,0 +1,231 @@
+.products {
+  background-color: #f9f9f9;
+}
+.productCard img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+.productCard {
+  background-color: var(--basic-color);
+}
+.productServices .swiper-button-prev,
+.productServices .swiper-button-next {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: var(--main-color) !important;
+}
+.productServices .swiper-button-prev::after,
+.productServices .swiper-button-next::after {
+  color: var(--basic-color);
+  font-size: 14px;
+}
+.productServices .showMore {
+  padding: 5px 20px 8px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  display: inline-block;
+  background-color: var(--basic-color);
+  color: #000;
+  box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+  transition: all 0.3s ease-in-out;
+}
+.productServices .showMore:hover {
+  background-color: var(--main-color);
+  color: var(--basic-color);
+}
+.productCard .viewDetails {
+  display: block;
+  background-color: var(--main-color);
+  color: var(--basic-color);
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 2em;
+  box-shadow: var(--box-shadow);
+}
+.products .nav-tabs {
+  border: none;
+  padding-inline: 15px;
+}
+.products .nav-tabs .nav-link {
+  font-size: small;
+  color: #000;
+  border-radius: 5px;
+  border: none;
+  border-bottom: 2px solid transparent;
+}
+.products .nav-tabs .nav-link.active {
+  background: transparent;
+  color: var(--main-color);
+  border-bottom: 2px solid var(--main-color);
+  border-radius: 0;
+  font-weight: bold;
+}
+[data-theme="dark"] {
+  .products {
+    background-color: var(--sub-dark-color);
+  }
+  .productCard {
+    background-color: var(--dark-color);
+    color: var(--basic-color);
+    border-color: var(--sub-dark-color) !important;
+  }
+  .products .nav-tabs .nav-link {
+    color: var(--basic-color);
+  }
+  .products .nav-tabs .nav-link.active {
+    color: var(--main-color);
+  }
+}
+/* dir ltr */
+[dir="ltr"] {
+  .productServices .showMore {
+    padding: 7px 20px 5px;
+  }
+}
+
+.btnCategories {
+  padding: 8px 25px;
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+/* التأكد من المحاذاة الصحيحة في كلا الاتجاهين */
+[dir="rtl"] .btnCategoriesContainer {
+  float: left !important;
+  margin-right: auto !important;
+}
+[dir="ltr"] .btnCategoriesContainer {
+  float: right !important;
+  margin-left: auto !important;
+}
+
+/* حل بديل باستخدام CSS فقط */
+.alignByDirection {
+  margin-inline-start: auto !important;
+  display: block !important;
+}
+
+/* Badge Styles for Warranty and Delivery */
+.productBadges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.badge.delivery {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.badge.noDelivery {
+  background: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+}
+
+.badge.warranty {
+  background: rgba(23, 162, 184, 0.1);
+  color: #17a2b8;
+}
+
+.badge.noWarranty {
+  background: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+}
+
+/* Product Action Buttons */
+.productActions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.actionBtn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 1.1rem;
+}
+
+.addToCartBtn {
+  background: var(--main-color);
+  color: white;
+}
+
+.addToCartBtn:hover:not(:disabled) {
+  background: #0a6e58;
+  transform: scale(1.1);
+}
+
+.addToCartBtn.inCart {
+  background: #28a745;
+  cursor: not-allowed;
+}
+
+.addToCartBtn.inCart:hover {
+  transform: none;
+}
+
+.wishlistBtn {
+  background: #e91e63;
+  color: white;
+}
+
+.wishlistBtn:hover:not(:disabled) {
+  background: #c2185b;
+  transform: scale(1.1);
+}
+
+.wishlistBtn.inWishlist {
+  background: #c2185b;
+  cursor: not-allowed;
+}
+
+.wishlistBtn.inWishlist:hover {
+  transform: none;
+}
+
+/* Product Image Wrapper for positioning */
+.productImageWrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* Make productCard relative for absolute positioning */
+.productCard {
+  background-color: var(--basic-color);
+  position: relative;
+}

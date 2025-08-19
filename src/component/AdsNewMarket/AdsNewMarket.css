@@ -1,1 +1,4 @@
-.ads img {display: block;border-radius: 20px !important;}
+.ads img {
+  display: block;
+  border-radius: 20px !important;
+}

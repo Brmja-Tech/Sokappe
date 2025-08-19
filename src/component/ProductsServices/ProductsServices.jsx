@@ -34,10 +34,6 @@ const ProductsServices = ({
   });
   const [loading, setLoading] = useState(false);
 
-  // Debug logging
-  console.log("ProductsServices render - relatedServices:", relatedServices);
-  console.log("ProductsServices render - services:", services);
-  console.log("ProductsServices render - loading:", loading);
 
   // fetch services
   const fetchServices = async (page = 1) => {
@@ -53,7 +49,6 @@ const ProductsServices = ({
         }
       );
       if (res.data?.status === 200) {
-        console.log("API response data:", res.data.data);
         setServices(res.data.data.data || res.data.data || []);
         setPagination(res.data.data.pagination);
       }
@@ -65,24 +60,19 @@ const ProductsServices = ({
   };
 
   useEffect(() => {
-    console.log("useEffect triggered - relatedServices:", relatedServices);
-    console.log("dataType:", dataType);
-
+  
     // If relatedServices are provided, use them directly
     if (
       relatedServices &&
       Array.isArray(relatedServices) &&
       relatedServices.length > 0
     ) {
-      console.log("Using related data:", relatedServices);
       setServices(relatedServices);
       setLoading(false);
     } else if (!relatedServices) {
       // Only fetch from API if no related data is provided
-      console.log("Fetching data from API");
       fetchServices(1);
     } else {
-      console.log("No related data, fetching from API instead");
       fetchServices(1);
     }
   }, [i18n.language, relatedServices, dataType]);
@@ -100,7 +90,6 @@ const ProductsServices = ({
     Array.isArray(relatedServices) &&
     relatedServices.length === 0
   ) {
-    console.log("No related data, returning null");
     return null;
   }
 

@@ -320,8 +320,78 @@
   .product-image-wrapper {
     height: 160px;
   }
-  
+
   .product-content {
     padding: 0.8rem;
   }
+}
+
+/* Product Action Buttons */
+.product-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 1.1rem;
+}
+
+.add-to-cart-btn {
+  background: var(--main-color);
+  color: white;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background: #0a6e58;
+  transform: scale(1.1);
+}
+
+.add-to-cart-btn.in-cart {
+  background: #28a745;
+  cursor: not-allowed;
+}
+
+.add-to-cart-btn.in-cart:hover {
+  transform: none;
+}
+
+.wishlist-btn {
+  background: #e91e63;
+  color: white;
+}
+
+.wishlist-btn:hover:not(:disabled) {
+  background: #c2185b;
+  transform: scale(1.1);
+}
+
+.wishlist-btn.in-wishlist {
+  background: #c2185b;
+  cursor: not-allowed;
+}
+
+.wishlist-btn.in-wishlist:hover {
+  transform: none;
+}
+
+/* Make product-image-wrapper relative for absolute positioning */
+.product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
 }

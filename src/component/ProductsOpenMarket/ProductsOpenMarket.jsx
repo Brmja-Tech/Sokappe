@@ -7,9 +7,11 @@ import "swiper/css/pagination";
 import "./ProductsOpenMarket.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../../context/CartContext";
 
 const ProductsOpenMarket = () => {
   const { t, i18n } = useTranslation("global");
+  const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
   const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
   const isRTL = i18n.language === "ar";
 
@@ -19,6 +21,14 @@ const ProductsOpenMarket = () => {
   // Helper function to check if delivery/warranty is available
   const isAvailable = (value) => {
     return value === "1" || value === 1 || value === true;
+  };
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+  };
+
+  const handleAddToWishlist = (product) => {
+    addToWishlist(product);
   };
 
   const fetchProducts = useCallback(
@@ -112,6 +122,57 @@ const ProductsOpenMarket = () => {
                 >
                   <div className="product-card">
                     <div className="product-image-wrapper">
+                      {/* Action Buttons */}
+                      <div className="product-actions">
+                        <button
+                          className={`action-btn add-to-cart-btn ${
+                            isInCart(product.id) ? "in-cart" : ""
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleAddToCart(product);
+                          }}
+                          disabled={isInCart(product.id)}
+                          title={
+                            isInCart(product.id)
+                              ? t("products.alreadyInCart")
+                              : t("products.addToCart")
+                          }
+                        >
+                          <i
+                            className={`bi ${
+                              isInCart(product.id)
+                                ? "bi-check-circle-fill"
+                                : "bi-cart-plus"
+                            }`}
+                          ></i>
+                        </button>
+
+                        <button
+                          className={`action-btn wishlist-btn ${
+                            isInWishlist(product.id) ? "in-wishlist" : ""
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleAddToWishlist(product);
+                          }}
+                          disabled={isInWishlist(product.id)}
+                          title={
+                            isInWishlist(product.id)
+                              ? t("products.alreadyInWishlist")
+                              : t("products.addToWishlist")
+                          }
+                        >
+                          <i
+                            className={`bi ${
+                              isInWishlist(product.id)
+                                ? "bi-heart-fill"
+                                : "bi-heart"
+                            }`}
+                          ></i>
+                        </button>
+                      </div>
+
                       <img
                         src={
                           product.main_image ||

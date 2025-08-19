@@ -28,6 +28,8 @@ import OtpForgetPassword from "../pages/OtpForgetPassword/OtpForgetPassword";
 import VendorProfile from "../pages/VendorProfile/VendorProfile";
 import AddProduct from "../pages/AddProduct/AddProduct";
 import ServiceDetalis from "../pages/ServiceDetalis/ServiceDetalis";
+import Cart from "../pages/Cart/Cart";
+import Wishlist from "../pages/Wishlist/Wishlist";
 
 export default function Applayout() {
   const location = useLocation();
@@ -77,6 +79,8 @@ export default function Applayout() {
         <Route path="/individualprofile" element={<IndividualProfile />} />
         <Route path="/companyprofile" element={<CompanyProfile />} />
         <Route path="/vendorprofile" element={<VendorProfile />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
         {/* <Route path="/otp" element={<OTP />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

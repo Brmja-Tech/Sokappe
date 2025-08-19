@@ -97,32 +97,103 @@
   margin-left: 0.5rem;
 }
 
-.contactBtn {
-  width: 100%;
-  padding: 1rem;
-  background-color: #0a6e58;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+/* Action Buttons Container */
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   margin-bottom: 2rem;
+}
+
+/* Base Action Button Styles */
+.actionBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-height: 48px;
+}
+
+/* Cart Button */
+.cartBtn {
+  background: var(--main-color);
+  color: white;
+}
+
+.cartBtn:hover:not(:disabled) {
+  background: #0a6e58;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 110, 88, 0.3);
+}
+
+.cartBtn.inCart {
+  background: #28a745;
+  cursor: not-allowed;
+}
+
+.cartBtn.inCart:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Wishlist Button */
+.wishlistBtn {
+  background: #e91e63;
+  color: white;
+}
+
+.wishlistBtn:hover:not(:disabled) {
+  background: #c2185b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+}
+
+.wishlistBtn.inWishlist {
+  background: #c2185b;
+  cursor: not-allowed;
+}
+
+.wishlistBtn.inWishlist:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Contact Button (Updated) */
+.contactBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--main-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-height: 48px;
 }
 
 .contactBtn:hover {
-  background-color: #08866b;
+  background: #0a6e58;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(10, 110, 88, 0.3);
+  box-shadow: 0 4px 12px rgba(10, 110, 88, 0.3);
 }
 
+/* Button Icons */
 .btnIcon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .safetyTips {
@@ -392,6 +463,17 @@
   .currentPrice {
     font-size: 2rem;
   }
+
+  .actionButtons {
+    gap: 0.75rem;
+  }
+  
+  .actionBtn,
+  .contactBtn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -418,5 +500,12 @@
 
   .sectionHeader {
     font-size: 1.2rem;
+  }
+
+  .actionBtn,
+  .contactBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    min-height: 40px;
   }
 }

@@ -9,6 +9,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../../context/CartContext";
 
 // Icons
 import ProductsServices from "../../component/ProductsServices/ProductsServices";
@@ -16,11 +17,22 @@ import ProductsServices from "../../component/ProductsServices/ProductsServices"
 export default function ProductsDetalis() {
   const { t, i18n } = useTranslation("global");
   const { id } = useParams();
+  const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
 
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Handle add to cart
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
+
+  // Handle add to wishlist
+  const handleAddToWishlist = () => {
+    addToWishlist(product);
+  };
 
   // Helper function to check if delivery/warranty is available
   const isAvailable = (value) => {
@@ -134,10 +146,83 @@ export default function ProductsDetalis() {
                 </span>
               </div>
 
-              <button className={styles.contactBtn}>
-                <i className={`bi bi-envelope-fill ${styles.btnIcon}`}></i>
-                {t("productDetails.contactSeller")}
-              </button>
+              {/* Conditional Buttons based on Product Condition */}
+              {product.condition === "New" ? (
+                // For New Products: Only Cart and Wishlist buttons
+                <div className={styles.actionButtons}>
+                  <button 
+                    className={`${styles.actionBtn} ${styles.cartBtn} ${
+                      isInCart(product.id) ? styles.inCart : ""
+                    }`}
+                    onClick={handleAddToCart}
+                    disabled={isInCart(product.id)}
+                    title={
+                      isInCart(product.id)
+                        ? t("products.alreadyInCart")
+                        : t("products.addToCart")
+                    }
+                  >
+                    <i className={`bi ${isInCart(product.id) ? "bi-check-circle-fill" : "bi-cart-plus"}`}></i>
+                    {isInCart(product.id) ? t("products.inCart") : t("products.addToCart")}
+                  </button>
+
+                  <button 
+                    className={`${styles.actionBtn} ${styles.wishlistBtn} ${
+                      isInWishlist(product.id) ? styles.inWishlist : ""
+                    }`}
+                    onClick={handleAddToWishlist}
+                    disabled={isInWishlist(product.id)}
+                    title={
+                      isInWishlist(product.id)
+                        ? t("products.alreadyInWishlist")
+                        : t("products.addToWishlist")
+                    }
+                  >
+                    <i className={`bi ${isInWishlist(product.id) ? "bi-heart-fill" : "bi-heart"}`}></i>
+                    {isInWishlist(product.id) ? t("products.inWishlist") : t("products.addToWishlist")}
+                  </button>
+                </div>
+              ) : (
+                // For Used Products: Contact Seller + Cart + Wishlist buttons
+                <div className={styles.actionButtons}>
+                  <button className={styles.contactBtn}>
+                    <i className={`bi bi-envelope-fill ${styles.btnIcon}`}></i>
+                    {t("productDetails.contactSeller")}
+                  </button>
+
+                  <button 
+                    className={`${styles.actionBtn} ${styles.cartBtn} ${
+                      isInCart(product.id) ? styles.inCart : ""
+                    }`}
+                    onClick={handleAddToCart}
+                    disabled={isInCart(product.id)}
+                    title={
+                      isInCart(product.id)
+                        ? t("products.alreadyInCart")
+                        : t("products.addToCart")
+                    }
+                  >
+                    <i className={`bi ${isInCart(product.id) ? "bi-check-circle-fill" : "bi-cart-plus"}`}></i>
+                    {isInCart(product.id) ? t("products.inCart") : t("products.addToCart")}
+                  </button>
+
+                  <button 
+                    className={`${styles.actionBtn} ${styles.wishlistBtn} ${
+                      isInWishlist(product.id) ? styles.inWishlist : ""
+                    }`}
+                    onClick={handleAddToWishlist}
+                    disabled={isInWishlist(product.id)}
+                    title={
+                      isInWishlist(product.id)
+                        ? t("products.alreadyInWishlist")
+                        : t("products.addToWishlist")
+                    }
+                  >
+                    <i className={`bi ${isInWishlist(product.id) ? "bi-heart-fill" : "bi-heart"}`}></i>
+                    {isInWishlist(product.id) ? t("products.inWishlist") : t("products.addToWishlist")}
+                  </button>
+                </div>
+              )}
 
               <div className={styles.safetyTips}>
                 <h3 className={styles.tipsHeading}>

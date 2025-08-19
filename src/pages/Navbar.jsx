@@ -7,8 +7,12 @@ import { FiChevronDown } from "react-icons/fi";
 import { useRef } from "react";
 import axios from "axios";
 import logo from "../assests/imgs/logo.svg";
+import { useCart } from "../context/CartContext";
+import styles from "./Navbar.module.css";
+
 const Navbar = () => {
   const { t, i18n } = useTranslation("global");
+  const { cartCount, wishlistItems } = useCart();
   const [isMobileScrolled, setIsMobileScrolled] = useState(false);
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "light"
@@ -34,13 +38,10 @@ const Navbar = () => {
   const checkAuthStatus = () => {
     const token = localStorage.getItem("token");
     const storedUserData = localStorage.getItem("userData");
-    console.log("Checking auth status, token:", token ? "exists" : "not found");
-    console.log("Stored userData:", storedUserData);
 
     if (token && storedUserData) {
       try {
         const userData = JSON.parse(storedUserData);
-        console.log("Parsed userData:", userData);
         setUserData(userData);
         setIsAuthenticated(true);
       } catch (error) {
@@ -51,8 +52,6 @@ const Navbar = () => {
         setUserData(null);
       }
     } else {
-      // Clear state if no token or userData
-      console.log("No token or userData found, clearing auth state");
       setIsAuthenticated(false);
       setUserData(null);
     }
@@ -137,12 +136,6 @@ const Navbar = () => {
         isMobileScrolled ? "fixed-top" : ""
       }`}
     >
-      {console.log(
-        "Current state - isAuthenticated:",
-        isAuthenticated,
-        "userData:",
-        userData
-      )}
       <div className="container d-flex justify-content-between align-items-center">
         <Link className="navbar-brand main-color fw-bold" to="/">
           <img src={logo} style={{ width: "75px" }} alt="logo" />
@@ -169,7 +162,7 @@ const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav align-items-center list-unstyled mx-auto mb-0 d-flex gap-3 p-0">
+          <ul className="navbar-nav align-items-center list-unstyled mx-auto mb-0 d-flex gap-1 p-0">
             <li className="nav-item">
               <Link to="/" className="nav-link">
                 {t("navbar.home")}
@@ -245,6 +238,38 @@ const Navbar = () => {
             <li className="d-lg-none">
               <Link className="add" to="/offer-request-service">
                 <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
+              </Link>
+            </li>
+
+            {/* Mobile Only - Cart */}
+            <li className="d-lg-none">
+              <Link className="add" to="/cart">
+                <div className={styles.mobileCounter}>
+                  <i className="bi bi-cart3"></i> {t("navbar.cart")}
+                  {cartCount > 0 && (
+                    <span
+                      className={`${styles.cartWishlistCounter} ${styles.cartCounter}`}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            </li>
+
+            {/* Mobile Only - Wishlist */}
+            <li className="d-lg-none">
+              <Link className="add" to="/wishlist">
+                <div className={styles.mobileCounter}>
+                  <i className="bi bi-heart"></i> {t("navbar.wishlist")}
+                  {wishlistItems.length > 0 && (
+                    <span
+                      className={`${styles.cartWishlistCounter} ${styles.wishlistCounter}`}
+                    >
+                      {wishlistItems.length}
+                    </span>
+                  )}
+                </div>
               </Link>
             </li>
 
@@ -396,6 +421,44 @@ const Navbar = () => {
               <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
             </Link>
           </li>
+          <li>|</li>
+
+          {/* Cart Icon */}
+          <li>
+            <Link
+              to="/cart"
+              className={styles.cartWishlistIcon}
+              title={t("navbar.cart")}
+            >
+              <i className="bi bi-cart3"></i>
+              {cartCount > 0 && (
+                <span
+                  className={`${styles.cartWishlistCounter} ${styles.cartCounter}`}
+                >
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          </li>
+
+          {/* Wishlist Icon */}
+          <li>
+            <Link
+              to="/wishlist"
+              className={styles.cartWishlistIcon}
+              title={t("navbar.wishlist")}
+            >
+              <i className="bi bi-heart"></i>
+              {wishlistItems.length > 0 && (
+                <span
+                  className={`${styles.cartWishlistCounter} ${styles.wishlistCounter}`}
+                >
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
+          </li>
+          <li>|</li>
 
           {/* Desktop Only - Profile Dropdown */}
           <li className="nav-item dropdown">

@@ -1,0 +1,119 @@
+/* Cart and Wishlist Icons */
+.cartWishlistIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--main-color);
+  text-decoration: none;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  background: rgba(10, 110, 88, 0.1);
+}
+
+.cartWishlistIcon:hover {
+  background: rgba(10, 110, 88, 0.2);
+  color: var(--main-color);
+  transform: scale(1.1);
+}
+
+.cartWishlistIcon i {
+  font-size: 1.2rem;
+}
+
+/* Counters */
+.cartWishlistCounter {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  border: 2px solid var(--basic-color);
+}
+
+.cartCounter {
+  background: #dc3545;
+}
+
+.wishlistCounter {
+  background: #e91e63;
+}
+
+/* Mobile Counters - for small screens */
+.mobileCounter {
+  position: relative;
+  display: inline-block;
+}
+
+.mobileCounter .cartWishlistCounter {
+  position: absolute;
+  top: -14px;
+  right: -20px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+}
+
+/* RTL Support for Arabic */
+[dir="rtl"] .mobileCounter .cartWishlistCounter {
+  right: auto;
+  left: -8px;
+}
+
+/* Dark Theme Support */
+[data-theme="dark"] .cartWishlistIcon {
+  color: var(--main-color);
+  background: rgba(10, 110, 88, 0.2);
+}
+
+[data-theme="dark"] .cartWishlistIcon:hover {
+  background: rgba(10, 110, 88, 0.3);
+}
+
+[data-theme="dark"] .cartWishlistCounter {
+  border-color: var(--dark-color);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .cartWishlistIcon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .cartWishlistIcon i {
+    font-size: 1.1rem;
+  }
+
+  .cartWishlistCounter {
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cartWishlistIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cartWishlistIcon i {
+    font-size: 1rem;
+  }
+
+  .cartWishlistCounter {
+    min-width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
+  }
+}

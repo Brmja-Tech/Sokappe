@@ -1,13 +1,48 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+/* ===== GLOBAL IMAGE RENDERING FIXES ===== */
+/* منع مشاكل الصور على السيرفر */
+img,
+video,
+canvas,
+svg,
+picture {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  image-rendering: auto !important;
+  -webkit-image-rendering: auto !important;
+  color-scheme: light only !important;
+  forced-color-adjust: none !important;
+}
+
+/* إصلاح مشكلة الألوان في الدارك مود */
+[data-theme="dark"] img,
+[data-theme="dark"] video,
+[data-theme="dark"] canvas,
+[data-theme="dark"] svg,
+[data-theme="dark"] picture {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  image-rendering: auto !important;
+  -webkit-image-rendering: auto !important;
+  color-scheme: light only !important;
+  forced-color-adjust: none !important;
+}
+
+/* ===== END OF IMAGE FIXES ===== */

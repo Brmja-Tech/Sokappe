@@ -10,6 +10,7 @@ import ProductsNewMarket from "../../component/ProductsNewMarket/ProductsNewMark
 import ProductsServices from "../../component/ProductsServices/ProductsServices";
 import ProductsOpenMarket from "../../component/ProductsOpenMarket/ProductsOpenMarket";
 import { useTranslation } from 'react-i18next'
+import ProductsUsedMarket from "../../component/ProductsUsedMarket/ProductsUsedMarket";
 
 const Home = () => {
   const { t, i18n } = useTranslation("global");
@@ -22,6 +23,7 @@ const Home = () => {
       <AdsServices/>
       <AdsOpenMarket/>
       <ProductsNewMarket/>
+      <ProductsUsedMarket/>
       <ProductsServices tittle={t("products.services")}/>
       <ProductsOpenMarket/>
       <Features/>

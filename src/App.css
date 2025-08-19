@@ -4,6 +4,52 @@
   --box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
 }
 
+/* ===== FIXES FOR DARK MODE IMAGE ISSUES ON SERVER ===== */
+/* منع تأثيرات CSS غير المرغوبة على الصور */
+img,
+video,
+canvas,
+svg {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  image-rendering: auto !important;
+  -webkit-image-rendering: auto !important;
+}
+
+/* إصلاح مشكلة الألوان في الدارك مود */
+[data-theme="dark"] img,
+[data-theme="dark"] video,
+[data-theme="dark"] canvas {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  image-rendering: auto !important;
+  -webkit-image-rendering: auto !important;
+}
+
+/* منع تأثيرات CSS Variables على الصور */
+img,
+video,
+canvas {
+  color-scheme: light only !important;
+  forced-color-adjust: none !important;
+}
+
+/* إصلاح مشكلة الألوان في المتصفحات القديمة */
+@supports not (color: var(--main-color)) {
+  img,
+  video,
+  canvas {
+    filter: none !important;
+    -webkit-filter: none !important;
+  }
+}
+
+/* ===== END OF FIXES ===== */
+
 @font-face {
   font-family: "Montserrat";
   src: url("../src/Montserrat-Arabic-Regular.ttf") format("truetype");
@@ -1001,3 +1047,50 @@ a {
     align-items: center !important;
   }
 }
+
+/* ===== ADDITIONAL SERVER-SAFE FIXES ===== */
+/* منع تأثيرات CSS على الصور في جميع الحالات */
+img,
+video,
+canvas,
+svg,
+picture {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  image-rendering: auto !important;
+  -webkit-image-rendering: auto !important;
+  color-scheme: light only !important;
+  forced-color-adjust: none !important;
+}
+
+/* إصلاح مشكلة الألوان في جميع المتصفحات */
+@supports not (backdrop-filter: blur(10px)) {
+  img,
+  video,
+  canvas,
+  svg,
+  picture {
+    filter: none !important;
+    -webkit-filter: none !important;
+  }
+}
+
+/* منع تأثيرات الدارك مود على الصور */
+[data-theme="dark"] img,
+[data-theme="dark"] video,
+[data-theme="dark"] canvas,
+[data-theme="dark"] svg,
+[data-theme="dark"] picture {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  image-rendering: auto !important;
+  -webkit-image-rendering: auto !important;
+  color-scheme: light only !important;
+  forced-color-adjust: none !important;
+}
+
+/* ===== END OF ADDITIONAL FIXES ===== */

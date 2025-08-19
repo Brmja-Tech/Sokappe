@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import styles from "./ProductsNewMarket.module.css";
+import styles from "./ProductsUsedMarket.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
 
-const ProductsNewMarket = () => {
+const ProductsUsedMarket = () => {
   const { t, i18n } = useTranslation("global");
   const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
   const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
@@ -17,12 +17,22 @@ const ProductsNewMarket = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Handle add to cart
+  const handleAddToCart = (product) => {
+    addToCart(product);
+  };
+
+  // Handle add to wishlist
+  const handleAddToWishlist = (product) => {
+    addToWishlist(product);
+  };
+
   useEffect(() => {
-    const fetchNewProducts = async () => {
+    const fetchUsedProducts = async () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/products/condition?condition=new`,
+          `${process.env.REACT_APP_BASE_URL}/products/condition?condition=used`,
           {
             headers: {
               Accept: "application/json",
@@ -37,7 +47,7 @@ const ProductsNewMarket = () => {
           setError(response.data?.message || "Failed to fetch products");
         }
       } catch (error) {
-        console.error("Error fetching new products:", error);
+        console.error("Error fetching used products:", error);
         if (error.response?.status === 404) {
           setError(
             "Products endpoint not found. Please check the API configuration."
@@ -52,16 +62,8 @@ const ProductsNewMarket = () => {
       }
     };
 
-    fetchNewProducts();
+    fetchUsedProducts();
   }, [i18n.language]);
-
-  const handleAddToCart = (product) => {
-    addToCart(product);
-  };
-
-  const handleAddToWishlist = (product) => {
-    addToWishlist(product);
-  };
 
   // Only enable loop if we have enough slides
   const shouldEnableLoop = products.length > 4;
@@ -100,7 +102,7 @@ const ProductsNewMarket = () => {
         <div className="container">
           <div className="text-center">
             <div className="alert alert-info" role="alert">
-              No new products available at the moment.
+              No used products available at the moment.
             </div>
           </div>
         </div>
@@ -114,7 +116,7 @@ const ProductsNewMarket = () => {
         <div className="row justify-content-between align-items-center">
           <div className="col-xl-5 col-lg-4 col-md-12 col-12">
             <h4 className="mb-4 main-color title">
-              <img src="/layout.gif" alt="--" /> {t("products.newmarket")}
+              <img src="/layout.gif" alt="--" /> {t("products.usedmarket")}
             </h4>
           </div>
           <div className="col-xl-7 col-lg-8 col-md-12 col-12 text-end">
@@ -227,7 +229,6 @@ const ProductsNewMarket = () => {
                       className="img-fluid mb-3 rounded-4"
                     />
                   </div>
-
                   <div className="p-3">
                     <p className="line-height mb-1 fw-bold">{product.name}</p>
 
@@ -290,4 +291,4 @@ const ProductsNewMarket = () => {
   );
 };
 
-export default ProductsNewMarket;
+export default ProductsUsedMarket;
