@@ -125,6 +125,161 @@
   font-size: 1.2rem;
 }
 
+/* Service Request Buttons */
+.requestBtn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.requestBtn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.requestBtn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancelRequestBtn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.cancelRequestBtn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.cancelRequestBtn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.requestStatus {
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.requestStatus.accepted {
+  background: rgba(25, 135, 84, 0.1);
+  border: 1px solid rgba(25, 135, 84, 0.3);
+}
+
+.requestStatus.rejected {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.requestStatus.completed {
+  background: rgba(13, 110, 253, 0.1);
+  border: 1px solid rgba(13, 110, 253, 0.3);
+}
+
+.requestStatus.pending {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.statusAccepted {
+  color: #198754;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.statusRejected {
+  color: #dc3545;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.statusCompleted {
+  color: #0d6efd;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.statusPending {
+  color: #ffc107;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.refreshStatusBtn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.refreshStatusBtn:hover {
+  color: #0a6e58;
+  background: rgba(10, 110, 88, 0.1);
+}
+
+.refreshStatusBtn:active {
+  transform: scale(0.95);
+}
+
+/* RTL Support for refresh button */
+[dir="rtl"] .refreshStatusBtn {
+  right: auto;
+  left: 0.5rem;
+}
+
 .safetyTips {
   border-top: 1px solid #f1f1f1;
   padding-top: 1.5rem;
@@ -161,6 +316,135 @@
   color: #0a6e58;
   font-size: 0.9rem;
   margin-top: 0.2rem;
+}
+
+/* Service Notifications Section */
+.serviceNotifications {
+  border-top: 1px solid #f1f1f1;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.notificationsHeading {
+  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notificationsIcon {
+  color: #ff9800;
+}
+
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.notificationItem {
+  background: #f8fafc;
+  border: 1px solid #e1e5eb;
+  border-radius: 8px;
+  padding: 1rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.notificationItem:hover {
+  background: #f1f3f4;
+  border-color: #0a6e58;
+}
+
+.notificationItem.unread {
+  background: rgba(255, 152, 0, 0.05);
+  border-left: 3px solid #ff9800;
+}
+
+.notificationContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notificationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notificationService {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.notificationTime {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.notificationStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusBadge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusSuccess {
+  background: #d4edda;
+  color: #155724;
+}
+
+.statusDanger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.statusPrimary {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.statusSecondary {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.notificationReason {
+  margin-top: 0.3rem;
+}
+
+.unreadIndicator {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  color: #ff9800;
+  font-size: 0.6rem;
+}
+
+.noNotifications {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #6c757d;
+  background: rgba(10, 110, 88, 0.02);
+  border-radius: 8px;
+  border: 2px dashed rgba(10, 110, 88, 0.1);
+}
+
+.noNotifications i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: rgba(10, 110, 88, 0.3);
 }
 
 /* قسم المواصفات */
@@ -406,5 +690,13 @@
 
   .sectionHeader {
     font-size: 1.2rem;
+  }
+
+  .notificationsHeading {
+    font-size: 1.1rem;
+  }
+
+  .notificationItem {
+    padding: 0.8rem;
   }
 }

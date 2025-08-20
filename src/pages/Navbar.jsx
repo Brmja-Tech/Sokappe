@@ -8,11 +8,14 @@ import { useRef } from "react";
 import axios from "axios";
 import logo from "../assests/imgs/logo.svg";
 import { useCart } from "../context/CartContext";
+import { useNotifications } from "../context/NotificationContext";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const { t, i18n } = useTranslation("global");
   const { cartCount, wishlistItems } = useCart();
+  const { unreadCount, notifications, markAsRead, formatNotificationTime } =
+    useNotifications();
   const [isMobileScrolled, setIsMobileScrolled] = useState(false);
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "light"
@@ -273,6 +276,25 @@ const Navbar = () => {
               </Link>
             </li>
 
+            {/* Mobile Only - Notifications */}
+            {isAuthenticated && (
+              <li className="d-lg-none">
+                <Link className="add" to="/notifications">
+                  <div className={styles.mobileCounter}>
+                    <i className="bi bi-bell"></i>{" "}
+                    {t("notifications.notifications")}
+                    {unreadCount > 0 && (
+                      <span
+                        className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
+                      >
+                        {unreadCount}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            )}
+
             {/* Mobile Only - Profile Dropdown */}
             <li className="nav-item dropdown d-lg-none">
               <button
@@ -458,6 +480,117 @@ const Navbar = () => {
               )}
             </Link>
           </li>
+
+          {/* Notifications Icon */}
+          {isAuthenticated && (
+            <>
+              <li>|</li>
+              <li className="nav-item dropdown">
+                <button
+                  className={`${styles.cartWishlistIcon} dropdown-toggle border-0 bg-transparent`}
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  title={t("notifications.notifications")}
+                >
+                  <i className="bi bi-bell"></i>
+                  {unreadCount > 0 && (
+                    <span
+                      className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
+                    >
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+                <div
+                  className={`dropdown-menu dropdown-menu-end ${styles.notificationsDropdown}`}
+                  style={{
+                    backgroundColor: `${
+                      theme === "dark"
+                        ? "var(--dark-color)"
+                        : "var(--basic-color)"
+                    }`,
+                  }}
+                >
+                  <div className={styles.dropdownHeader}>
+                    <h6 className="dropdown-header">
+                      <i className="bi bi-bell me-2"></i>
+                      {t("notifications.notifications")}
+                    </h6>
+                    {unreadCount > 0 && (
+                      <span className={styles.unreadBadge}>{unreadCount}</span>
+                    )}
+                  </div>
+
+                  <div className={styles.notificationsList}>
+                    {notifications.slice(0, 5).map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`${styles.notificationItem} ${
+                          !notification.read_at ? styles.unread : ""
+                        }`}
+                        onClick={() => markAsRead(notification.id)}
+                      >
+                        <div className={styles.notificationContent}>
+                          <div className={styles.notificationTitle}>
+                            <i className="bi bi-gear-fill me-2"></i>
+                            {notification.service_name}
+                          </div>
+                          <div className={styles.notificationStatus}>
+                            <span
+                              className={`${styles.statusBadge} ${
+                                notification.status === "accept" ||
+                                notification.status === "accepted"
+                                  ? styles.statusSuccess
+                                  : notification.status === "reject" ||
+                                    notification.status === "rejected"
+                                  ? styles.statusDanger
+                                  : styles.statusSecondary
+                              }`}
+                            >
+                              {notification.status === "accept" ||
+                              notification.status === "accepted"
+                                ? t("notifications.accepted")
+                                : notification.status === "reject" ||
+                                  notification.status === "rejected"
+                                ? t("notifications.rejected")
+                                : notification.status === "completed"
+                                ? t("notifications.completed")
+                                : notification.status}
+                            </span>
+                          </div>
+                          <div className={styles.notificationTime}>
+                            {formatNotificationTime(notification.created_at)}
+                          </div>
+                        </div>
+                        {!notification.read_at && (
+                          <div className={styles.unreadDot}>
+                            <i className="bi bi-circle-fill"></i>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    {notifications.length === 0 && (
+                      <div className={styles.emptyNotifications}>
+                        <i className="bi bi-bell-slash"></i>
+                        <span>{t("notifications.noNotifications")}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.dropdownFooter}>
+                    <Link
+                      to="/notifications"
+                      className={`${styles.viewAllBtn} dropdown-item text-center`}
+                    >
+                      <i className="bi bi-arrow-right me-2"></i>
+                      {t("notifications.viewAll")}
+                    </Link>
+                  </div>
+                </div>
+              </li>
+            </>
+          )}
           <li>|</li>
 
           {/* Desktop Only - Profile Dropdown */}

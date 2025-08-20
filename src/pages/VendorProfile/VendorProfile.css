@@ -376,6 +376,87 @@
   font-weight: 700;
 }
 
+.company-services-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.company-services-location {
+  margin-bottom: 0.5rem;
+}
+
+.company-services-discount {
+  margin-bottom: 0.5rem;
+}
+
+.company-services-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.clickable-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(10, 110, 88, 0.15);
+}
+
+.clickable-card:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.company-services-actions .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.company-services-actions .btn-outline-primary:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.company-services-actions .btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.company-services-actions .btn-outline-info:hover {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+/* Pagination styles */
+.pagination {
+  margin-bottom: 0;
+}
+
+.pagination .page-link {
+  color: #007bff;
+  border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
 /* --- Store Image Upload --- */
 .company-logo-upload-container {
   margin-bottom: 20px;
@@ -522,6 +603,12 @@
   color: #999;
 }
 
+/* Empty state */
+.text-muted {
+  color: #6c757d !important;
+  font-style: italic;
+}
+
 @media (max-width: 991px) {
   .profile-settings-content,
   .profile-settings-sidebar {
@@ -555,5 +642,16 @@
   .company-services-grid {
     flex-direction: column;
     gap: 18px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .company-services-actions {
+    justify-content: center;
+  }
+
+  .company-services-actions .btn {
+    flex: 1;
+    min-width: 60px;
   }
 }

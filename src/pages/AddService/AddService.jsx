@@ -658,6 +658,16 @@ export default function AddService() {
           formData[key].forEach((image) => {
             formDataToSend.append("other_images[]", image);
           });
+        } else if (
+          key === "country_id" ||
+          key === "governorate_id" ||
+          key === "center_gov_id"
+        ) {
+          // Only add location fields if not using profile address
+          if (formData.use_profile_address === "0") {
+            formDataToSend.append(key, formData[key]);
+          }
+          // If using profile address, don't add these fields at all
         } else if (key !== "main_image" && key !== "other_images") {
           formDataToSend.append(key, formData[key]);
         }
@@ -845,21 +855,20 @@ export default function AddService() {
               }
             });
           }
+        } else if (
+          key === "country_id" ||
+          key === "governorate_id" ||
+          key === "center_gov_id"
+        ) {
+          // Only add location fields if not using profile address
+          if (editFormData.use_profile_address === "0") {
+            formDataToSend.append(key, editFormData[key]);
+          }
+          // If using profile address, don't add these fields at all
         } else {
           formDataToSend.append(key, editFormData[key]);
         }
       });
-
-      // Add country, governorate, and center_gov data
-      if (editFormData.country_id) {
-        formDataToSend.append("country_id", editFormData.country_id);
-      }
-      if (editFormData.governorate_id) {
-        formDataToSend.append("governorate_id", editFormData.governorate_id);
-      }
-      if (editFormData.center_gov_id) {
-        formDataToSend.append("center_gov_id", editFormData.center_gov_id);
-      }
 
       console.log("Update form data:", editFormData);
       console.log("FormData entries:");
@@ -1334,7 +1343,6 @@ export default function AddService() {
         </div>
 
         <div className="form-row">
-          
           <div className="form-group">
             <label>{t("governorate")}</label>
             <select
@@ -1376,8 +1384,6 @@ export default function AddService() {
             </select>
           </div>
         </div>
-
-        
 
         <div className="form-row">
           <div className="form-group">
@@ -2384,8 +2390,6 @@ export default function AddService() {
                     </select>
                   </div>
                 </div>
-
-             
 
                 <div className="form-row">
                   <div className="form-group">

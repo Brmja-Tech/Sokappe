@@ -8,6 +8,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 // Icons
 import ProductsServices from "../../component/ProductsServices/ProductsServices";
@@ -18,6 +19,12 @@ export default function ServiceDetalis() {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Service request states
+  const [requestStatus, setRequestStatus] = useState(null); // 'pending', 'accepted', 'rejected', null
+  const [requestId, setRequestId] = useState(null);
+  const [requestLoading, setRequestLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   // Fetch service details
   const fetchServiceDetails = async () => {
@@ -48,11 +55,227 @@ export default function ServiceDetalis() {
     }
   };
 
+  // Send service request
+  const sendServiceRequest = async () => {
+    try {
+      setRequestLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      if (!userData || !userData.token) {
+        toast.error(t("sign.login") + " " + t("sign.haveAccount"));
+        return;
+      }
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/request/services?service_id=${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 201) {
+        setRequestStatus("pending");
+        setRequestId(response.data.data.id);
+
+        // Save request to localStorage
+        const requestData = {
+          id: response.data.data.id,
+          status: "pending",
+          serviceId: id,
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(
+          `service_request_${id}`,
+          JSON.stringify(requestData)
+        );
+
+        toast.success(t("servicePage.requestSent"));
+      }
+    } catch (error) {
+      console.error("Error sending service request:", error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(t("servicePage.sendRequest") + " " + t("sign.failed"));
+      }
+    } finally {
+      setRequestLoading(false);
+    }
+  };
+
+  // Cancel service request
+  const cancelServiceRequest = async () => {
+    try {
+      setCancelLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      if (!userData || !userData.token) {
+        toast.error(t("sign.login") + " " + t("sign.haveAccount"));
+        return;
+      }
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/request/services/cancel/${requestId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 200) {
+        setRequestStatus(null);
+        setRequestId(null);
+
+        // Remove request from localStorage
+        localStorage.removeItem(`service_request_${id}`);
+
+        toast.success(t("servicePage.cancelRequest") + " " + t("sign.success"));
+      }
+    } catch (error) {
+      console.error("Error cancelling service request:", error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(t("servicePage.cancelRequest") + " " + t("sign.failed"));
+      }
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  // Check current request status
+  const checkRequestStatus = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      if (!userData || !userData.token) {
+        return;
+      }
+
+      // Check if there's a saved request in localStorage
+      const savedRequest = localStorage.getItem(`service_request_${id}`);
+      if (savedRequest) {
+        try {
+          const requestData = JSON.parse(savedRequest);
+          // Verify the request is for the current service
+          if (requestData.serviceId === id) {
+            setRequestStatus(requestData.status);
+            setRequestId(requestData.id);
+
+            // Now check the actual status from the server
+            await checkRequestStatusFromServer(requestData.id);
+          } else {
+            // Remove invalid request data
+            localStorage.removeItem(`service_request_${id}`);
+          }
+        } catch (parseError) {
+          // Remove corrupted data
+          localStorage.removeItem(`service_request_${id}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking request status:", error);
+    }
+  };
+
+  // Check request status from server
+  const checkRequestStatusFromServer = async (requestId) => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      if (!userData || !userData.token) {
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/request/services/request/${requestId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 200) {
+        const serverStatus = response.data.data.status;
+        const previousStatus = requestStatus;
+
+        // Update status based on server response
+        if (serverStatus === "accept" || serverStatus === "accepted") {
+          setRequestStatus("accepted");
+        } else if (serverStatus === "reject" || serverStatus === "rejected") {
+          setRequestStatus("rejected");
+        } else if (serverStatus === "completed") {
+          setRequestStatus("completed");
+        } else {
+          setRequestStatus("pending");
+        }
+
+        // Update localStorage with new status
+        const savedRequest = localStorage.getItem(`service_request_${id}`);
+        if (savedRequest) {
+          const requestData = JSON.parse(savedRequest);
+          requestData.status = serverStatus;
+          localStorage.setItem(
+            `service_request_${id}`,
+            JSON.stringify(requestData)
+          );
+        }
+
+        // Show appropriate message based on status change
+        if (serverStatus === "accept" || serverStatus === "accepted") {
+          if (previousStatus !== "accepted") {
+            toast.success(t("servicePage.requestAccepted"));
+          }
+        } else if (serverStatus === "reject" || serverStatus === "rejected") {
+          if (previousStatus !== "rejected") {
+            toast.error(t("servicePage.requestRejected"));
+          }
+        } else if (serverStatus === "completed") {
+          if (previousStatus !== "completed") {
+            toast.success(t("servicePage.requestCompleted"));
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error checking request status from server:", error);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchServiceDetails();
+      checkRequestStatus();
     }
   }, [id, i18n.language]);
+
+  // Periodic status check every 30 seconds if there's a pending request
+  useEffect(() => {
+    let intervalId;
+
+    if (requestStatus === "pending" && requestId) {
+      intervalId = setInterval(() => {
+        checkRequestStatusFromServer(requestId);
+      }, 30000); // Check every 30 seconds
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [requestStatus, requestId]);
 
   if (loading) {
     return (
@@ -136,6 +359,72 @@ export default function ServiceDetalis() {
                 <i className={`bi bi-envelope-fill btnIcon`}></i>
                 {t("servicePage.contactSeller")}
               </button>
+
+              {/* Service Request Buttons */}
+              {!requestStatus ? (
+                <button
+                  className="requestBtn"
+                  onClick={sendServiceRequest}
+                  disabled={requestLoading}
+                >
+                  <i className={`bi bi-send-fill btnIcon`}></i>
+                  {requestLoading
+                    ? t("servicePage.sending")
+                    : t("servicePage.sendRequest")}
+                </button>
+              ) : requestStatus === "pending" ? (
+                <button
+                  className="cancelRequestBtn"
+                  onClick={cancelServiceRequest}
+                  disabled={cancelLoading}
+                >
+                  <i className={`bi bi-x-circle-fill btnIcon`}></i>
+                  {cancelLoading
+                    ? t("servicePage.cancelling")
+                    : t("servicePage.cancelRequest")}
+                </button>
+              ) : null}
+
+              {/* Display current request status */}
+              {requestStatus && (
+                <div className={`requestStatus ${requestStatus}`}>
+                  {requestStatus === "pending" && (
+                    <div className="statusPending">
+                      <i className="bi bi-clock-fill me-2"></i>
+                      <span>{t("servicePage.requestSent")}</span>
+                    </div>
+                  )}
+                  {requestStatus === "accepted" && (
+                    <div className="statusAccepted">
+                      <i className="bi bi-check-circle-fill me-2"></i>
+                      <span>{t("servicePage.requestAccepted")}</span>
+                    </div>
+                  )}
+                  {requestStatus === "rejected" && (
+                    <div className="statusRejected">
+                      <i className="bi bi-x-circle-fill me-2"></i>
+                      <span>{t("servicePage.requestRejected")}</span>
+                    </div>
+                  )}
+                  {requestStatus === "completed" && (
+                    <div className="statusCompleted">
+                      <i className="bi bi-check2-all me-2"></i>
+                      <span>{t("servicePage.requestCompleted")}</span>
+                    </div>
+                  )}
+
+                  {/* Refresh Status Button - Only show for pending requests */}
+                  {requestStatus === "pending" && (
+                    <button
+                      className="refreshStatusBtn"
+                      onClick={() => checkRequestStatusFromServer(requestId)}
+                      title={t("servicePage.refreshStatus")}
+                    >
+                      <i className="bi bi-arrow-clockwise"></i>
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div className="safetyTips">
                 <h3 className="tipsHeading">

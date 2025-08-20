@@ -542,6 +542,73 @@
   font-weight: 700;
 }
 
+.clickable-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(10, 110, 88, 0.15);
+}
+
+.clickable-card:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.company-services-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.company-services-location {
+  margin-bottom: 0.5rem;
+}
+
+.company-services-discount {
+  margin-bottom: 0.5rem;
+}
+
+.company-services-condition {
+  margin-bottom: 0.5rem;
+}
+
+.company-services-condition .text-primary {
+  color: #007bff !important;
+  font-weight: 600;
+}
+
+/* Pagination styles */
+.pagination {
+  margin-bottom: 0;
+}
+
+.pagination .page-link {
+  color: #007bff;
+  border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+/* Empty state */
+.text-muted {
+  color: #6c757d !important;
+  font-style: italic;
+}
+
 @media (max-width: 991px) {
   .profile-settings-content,
   .profile-settings-sidebar {

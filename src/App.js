@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import AppRoutes from "./routes/AppRoutes";
 import CartProvider from "./context/CartContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import ScrollToTop from "./component/ScrollToTop/ScrollToTop";
 import "./App.css";
 import AOS from "aos";
@@ -19,22 +20,24 @@ function App() {
 
   return (
     <CartProvider>
-      <BrowserRouter>
-        <AppRoutes />
-        <ScrollToTop />
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </BrowserRouter>
+      <NotificationProvider>
+        <BrowserRouter>
+          <AppRoutes />
+          <ScrollToTop />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </BrowserRouter>
+      </NotificationProvider>
     </CartProvider>
   );
 }

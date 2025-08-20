@@ -3,13 +3,15 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "./CompanyProfile.css";
-import { FiCamera, FiPlus } from "react-icons/fi";
+import { FiCamera } from "react-icons/fi";
 
 export default function CompanyProfile() {
   const { t, i18n } = useTranslation("global");
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [servicesLoading, setServicesLoading] = useState(false);
+  const [productsLoading, setProductsLoading] = useState(false);
   const isRTL = i18n.language === "ar";
 
   // Profile form state
@@ -60,13 +62,19 @@ export default function CompanyProfile() {
     email: "",
   });
 
+  // Services and Products state
+  const [services, setServices] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   // API Data States for location
   const [countries, setCountries] = useState([]);
   const [governorates, setGovernorates] = useState([]);
   const [centerGovernorates, setCenterGovernorates] = useState([]);
 
   // Dummy data for services
-  const services = [1, 2, 3, 4, 5, 6, 7, 8];
+  const dummyServices = [1, 2, 3, 4, 5, 6, 7, 8];
 
   // Fetch profile data on component mount
   useEffect(() => {
@@ -110,6 +118,28 @@ export default function CompanyProfile() {
       fetchCenterGovernorates(profileData.governorate_id);
     }
   }, [profileData.governorate_id]);
+
+  // Fetch services or products when tab changes
+  useEffect(() => {
+    if (activeTab === "services" && profileData.account_type) {
+      if (profileData.account_type === "service") {
+        fetchServices();
+      } else {
+        fetchProducts();
+      }
+    }
+  }, [activeTab, profileData.account_type]);
+
+  // Refetch data when page changes
+  useEffect(() => {
+    if (activeTab === "services" && profileData.account_type) {
+      if (profileData.account_type === "service") {
+        fetchServices();
+      } else {
+        fetchProducts();
+      }
+    }
+  }, [currentPage]);
 
   const fetchProfileData = async () => {
     try {
@@ -254,6 +284,77 @@ export default function CompanyProfile() {
     }
   };
 
+  // Fetch services for service accounts
+  const fetchServices = async () => {
+    try {
+      setServicesLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || !userData.token) {
+        toast.error("Authentication required");
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/services/my-services?per_page=10&page=${currentPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        setServices(response.data.data.data || []);
+        setTotalPages(response.data.data.meta?.last_page || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching services:", error);
+      toast.error("Failed to load services");
+    } finally {
+      setServicesLoading(false);
+    }
+  };
+
+  // Fetch products for physical accounts
+  const fetchProducts = async () => {
+    try {
+      setProductsLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || !userData.token) {
+        toast.error("Authentication required");
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/products/my-products?per_page=10&page=${currentPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        setProducts(response.data.data.data || []);
+        setTotalPages(response.data.data.meta?.last_page || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast.error("Failed to load products");
+    } finally {
+      setProductsLoading(false);
+    }
+  };
+
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
   const handleProfileInputChange = (field, value) => {
     setProfileData((prev) => ({
       ...prev,
@@ -266,6 +367,46 @@ export default function CompanyProfile() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  // Helper function to get localized name
+  const getLocalizedName = (item) => {
+    if (!item || !item.name) return "";
+
+    // If name is an object with ar/en properties
+    if (typeof item.name === "object" && item.name.ar && item.name.en) {
+      return i18n.language === "ar" ? item.name.ar : item.name.en;
+    }
+
+    // If name is a string, return it directly
+    if (typeof item.name === "string") {
+      return item.name;
+    }
+
+    // Fallback to empty string
+    return "";
+  };
+
+  // Helper function to get localized description
+  const getLocalizedDescription = (item) => {
+    if (!item || !item.description) return "";
+
+    // If description is an object with ar/en properties
+    if (
+      typeof item.description === "object" &&
+      item.description.ar &&
+      item.description.en
+    ) {
+      return i18n.language === "ar" ? item.description.ar : item.description.en;
+    }
+
+    // If description is a string, return it directly
+    if (typeof item.description === "string") {
+      return item.description;
+    }
+
+    // Fallback to empty string
+    return "";
   };
 
   const handleProfileSubmit = async (e) => {
@@ -427,7 +568,9 @@ export default function CompanyProfile() {
                   onClick={() => setActiveTab("services")}
                   style={{ textAlign: isRTL ? "right" : "left" }}
                 >
-                  {t("settings.myServicesTab")}
+                  {profileData.account_type === "service"
+                    ? t("settings.myServicesTab")
+                    : t("settings.myProductsTab")}
                 </button>
               </div>
             </div>
@@ -1071,41 +1214,223 @@ export default function CompanyProfile() {
               )}
               {activeTab === "services" && (
                 <div className="company-services-tab">
-                  <div className="row company-services-grid">
-                    {services.map((item, idx) => (
-                      <div className="col-md-6 col-lg-4 mb-4" key={idx}>
-                        <div className="company-services-card">
-                          <img
-                            src="/car.png"
-                            alt="service"
-                            className="company-services-img"
-                          />
-                          <div className="company-services-content">
-                            <h6 className="company-services-title">
-                              Mercedes-Benz GLA 200 AMG 2023
-                            </h6>
-                            <p className="company-services-owner">
-                              Nine One One
-                            </p>
-                            <div className="company-services-rating">
-                              <span className="company-services-star">★</span>
-                              <span className="company-services-star">★</span>
-                              <span className="company-services-star">★</span>
-                              <span className="company-services-star">★</span>
-                              <span className="company-services-star empty">
-                                ★
-                              </span>
-                              <span className="mx-2">(16)</span>
-                            </div>
-                            <div className="company-services-price">
-                              {t("products.startingFrom")}{" "}
-                              <span>130 {t("products.currency")}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="mb-4">
+                    <h4>
+                      {profileData.account_type === "service"
+                        ? t("settings.myServicesTab")
+                        : t("settings.myProductsTab")}
+                    </h4>
                   </div>
+
+                  {servicesLoading || productsLoading ? (
+                    <div className="text-center">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {profileData.account_type === "service" ? (
+                        // Services Grid
+                        <div className="row company-services-grid">
+                          {services.length > 0 ? (
+                            services.map((service) => (
+                              <div
+                                className="col-md-6 col-lg-4 mb-4"
+                                key={service.id}
+                              >
+                                <div
+                                  className="company-services-card clickable-card"
+                                  onClick={() =>
+                                    (window.location.href = `/servicedetails/${service.id}`)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <img
+                                    src={
+                                      typeof service.main_image === "string"
+                                        ? service.main_image
+                                        : "/car.png"
+                                    }
+                                    alt={getLocalizedName(service)}
+                                    className="company-services-img"
+                                  />
+                                  <div className="company-services-content">
+                                    <h6 className="company-services-title">
+                                      {getLocalizedName(service)}
+                                    </h6>
+                                    <p className="company-services-description">
+                                      {getLocalizedDescription(service)}
+                                    </p>
+                                    <div className="company-services-location">
+                                      <small className="text-muted">
+                                        {service.country?.name ||
+                                          service.country ||
+                                          ""}{" "}
+                                        -{" "}
+                                        {service.governorate?.name ||
+                                          service.governorate ||
+                                          ""}{" "}
+                                        -{" "}
+                                        {service.center_gov?.name ||
+                                          service.centerGov?.name ||
+                                          service.centerGov ||
+                                          ""}
+                                      </small>
+                                    </div>
+                                    <div className="company-services-price">
+                                      {t("products.startingFrom")}{" "}
+                                      <span>
+                                        {service.price || "0"}{" "}
+                                        {t("products.currency")}
+                                      </span>
+                                    </div>
+                                    {service.discount_price && (
+                                      <div className="company-services-discount">
+                                        <small className="text-danger">
+                                          {t("products.discountPrice")}:{" "}
+                                          {service.discount_price}{" "}
+                                          {t("products.currency")}
+                                        </small>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="col-12 text-center">
+                              <p className="text-muted">No services found</p>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        // Products Grid
+                        <div className="row company-services-grid">
+                          {products.length > 0 ? (
+                            products.map((product) => (
+                              <div
+                                className="col-md-6 col-lg-4 mb-4"
+                                key={product.id}
+                              >
+                                <div
+                                  className="company-services-card clickable-card"
+                                  onClick={() =>
+                                    (window.location.href = `/productdetalis/${product.id}`)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <img
+                                    src={
+                                      typeof product.main_image === "string"
+                                        ? product.main_image
+                                        : "/car.png"
+                                    }
+                                    alt={getLocalizedName(product)}
+                                    className="company-services-img"
+                                  />
+                                  <div className="company-services-content">
+                                    <h6 className="company-services-title">
+                                      {getLocalizedName(product)}
+                                    </h6>
+                                    <p className="company-services-description">
+                                      {getLocalizedDescription(product)}
+                                    </p>
+                                    <div className="company-services-condition">
+                                      <small className="text-primary font-weight-bold">
+                                        {product.condition}
+                                      </small>
+                                    </div>
+                                    <div className="company-services-price">
+                                      {t("products.startingFrom")}{" "}
+                                      <span>
+                                        {product.price || "0"}{" "}
+                                        {t("products.currency")}
+                                      </span>
+                                    </div>
+                                    {product.discount_price && (
+                                      <div className="company-services-discount">
+                                        <small className="text-danger">
+                                          {t("products.discountPrice")}:{" "}
+                                          {product.discount_price}{" "}
+                                          {t("products.currency")}
+                                        </small>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="col-12 text-center">
+                              <p className="text-muted">No products found</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <div className="d-flex justify-content-center mt-4">
+                          <nav>
+                            <ul className="pagination">
+                              <li
+                                className={`page-item ${
+                                  currentPage === 1 ? "disabled" : ""
+                                }`}
+                              >
+                                <button
+                                  className="page-link"
+                                  onClick={() =>
+                                    handlePageChange(currentPage - 1)
+                                  }
+                                  disabled={currentPage === 1}
+                                >
+                                  {t("previous")}
+                                </button>
+                              </li>
+                              {Array.from(
+                                { length: totalPages },
+                                (_, i) => i + 1
+                              ).map((page) => (
+                                <li
+                                  key={page}
+                                  className={`page-item ${
+                                    currentPage === page ? "active" : ""
+                                  }`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() => handlePageChange(page)}
+                                  >
+                                    {page}
+                                  </button>
+                                </li>
+                              ))}
+                              <li
+                                className={`page-item ${
+                                  currentPage === totalPages ? "disabled" : ""
+                                }`}
+                              >
+                                <button
+                                  className="page-link"
+                                  onClick={() =>
+                                    handlePageChange(currentPage + 1)
+                                  }
+                                  disabled={currentPage === totalPages}
+                                >
+                                  {t("next")}
+                                </button>
+                              </li>
+                            </ul>
+                          </nav>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               )}
             </div>

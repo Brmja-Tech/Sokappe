@@ -1,25 +1,22 @@
-import React, { useMemo } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
-import { useTranslation } from 'react-i18next';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import './AdsOpenMarket.css';
+import React, { useMemo } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import { useTranslation } from "react-i18next";
+import "swiper/css";
+import "swiper/css/pagination";
+import "./AdsOpenMarket.css";
 
 const AdsOpenMarket = () => {
   const { t, i18n } = useTranslation("global");
-    const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
-    const isRTL = i18n.language === "ar";
+  const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
+  const isRTL = i18n.language === "ar";
 
-  const ads = [
-    '/ads/ad1.jpg',
-    '/ads/ad2.jpg'
-  ];
+  const ads = ["/ads/ad1.jpg", "/ads/ad2.jpg"];
 
   return (
     <div className="ads py-5">
       <div className="container">
-      <h4 className='mb-3'>{t("ads.openmarket")}</h4>
+        <h4 className="mb-3">{t("ads.openmarket")}</h4>
         <Swiper
           modules={[Pagination, Autoplay]}
           slidesPerView={1}
@@ -28,7 +25,7 @@ const AdsOpenMarket = () => {
           dir={isRTL ? "rtl" : "ltr"}
           autoplay={{
             delay: 3000,
-            disableOnInteraction: false
+            disableOnInteraction: false,
           }}
           loop={true}
           pagination={{ clickable: true }}
@@ -39,7 +36,7 @@ const AdsOpenMarket = () => {
                 src={img}
                 alt={`Ad ${index + 1}`}
                 className="w-100 rounded shadow-sm"
-                style={{ maxHeight: '350px', objectFit: 'cover' }}
+                style={{ maxHeight: "350px", objectFit: "cover" }}
               />
             </SwiperSlide>
           ))}

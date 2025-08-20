@@ -30,6 +30,8 @@ import AddProduct from "../pages/AddProduct/AddProduct";
 import ServiceDetalis from "../pages/ServiceDetalis/ServiceDetalis";
 import Cart from "../pages/Cart/Cart";
 import Wishlist from "../pages/Wishlist/Wishlist";
+import Notifications from "../pages/Notifications/Notifications";
+import RequestDetails from "../pages/RequestDetails/RequestDetails";
 
 export default function Applayout() {
   const location = useLocation();
@@ -81,6 +83,11 @@ export default function Applayout() {
         <Route path="/vendorprofile" element={<VendorProfile />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route
+          path="/request-details/:requestId"
+          element={<RequestDetails />}
+        />
         {/* <Route path="/otp" element={<OTP />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
