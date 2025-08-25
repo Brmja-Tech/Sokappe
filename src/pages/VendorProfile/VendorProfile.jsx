@@ -68,6 +68,12 @@ export default function VendorProfile() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Service Requests state
+  const [requests, setRequests] = useState([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+  const [requestsCurrentPage, setRequestsCurrentPage] = useState(1);
+  const [requestsTotalPages, setRequestsTotalPages] = useState(1);
+
   // API Data States for location
   const [countries, setCountries] = useState([]);
   const [governorates, setGovernorates] = useState([]);
@@ -113,6 +119,20 @@ export default function VendorProfile() {
     }
   }, [activeTab, profileData.account_type]);
 
+  // Fetch requests when tab changes
+  useEffect(() => {
+    if (activeTab === "requests") {
+      fetchRequests();
+    }
+  }, [activeTab]);
+
+  // Refetch requests when page changes
+  useEffect(() => {
+    if (activeTab === "requests" && requestsCurrentPage > 1) {
+      fetchRequests();
+    }
+  }, [requestsCurrentPage]);
+
   // Fetch governorates when country_id changes
   useEffect(() => {
     if (profileData.country_id) {
@@ -131,7 +151,7 @@ export default function VendorProfile() {
     try {
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -210,7 +230,7 @@ export default function VendorProfile() {
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
-      toast.error("Failed to load profile data");
+      toast.error(t("settings.failedToLoadProfileData"));
     } finally {
       setProfileLoading(false);
     }
@@ -276,7 +296,7 @@ export default function VendorProfile() {
       setServicesLoading(true);
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -297,7 +317,7 @@ export default function VendorProfile() {
       }
     } catch (error) {
       console.error("Error fetching services:", error);
-      toast.error("Failed to load services");
+      toast.error(t("settings.failedToLoadServices"));
     } finally {
       setServicesLoading(false);
     }
@@ -309,7 +329,7 @@ export default function VendorProfile() {
       setProductsLoading(true);
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -330,15 +350,53 @@ export default function VendorProfile() {
       }
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error("Failed to load products");
+      toast.error(t("settings.failedToLoadProducts"));
     } finally {
       setProductsLoading(false);
+    }
+  };
+
+  // Fetch service requests
+  const fetchRequests = async () => {
+    try {
+      setRequestsLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || !userData.token) {
+        toast.error(t("settings.authenticationRequired"));
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/request/services/my-requests?page=${requestsCurrentPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        setRequests(response.data.data.data || []);
+        setRequestsTotalPages(response.data.data.pagination?.last_page || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+      toast.error(t("settings.failedToLoadRequests"));
+    } finally {
+      setRequestsLoading(false);
     }
   };
 
   // Handle page change
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+  };
+
+  // Handle requests page change
+  const handleRequestsPageChange = (newPage) => {
+    setRequestsCurrentPage(newPage);
   };
 
   // Helper function to get localized name
@@ -378,7 +436,7 @@ export default function VendorProfile() {
     try {
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -420,7 +478,7 @@ export default function VendorProfile() {
       );
 
       if (response.data.status === 200) {
-        toast.success("Profile updated successfully!");
+        toast.success(t("settings.profileUpdatedSuccessfully"));
 
         // Update local state with the new data we sent
         const updatedProfileData = {
@@ -474,7 +532,9 @@ export default function VendorProfile() {
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error(error.response?.data?.message || "Failed to update profile");
+      toast.error(
+        error.response?.data?.message || t("settings.failedToUpdateProfile")
+      );
     } finally {
       setLoading(false);
     }
@@ -532,6 +592,15 @@ export default function VendorProfile() {
                     ? t("settings.myServicesTab")
                     : t("settings.myProductsTab")}
                 </button>
+                <button
+                  className={`profile-settings-tab-btn${
+                    activeTab === "requests" ? " active" : ""
+                  }`}
+                  onClick={() => setActiveTab("requests")}
+                  style={{ textAlign: isRTL ? "right" : "left" }}
+                >
+                  {t("settings.myRequestsTab")}
+                </button>
               </div>
             </div>
           </div>
@@ -546,7 +615,9 @@ export default function VendorProfile() {
                         className="spinner-border text-primary"
                         role="status"
                       >
-                        <span className="visually-hidden">Loading...</span>
+                        <span className="visually-hidden">
+                          {t("settings.loading")}
+                        </span>
                       </div>
                     </div>
                   ) : (
@@ -700,7 +771,7 @@ export default function VendorProfile() {
                             <input
                               type="text"
                               className="form-control profile-settings-input"
-                              placeholder="National ID"
+                              placeholder={t("profile.nationalIdPlaceholder")}
                               value={profileData.national_id}
                               onChange={(e) =>
                                 handleProfileInputChange(
@@ -878,7 +949,7 @@ export default function VendorProfile() {
                             <input
                               className="form-control profile-settings-input"
                               rows="3"
-                              placeholder="Address"
+                              placeholder={t("sign.addressPlaceholderAr")}
                               value={profileData.address.ar}
                               onChange={(e) =>
                                 handleProfileInputChange("address", {
@@ -895,7 +966,7 @@ export default function VendorProfile() {
                             </label>
                             <input
                               className="form-control profile-settings-input"
-                              placeholder="Address"
+                              placeholder={t("sign.addressPlaceholderEn")}
                               value={profileData.address.en}
                               onChange={(e) =>
                                 handleProfileInputChange("address", {
@@ -914,7 +985,7 @@ export default function VendorProfile() {
                             <textarea
                               className="form-control profile-settings-input"
                               rows="3"
-                              placeholder={t("settings.bioPlaceholder")}
+                              placeholder={t("settings.bioPlaceholderAr")}
                               value={profileData.bio.ar}
                               onChange={(e) =>
                                 handleProfileInputChange("bio", {
@@ -931,7 +1002,7 @@ export default function VendorProfile() {
                             <textarea
                               className="form-control profile-settings-input"
                               rows="3"
-                              placeholder={t("settings.bioPlaceholder")}
+                              placeholder={t("settings.bioPlaceholderEn")}
                               value={profileData.bio.en}
                               onChange={(e) =>
                                 handleProfileInputChange("bio", {
@@ -1130,7 +1201,9 @@ export default function VendorProfile() {
                               className="profile-settings-save-btn"
                               disabled={loading}
                             >
-                              {loading ? "Updating..." : t("settings.saveBtn")}
+                              {loading
+                                ? t("settings.updating")
+                                : t("settings.saveBtn")}
                             </button>
                           </div>
                         </div>
@@ -1187,7 +1260,9 @@ export default function VendorProfile() {
                         className="spinner-border text-primary"
                         role="status"
                       >
-                        <span className="visually-hidden">Loading...</span>
+                        <span className="visually-hidden">
+                          {t("settings.loading")}
+                        </span>
                       </div>
                     </div>
                   ) : (
@@ -1248,7 +1323,9 @@ export default function VendorProfile() {
                             ))
                           ) : (
                             <div className="col-12 text-center">
-                              <p className="text-muted">No services found</p>
+                              <p className="text-muted">
+                                {t("settings.noServicesFound")}
+                              </p>
                             </div>
                           )}
                         </div>
@@ -1306,7 +1383,9 @@ export default function VendorProfile() {
                             ))
                           ) : (
                             <div className="col-12 text-center">
-                              <p className="text-muted">No products found</p>
+                              <p className="text-muted">
+                                {t("settings.noProductsFound")}
+                              </p>
                             </div>
                           )}
                         </div>
@@ -1361,6 +1440,155 @@ export default function VendorProfile() {
                                     handlePageChange(currentPage + 1)
                                   }
                                   disabled={currentPage === totalPages}
+                                >
+                                  {t("next")}
+                                </button>
+                              </li>
+                            </ul>
+                          </nav>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+              {activeTab === "requests" && (
+                <div className="company-requests-tab">
+                  <div className="mb-4">
+                    <h4>{t("settings.myRequestsTab")}</h4>
+                  </div>
+
+                  {requestsLoading ? (
+                    <div className="text-center">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="visually-hidden">
+                          {t("settings.loading")}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {requests.length > 0 ? (
+                        <div className="row company-requests-grid">
+                          {requests.map((request) => (
+                            <div
+                              className="col-md-6 col-lg-4 mb-4"
+                              key={request.id}
+                            >
+                              <div
+                                className="company-requests-card clickable-card"
+                                onClick={() =>
+                                  (window.location.href = `/request-details/${request.id}`)
+                                }
+                                style={{ cursor: "pointer" }}
+                              >
+                                <div className="company-requests-content">
+                                  <div className="company-requests-header">
+                                    <h6 className="company-requests-title">
+                                      {request.service?.name ||
+                                        t("settings.serviceRequest")}
+                                    </h6>
+                                    <span
+                                      className={`company-requests-status status-${request.status}`}
+                                    >
+                                      {request.status}
+                                    </span>
+                                  </div>
+                                  <div className="company-requests-details">
+                                    <p className="company-requests-requester">
+                                      <strong>
+                                        {t("settings.requester")}:
+                                      </strong>{" "}
+                                      {request.other_party?.name ||
+                                        t("settings.unknown")}
+                                    </p>
+                                    <p className="company-requests-date">
+                                      <strong>
+                                        {t("settings.startedAt")}:
+                                      </strong>{" "}
+                                      {request.started_at || t("settings.na")}
+                                    </p>
+                                  </div>
+                                  <div className="company-requests-actions">
+                                    <button className="btn btn-outline-primary btn-sm">
+                                      {t("settings.viewDetails")}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="col-12 text-center">
+                          <p className="text-muted">
+                            {t("settings.noRequestsFound")}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Pagination */}
+                      {requestsTotalPages > 1 && (
+                        <div className="d-flex justify-content-center mt-4">
+                          <nav>
+                            <ul className="pagination">
+                              <li
+                                className={`page-item ${
+                                  requestsCurrentPage === 1 ? "disabled" : ""
+                                }`}
+                              >
+                                <button
+                                  className="page-link"
+                                  onClick={() =>
+                                    handleRequestsPageChange(
+                                      requestsCurrentPage - 1
+                                    )
+                                  }
+                                  disabled={requestsCurrentPage === 1}
+                                >
+                                  {t("previous")}
+                                </button>
+                              </li>
+                              {Array.from(
+                                { length: requestsTotalPages },
+                                (_, i) => i + 1
+                              ).map((page) => (
+                                <li
+                                  key={page}
+                                  className={`page-item ${
+                                    requestsCurrentPage === page ? "active" : ""
+                                  }`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() =>
+                                      handleRequestsPageChange(page)
+                                    }
+                                  >
+                                    {page}
+                                  </button>
+                                </li>
+                              ))}
+                              <li
+                                className={`page-item ${
+                                  requestsCurrentPage === requestsTotalPages
+                                    ? "disabled"
+                                    : ""
+                                }`}
+                              >
+                                <button
+                                  className="page-link"
+                                  onClick={() =>
+                                    handleRequestsPageChange(
+                                      requestsCurrentPage + 1
+                                    )
+                                  }
+                                  disabled={
+                                    requestsCurrentPage === requestsTotalPages
+                                  }
                                 >
                                   {t("next")}
                                 </button>

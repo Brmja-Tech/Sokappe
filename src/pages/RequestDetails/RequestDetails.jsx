@@ -12,6 +12,10 @@ const RequestDetails = () => {
   const [requestData, setRequestData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [userType, setUserType] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
 
   // Fetch request details
   const fetchRequestDetails = async () => {
@@ -59,6 +63,74 @@ const RequestDetails = () => {
       fetchRequestDetails();
     }
   }, [requestId, i18n.language]);
+
+  // Get user type from localStorage
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData && userData.type) {
+      setUserType(userData.type);
+    }
+  }, []);
+
+  // Open confirmation modal
+  const openConfirmModal = (action) => {
+    setPendingAction(action);
+    setShowConfirmModal(true);
+  };
+
+  // Handle request action (accept/reject)
+  const handleRequestAction = async (action) => {
+    try {
+      setActionLoading(true);
+      setShowConfirmModal(false);
+
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      if (!userData || !userData.token) {
+        setError(t("requestDetails.loginRequired"));
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("action", action);
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/request/services/respond/${requestId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 200) {
+        // Show success message
+        const successMessage =
+          action === "accept"
+            ? t("requestDetails.actions.acceptSuccess")
+            : t("requestDetails.actions.rejectSuccess");
+
+        // Update request status locally
+        setRequestData((prev) => ({
+          ...prev,
+          status: action === "accept" ? "accepted" : "rejected",
+        }));
+
+        // Show success message (you can replace this with a toast notification)
+        alert(successMessage);
+      } else {
+        setError(t("requestDetails.actions.actionError"));
+      }
+    } catch (error) {
+      console.error("Error performing action:", error);
+      setError(t("requestDetails.actions.actionError"));
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -130,6 +202,15 @@ const RequestDetails = () => {
     } catch (error) {
       return dateString;
     }
+  };
+
+  // Check if user can perform actions on this request
+  const canPerformActions = () => {
+    // Only company or individual_vendor can perform actions
+    return (
+      (userType === "company" || userType === "individual_vendor") &&
+      requestData?.status === "pending"
+    );
   };
 
   if (loading) {
@@ -311,13 +392,15 @@ const RequestDetails = () => {
           </div>
         )}
 
-        {/* Provider Details Card */}
-        {requestData.service?.provider && (
+        {/* Other Party Details Card - Shows provider or requester based on type */}
+        {requestData.other_party && (
           <div className="request-card">
             <div className="card-header">
               <h2 className="card-title">
                 <i className="bi bi-person me-2"></i>
-                {t("requestDetails.providerInfo")}
+                {requestData.other_party.type === "provider"
+                  ? t("requestDetails.requesterInfo")
+                  : t("requestDetails.providerInfo")}
               </h2>
             </div>
 
@@ -325,19 +408,25 @@ const RequestDetails = () => {
               <div className="provider-details">
                 <div className="detail-item">
                   <label className="detail-label">
-                    {t("requestDetails.providerName")}:
+                    {requestData.other_party.type === "provider"
+                      ? t("requestDetails.requesterName")
+                      : t("requestDetails.providerName")}
+                    :
                   </label>
                   <span className="detail-value provider-name">
-                    {requestData.service.provider.name}
+                    {requestData.other_party.name}
                   </span>
                 </div>
 
                 <div className="detail-item">
                   <label className="detail-label">
-                    {t("requestDetails.providerId")}:
+                    {requestData.other_party.type === "provider"
+                      ? t("requestDetails.requesterId")
+                      : t("requestDetails.providerId")}
+                    :
                   </label>
                   <span className="detail-value">
-                    #{requestData.service.provider.id}
+                    #{requestData.other_party.id}
                   </span>
                 </div>
               </div>
@@ -345,7 +434,62 @@ const RequestDetails = () => {
           </div>
         )}
 
-        {/* Action Buttons */}
+        {/* Request Action Buttons - Only for company/individual_vendor when status is pending */}
+        {canPerformActions() && (
+          <div className="request-action-buttons">
+            <h3 className="action-title">
+              <i className="bi bi-gear me-2"></i>
+              {t("requestDetails.actions.title") || "Request Actions"}
+            </h3>
+            <div className="action-buttons-grid">
+              <button
+                className="btn btn-success action-btn"
+                onClick={() => openConfirmModal("accept")}
+                disabled={actionLoading}
+              >
+                {actionLoading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    {t("requestDetails.actions.accepting")}
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-check-circle me-2"></i>
+                    {t("requestDetails.actions.accept")}
+                  </>
+                )}
+              </button>
+
+              <button
+                className="btn btn-danger action-btn"
+                onClick={() => openConfirmModal("reject")}
+                disabled={actionLoading}
+              >
+                {actionLoading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    {t("requestDetails.actions.rejecting")}
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-x-circle me-2"></i>
+                    {t("requestDetails.actions.reject")}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Action Buttons */}
         <div className="action-buttons">
           <button className="btn btn-secondary" onClick={() => navigate(-1)}>
             <i className="bi bi-arrow-left me-2"></i>
@@ -361,6 +505,73 @@ const RequestDetails = () => {
           </button>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowConfirmModal(false)}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h4 className="modal-title">
+                <i className="bi bi-question-circle me-2"></i>
+                {t("requestDetails.actions.confirmTitle") || "Confirm Action"}
+              </h4>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowConfirmModal(false)}
+              ></button>
+            </div>
+            <div className="modal-body">
+              <p>
+                {pendingAction === "accept"
+                  ? t("requestDetails.actions.confirmAccept") ||
+                    "Are you sure you want to accept this request?"
+                  : t("requestDetails.actions.confirmReject") ||
+                    "Are you sure you want to reject this request?"}
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                {t("requestDetails.actions.cancel") || "Cancel"}
+              </button>
+              <button
+                type="button"
+                className={`btn ${
+                  pendingAction === "accept" ? "btn-success" : "btn-danger"
+                }`}
+                onClick={() => handleRequestAction(pendingAction)}
+                disabled={actionLoading}
+              >
+                {actionLoading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    {pendingAction === "accept"
+                      ? t("requestDetails.actions.accepting")
+                      : t("requestDetails.actions.rejecting")}
+                  </>
+                ) : (
+                  <>
+                    {pendingAction === "accept"
+                      ? t("requestDetails.actions.accept")
+                      : t("requestDetails.actions.reject")}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

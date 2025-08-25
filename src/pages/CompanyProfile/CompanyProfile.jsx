@@ -145,7 +145,7 @@ export default function CompanyProfile() {
     try {
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -224,7 +224,7 @@ export default function CompanyProfile() {
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
-      toast.error("Failed to load profile data");
+              toast.error(t("settings.failedToLoadProfileData"));
     } finally {
       setProfileLoading(false);
     }
@@ -290,7 +290,7 @@ export default function CompanyProfile() {
       setServicesLoading(true);
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -311,7 +311,7 @@ export default function CompanyProfile() {
       }
     } catch (error) {
       console.error("Error fetching services:", error);
-      toast.error("Failed to load services");
+              toast.error(t("settings.failedToLoadServices"));
     } finally {
       setServicesLoading(false);
     }
@@ -323,7 +323,7 @@ export default function CompanyProfile() {
       setProductsLoading(true);
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -344,7 +344,7 @@ export default function CompanyProfile() {
       }
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error("Failed to load products");
+              toast.error(t("settings.failedToLoadProducts"));
     } finally {
       setProductsLoading(false);
     }
@@ -416,7 +416,7 @@ export default function CompanyProfile() {
     try {
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -459,7 +459,7 @@ export default function CompanyProfile() {
       );
 
       if (response.data.status === 200) {
-        toast.success("Profile updated successfully!");
+        toast.success(t("settings.profileUpdatedSuccessfully"));
 
         // Update local state with the new data we sent
         const updatedProfileData = {
@@ -514,7 +514,7 @@ export default function CompanyProfile() {
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error(error.response?.data?.message || "Failed to update profile");
+              toast.error(error.response?.data?.message || t("settings.failedToUpdateProfile"));
     } finally {
       setLoading(false);
     }
@@ -1303,7 +1303,7 @@ export default function CompanyProfile() {
                             ))
                           ) : (
                             <div className="col-12 text-center">
-                              <p className="text-muted">No services found</p>
+                              <p className="text-muted">{t("settings.noServicesFound")}</p>
                             </div>
                           )}
                         </div>
@@ -1366,7 +1366,7 @@ export default function CompanyProfile() {
                             ))
                           ) : (
                             <div className="col-12 text-center">
-                              <p className="text-muted">No products found</p>
+                              <p className="text-muted">{t("settings.noProductsFound")}</p>
                             </div>
                           )}
                         </div>

@@ -23,39 +23,52 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 import axios from "axios";
-import "./Services.css";
+import "./Categories.css";
 
-const Services = () => {
+const Categories = () => {
   const { t, i18n } = useTranslation("global");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Dynamic Categories States - exactly like Categories.jsx
+  // Dynamic Categories States - exactly like AddProduct
   const [categoryLevels, setCategoryLevels] = useState([]); // Array of category levels
   const [expandedCategories, setExpandedCategories] = useState({}); // Object to store expanded categories
 
-  // Icon mapping for different service types
-  const getServiceIcon = (categoryName) => {
+  // Icon mapping for different product types
+  const getProductIcon = (categoryName) => {
     const name = categoryName.toLowerCase();
-    if (name.includes("programming") || name.includes("development"))
+    if (
+      name.includes("electronics") ||
+      name.includes("laptop") ||
+      name.includes("computer")
+    )
       return <FaLaptopCode />;
-    if (name.includes("writing") || name.includes("content")) return <FaPen />;
-    if (name.includes("marketing")) return <FaChartLine />;
-    if (name.includes("design")) return <FaPalette />;
-    if (name.includes("mobile") || name.includes("app")) return <FaMobileAlt />;
-    if (name.includes("web")) return <FaCode />;
-    if (name.includes("real estate") || name.includes("property"))
-      return <FaHome />;
-    if (name.includes("car") || name.includes("vehicle")) return <FaCar />;
-    if (name.includes("job") || name.includes("work")) return <FaBriefcase />;
-    if (name.includes("baby") || name.includes("child")) return <FaBaby />;
-    if (name.includes("furniture")) return <FaCouch />;
-    if (name.includes("pet") || name.includes("animal")) return <FaDog />;
-    if (name.includes("business")) return <FaGem />;
-    if (name.includes("fashion") || name.includes("clothing"))
+    if (
+      name.includes("clothing") ||
+      name.includes("fashion") ||
+      name.includes("shirt")
+    )
       return <FaTshirt />;
+    if (
+      name.includes("furniture") ||
+      name.includes("couch") ||
+      name.includes("chair")
+    )
+      return <FaCouch />;
+    if (name.includes("car") || name.includes("vehicle")) return <FaCar />;
+    if (
+      name.includes("home") ||
+      name.includes("house") ||
+      name.includes("property")
+    )
+      return <FaHome />;
+    if (name.includes("baby") || name.includes("child")) return <FaBaby />;
+    if (name.includes("pet") || name.includes("animal") || name.includes("dog"))
+      return <FaDog />;
+    if (name.includes("business") || name.includes("work"))
+      return <FaBriefcase />;
     if (name.includes("game") || name.includes("hobby")) return <FaGamepad />;
-    if (name.includes("service")) return <FaCog />;
+    if (name.includes("jewelry") || name.includes("gem")) return <FaGem />;
     return <FaCog />; // Default icon
   };
 
@@ -64,16 +77,16 @@ const Services = () => {
     fetchMainCategories();
   }, []);
 
-  // Fetch main categories - exactly like Categories.jsx
+  // Fetch main categories - exactly like AddProduct
   const fetchMainCategories = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      console.log("Fetching categories for market: service");
+      console.log("Fetching categories for market: physical");
 
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/categories/children?market=service`,
+        `${process.env.REACT_APP_BASE_URL}/categories/children?market=physical`,
         {
           headers: {
             Accept: "application/json",
@@ -86,7 +99,7 @@ const Services = () => {
 
       if (mainCategories.length > 0) {
         console.log("Main categories loaded:", mainCategories);
-        // Initialize first level exactly like Categories.jsx
+        // Initialize first level exactly like AddProduct
         setCategoryLevels([
           {
             level: 0,
@@ -99,10 +112,9 @@ const Services = () => {
         console.log("No categories found in API response");
         // Try to use fallback categories if API returns empty
         const fallbackCategories = [
-          { id: 1, name: "Programming", has_children: 1 },
-          { id: 2, name: "Content Writing", has_children: 1 },
-          { id: 3, name: "Marketing", has_children: 1 },
-          { id: 4, name: "Design", has_children: 1 },
+          { id: 1, name: "Electronics", has_children: 1 },
+          { id: 2, name: "Clothing", has_children: 1 },
+          { id: 3, name: "Furniture", has_children: 1 },
         ];
         console.log("Using fallback categories:", fallbackCategories);
         setCategoryLevels([
@@ -122,13 +134,12 @@ const Services = () => {
         status: error.response?.status,
       });
 
-      // Use fallback categories on error exactly like Categories.jsx
+      // Use fallback categories on error exactly like AddProduct
       console.log("Using fallback categories due to API error");
       const fallbackCategories = [
-        { id: 1, name: "Programming", has_children: 1 },
-        { id: 2, name: "Content Writing", has_children: 1 },
-        { id: 3, name: "Marketing", has_children: 1 },
-        { id: 4, name: "Design", has_children: 1 },
+        { id: 1, name: "Electronics", has_children: 1 },
+        { id: 2, name: "Clothing", has_children: 1 },
+        { id: 3, name: "Furniture", has_children: 1 },
       ];
       setCategoryLevels([
         {
@@ -145,7 +156,7 @@ const Services = () => {
     }
   };
 
-  // Fetch sub categories when a category is selected - exactly like Categories.jsx
+  // Fetch sub categories when a category is selected - exactly like AddProduct
   const fetchSubCategories = async (parentId, level) => {
     try {
       // Set loading for this specific level
@@ -160,11 +171,11 @@ const Services = () => {
         parentId,
         "level:",
         level,
-        "market: service"
+        "market: physical"
       );
 
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/categories/children?parent_id=${parentId}&market=service`,
+        `${process.env.REACT_APP_BASE_URL}/categories/children?parent_id=${parentId}&market=physical`,
         {
           headers: {
             Accept: "application/json",
@@ -175,7 +186,7 @@ const Services = () => {
       console.log("Sub categories API response:", response.data);
       const subCategories = response.data.data || [];
 
-      // Update the levels array with new categories exactly like Categories.jsx
+      // Update the levels array with new categories exactly like AddProduct
       setCategoryLevels((prev) => {
         const newLevels = [...prev];
 
@@ -211,7 +222,7 @@ const Services = () => {
     }
   };
 
-  // Handle category click - exactly like Categories.jsx logic
+  // Handle category click - exactly like AddProduct logic
   const handleCategoryClick = async (category, level = 0) => {
     console.log("Category clicked:", category, "Level:", level);
     console.log("has_children value:", category.has_children);
@@ -228,7 +239,7 @@ const Services = () => {
           return newState;
         });
 
-        // Remove all levels after this one exactly like Categories.jsx
+        // Remove all levels after this one exactly like AddProduct
         setCategoryLevels((prev) => prev.filter((l) => l.level <= level));
       } else {
         // If opening a new category, close all others and open this one
@@ -239,10 +250,10 @@ const Services = () => {
           return newState;
         });
 
-        // Remove all levels after this one exactly like Categories.jsx
+        // Remove all levels after this one exactly like AddProduct
         setCategoryLevels((prev) => prev.filter((l) => l.level <= level));
 
-        // Fetch subcategories for this level exactly like Categories.jsx
+        // Fetch subcategories for this level exactly like AddProduct
         console.log(
           "Fetching subcategories for:",
           category.name,
@@ -252,13 +263,13 @@ const Services = () => {
         await fetchSubCategories(category.id, level + 1);
       }
     } else {
-      console.log("Category is a leaf, navigating to services page");
-      // Navigate to filter products page with category ID for services
-      window.location.href = `/filterproducts?category_id=${category.id}&market=service`;
+      console.log("Category is a leaf, navigating to products page");
+      // Navigate to filter products page with category ID for physical products
+      window.location.href = `/filterproductsphysical?category_id=${category.id}&market=physical`;
     }
   };
 
-  // Render category recursively - exactly like Categories.jsx
+  // Render category recursively - exactly like AddProduct
   const renderCategory = (category, level = 0) => {
     const isExpanded = expandedCategories[category.id];
     const hasChildren = category.has_children === 1;
@@ -301,7 +312,7 @@ const Services = () => {
                 <img src={category.image} alt={category.name} />
               ) : (
                 <div className="category-icon">
-                  {getServiceIcon(category.name)}
+                  {getProductIcon(category.name)}
                 </div>
               )}
             </div>
@@ -317,7 +328,7 @@ const Services = () => {
         {/* Render children if expanded */}
         {isExpanded && hasChildren && (
           <div className="subcategories">
-            {/* Check if next level exists in categoryLevels exactly like Categories.jsx */}
+            {/* Check if next level exists in categoryLevels exactly like AddProduct */}
             {(() => {
               const nextLevel = categoryLevels.find(
                 (l) => l.level === level + 1
@@ -366,10 +377,10 @@ const Services = () => {
     <div className="services py-5">
       <div className="container">
         <h4 className="mb-3 main-color text-center title">
-          <img src="/shopping-list.gif" alt="--" /> {t("services.title")}
+          <img src="/shopping-list.gif" alt="--" /> {t("categoriess")}
         </h4>
         <p className="mb-4 gray-color text-center">
-          {t("services.yourFeedback")}
+          {t("yourFeedback")}
         </p>
 
         <div className="services_categories py-3">
@@ -398,7 +409,7 @@ const Services = () => {
               {categoryLevels.map((level) => (
                 <div key={level.level} className="category-level">
                   <h4 className="level-title">
-                    {t(`services.level${level.level}`)}
+                    {t(`categories.level${level.level}`)}
                   </h4>
                   {level.loading ? (
                     <div className="text-center py-3">
@@ -451,4 +462,4 @@ const Services = () => {
   );
 };
 
-export default Services;
+export default Categories;

@@ -1,0 +1,384 @@
+/* Main page container */
+.filterPage {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+/* Filters sidebar */
+.filtersBox {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+.filterBlock {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f1f3f4;
+  margin-bottom: 0;
+}
+
+.filterBlock:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.filterBlock h6 {
+  color: #1a1a1a;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filterSelect {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background-color: #fafbfc;
+}
+
+.filterSelect:focus {
+  border-color: #0a6e58;
+  box-shadow: 0 0 0 3px rgba(10, 110, 88, 0.1);
+  background-color: white;
+}
+
+/* Price inputs */
+.priceInputs {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.priceInput {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background-color: #fafbfc;
+  flex: 1;
+}
+
+.priceInput:focus {
+  border-color: #0a6e58;
+  box-shadow: 0 0 0 3px rgba(10, 110, 88, 0.1);
+  background-color: white;
+}
+
+/* Services grid */
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Service card */
+.serviceCard {
+  height: 100%;
+}
+
+.serviceLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+.serviceLink:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+  height: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border-color: #0a6e58;
+}
+
+/* Image container */
+.imageContainer {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.serviceImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .serviceImage {
+  transform: scale(1.05);
+}
+
+/* Card content */
+.cardContent {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceTitle {
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.serviceDescription {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.serviceFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f3f4;
+}
+
+.servicePrice {
+  color: #0a6e58;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.serviceLocation {
+  color: #6c757d;
+  font-size: 0.85rem;
+  text-align: right;
+  max-width: 40%;
+}
+
+/* Loading container */
+.loadingContainer {
+  text-center: center;
+  padding: 4rem 2rem;
+}
+
+/* Empty state */
+.emptyState {
+  text-center: center;
+  padding: 4rem 2rem;
+}
+
+/* Pagination container */
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+/* Pagination styling */
+.pagination .page-link {
+  color: #0a6e58;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  margin: 0 0.25rem;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.pagination .page-link:hover {
+  background-color: #0a6e58;
+  border-color: #0a6e58;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0a6e58;
+  border-color: #0a6e58;
+  color: white;
+  box-shadow: 0 4px 15px rgba(10, 110, 88, 0.3);
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #adb5bd;
+  border-color: #e9ecef;
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .servicesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .servicesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filtersBox {
+    position: static;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .servicesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .cardContent {
+    padding: 1.25rem;
+  }
+
+  .imageContainer {
+    height: 180px;
+  }
+
+  .serviceTitle {
+    font-size: 1rem;
+  }
+
+  .serviceDescription {
+    font-size: 0.85rem;
+  }
+
+  .servicePrice {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .filterPage {
+    padding: 1rem 0;
+  }
+
+  .cardContent {
+    padding: 1rem;
+  }
+
+  .imageContainer {
+    height: 160px;
+  }
+
+  .priceInputs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Dark theme support */
+[data-theme="dark"] .filterPage {
+  background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .filtersBox,
+[data-theme="dark"] .card {
+  background-color: #2d2d2d;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .filterBlock {
+  border-color: #404040;
+}
+
+[data-theme="dark"] .filterBlock h6 {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .filterSelect,
+[data-theme="dark"] .priceInput {
+  background-color: #404040;
+  border-color: #555555;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .filterSelect:focus,
+[data-theme="dark"] .priceInput:focus {
+  background-color: #2d2d2d;
+  border-color: #0a6e58;
+}
+
+[data-theme="dark"] .serviceTitle {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .serviceDescription {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .serviceFooter {
+  border-color: #404040;
+}
+
+[data-theme="dark"] .imageContainer {
+  background: linear-gradient(135deg, #404040 0%, #2d2d2d 100%);
+}
+
+/* RTL support */
+[dir="rtl"] .serviceFooter {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .serviceLocation {
+  text-align: left;
+  max-width: 40%;
+}
+
+/* Smooth animations */
+.card,
+.serviceImage,
+.pagination .page-link {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+.card:focus-within {
+  outline: 2px solid #0a6e58;
+  outline-offset: 2px;
+}
+
+.filterSelect:focus,
+.priceInput:focus {
+  outline: none;
+}

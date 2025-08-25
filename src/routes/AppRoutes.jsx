@@ -12,6 +12,7 @@ import Register from "../pages/Register/Register";
 import OfferRequestService from "../pages/OfferRequestService/OfferRequestService";
 import RequestService from "../pages/RequestService/RequestService";
 import FilterProducts from "../pages/FilterProducts/FilterProducts";
+import FilterProductsPhysical from "../pages/FilterProductsPhysical/FilterProductsPhysical";
 import ProductsDetalis from "../pages/ProductsDetalis/ProductsDetalis";
 import AboutUS from "../pages/AboutUS/AboutUS";
 import ContactUS from "../pages/ContactUS/ContactUS";
@@ -32,6 +33,7 @@ import Cart from "../pages/Cart/Cart";
 import Wishlist from "../pages/Wishlist/Wishlist";
 import Notifications from "../pages/Notifications/Notifications";
 import RequestDetails from "../pages/RequestDetails/RequestDetails";
+import RequestCategories from "../pages/RequestCategories/RequestCategories";
 
 export default function Applayout() {
   const location = useLocation();
@@ -69,7 +71,12 @@ export default function Applayout() {
           element={<OfferRequestService />}
         />
         <Route path="/requestservice" element={<RequestService />} />
+        <Route path="/requestcategories" element={<RequestCategories />} />
         <Route path="/filterproducts" element={<FilterProducts />} />
+        <Route
+          path="/filterproductsphysical"
+          element={<FilterProductsPhysical />}
+        />
         <Route path="/productdetalis/:id" element={<ProductsDetalis />} />
         <Route path="/servicedetails/:id" element={<ServiceDetalis />} />
         <Route path="/aboutus" element={<AboutUS />} />

@@ -1,140 +1,243 @@
-import React from 'react';
-import FliterPageHead from '../../component/FliterPageHead/FliterPageHead';
-import { useTranslation } from 'react-i18next';
-import '../FilterProducts/FilterProducts.css';
-import latop from "../../assests/imgs/22.svg";
-import icon from "../../assests/imgs/Vector.svg";
-import chat from "../../assests/imgs/fluent_chat-24-filled.svg";
-import heart from "../../assests/imgs/heart.svg";
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import FliterPageHead from "../../component/FliterPageHead/FliterPageHead";
+import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
+import axios from "axios";
+import styles from "./FilterProducts.module.css";
+import { Link } from "react-router-dom";
 
 export default function FilterProducts() {
-    const { t, i18n } = useTranslation("global");
-    const isRTL = i18n.language === 'ar';
+  const { t, i18n } = useTranslation("global");
+  const [searchParams] = useSearchParams();
+  const isRTL = i18n.language === "ar";
 
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+  });
+
+  const categoryId = searchParams.get("category_id");
+  const market = searchParams.get("market");
+
+  // Fetch services based on category and market
+  useEffect(() => {
+    if (categoryId && market === "service") {
+      fetchServices();
+    }
+  }, [categoryId, market]);
+
+  const fetchServices = async (page = 1) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/services/allServicesByCategory?category_id=${categoryId}&page=${page}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        setServices(response.data.data.data || []);
+        setPagination(response.data.data.pagination || {});
+      }
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (page) => {
+    fetchServices(page);
+  };
+
+  // Helper function to get display value for location fields
+  const getDisplayValue = (field) => {
+    return field?.name || field || "";
+  };
+
+  if (!categoryId || market !== "service") {
     return (
-        <div dir={isRTL ? "rtl" : "ltr"}>
-            <FliterPageHead services={t("products.newmarket")} flitercategory={t("products.latop")} />
-
-            <div className="tabs-container d-flex justify-content-start flex-wrap px-4 py-3">
-                {["latop", "computer", "printers", "parts", "modem", "accessories", "monitors"].map((tabKey, i) => (
-                    <button className="tab" key={i}>
-                        {t(`tabs.${tabKey}`)}
-                    </button>
-                ))}
-            </div>
-
-            <div className="container">
-                <div className="row">
-                    {/* Sidebar Filters */}
-                    <div className="col-lg-3 p-3 filters-box">
-                        <div className="filter-block">
-                            <h6>{t("filter.sortby")}</h6>
-                            <select className="form-select">
-                                <option>{t("sort.latest")}</option>
-                                <option>{t("sort.lowest")}</option>
-                                <option>{t("sort.highest")}</option>
-                                <option>{t("sort.topRated")}</option>
-                            </select>
-                        </div>
-
-                        <div className="filter-block">
-                            <h6>{t("filter.categories")}</h6>
-                            {["latop", "accessories", "phones"].map((cat, i) => (
-                                <div className="form-check" key={i}>
-                                    <input className="form-check-input" type="checkbox" id={`cat${i}`} />
-                                    <label className="form-check-label" htmlFor={`cat${i}`}>
-                                        {t(`categories.${cat}`)}
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="filter-block">
-                            <h6>{t("filter.governorate")}</h6>
-                            <select className="form-select">
-                                <option>{t("cities.cairo")}</option>
-                                <option>{t("cities.giza")}</option>
-                                <option>{t("cities.alex")}</option>
-                                <option>{t("cities.mansoura")}</option>
-                            </select>
-                        </div>
-
-                        <div className="filter-block">
-                            <h6>{t("filter.price")}</h6>
-                            <div className="d-flex gap-2">
-                                <input type="number" className="form-control" placeholder={t("filter.from")} />
-                                <input type="number" className="form-control" placeholder={t("filter.to")} />
-                            </div>
-                        </div>
-
-                        <div className="filter-block">
-                            <h6>{t("filter.brand")}</h6>
-                            {["Apple", "Samsung", "Dell"].map((brand, i) => (
-                                <div className="form-check" key={i}>
-                                    <input className="form-check-input" type="checkbox" id={`brand${i}`} />
-                                    <label className="form-check-label" htmlFor={`brand${i}`}>{brand}</label>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Product Cards */}
-                    <div className="col-lg-9 p-3">
-                        <div className="row gy-4">
-                            {Array(6).fill().map((_, i) => (
-                                 <Link to="/productdetalis">
-                                 <div className="col-12 product-card" key={i}>
-                                    <div className="card flex-md-row flex-column align-items-center p-3 gap-3">
-                                        <img src={latop} alt="product" className="product-img" />
-                                        <div className="flex-grow-1 w-100">
-                                            <div className="d-flex justify-content-between align-items-center flex-wrap">
-                                                <h6 className="mb-1">{t("product.title")}</h6>
-                                                <p className="text-muted small mb-1">{t("product.posted")}</p>
-                                            </div>
-                                            <div>
-                                                <p>{t("product.details")}</p>
-                                                <p className="bg-light p-2 rounded d-inline-flex align-items-center gap-2">
-                                                    <img src={icon} alt="" /> {t("product.delivery")}
-                                                </p>
-                                                <p className="mb-2">{t("product.location")}</p>
-                                            </div>
-                                            <div className="d-flex justify-content-between align-items-center flex-wrap">
-                                                <div className="d-flex align-items-center gap-2">
-                                                    <div className="chat">
-                                                        <p className="m-0 p-0 d-flex align-items-center gap-1">
-                                                            <img src={chat} alt="" /> {t("product.chat")}
-                                                        </p>
-                                                    </div>
-                                                    <div className="heart">
-                                                        <img src={heart} alt="favorite" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <h6 className="text-success">{t("product.price")}</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </Link>
-                               
-                            ))}
-
-                            {/* Pagination */}
-                            <div className="d-flex justify-content-center mt-4">
-                                <nav>
-                                    <ul className="pagination">
-                                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                                        <li className="page-item"><a className="page-link" href="#">2</a></li>
-                                        <li className="page-item"><a className="page-link" href="#">3</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div className="container py-5 text-center">
+        <h4>Invalid request</h4>
+        <p>Please select a valid service category.</p>
+      </div>
     );
+  }
+
+  return (
+    <div dir={isRTL ? "rtl" : "ltr"} className={styles.filterPage}>
+      <div className="container">
+        <div className="row">
+          {/* Sidebar Filters */}
+          <div className={`col-lg-3 p-3 ${styles.filtersBox}`}>
+            <div className={styles.filterBlock}>
+              <h6>{t("filter.sortby")}</h6>
+              <select className={`form-select ${styles.filterSelect}`}>
+                <option>{t("sort.latest")}</option>
+                <option>{t("sort.lowest")}</option>
+                <option>{t("sort.highest")}</option>
+                <option>{t("sort.topRated")}</option>
+              </select>
+            </div>
+
+            <div className={styles.filterBlock}>
+              <h6>{t("filter.price")}</h6>
+              <div className={styles.priceInputs}>
+                <input
+                  type="number"
+                  className={`form-control ${styles.priceInput}`}
+                  placeholder={t("filter.from")}
+                />
+                <input
+                  type="number"
+                  className={`form-control ${styles.priceInput}`}
+                  placeholder={t("filter.to")}
+                />
+              </div>
+            </div>
+
+            <div className={styles.filterBlock}>
+              <h6>{t("filter.governorate")}</h6>
+              <select className={`form-select ${styles.filterSelect}`}>
+                <option>{t("cities.cairo")}</option>
+                <option>{t("cities.giza")}</option>
+                <option>{t("cities.alex")}</option>
+                <option>{t("cities.mansoura")}</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Services Cards */}
+          <div className="col-lg-9 p-3">
+            {loading ? (
+              <div className={styles.loadingContainer}>
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-2 text-muted">{t("settings.loading")}</p>
+              </div>
+            ) : services.length > 0 ? (
+              <>
+                <div className={styles.servicesGrid}>
+                  {services.map((service) => (
+                    <div key={service.id} className={styles.serviceCard}>
+                      <Link
+                        to={`/servicedetails/${service.id}`}
+                        className={styles.serviceLink}
+                      >
+                        <div className={styles.card}>
+                          <div className={styles.imageContainer}>
+                            <img
+                              src={service.main_image}
+                              alt={service.name}
+                              className={styles.serviceImage}
+                              onError={(e) => {
+                                e.target.src = "/categories/1.png"; // Fallback image
+                              }}
+                            />
+                          </div>
+                          <div className={styles.cardContent}>
+                            <h6 className={styles.serviceTitle}>
+                              {service.name}
+                            </h6>
+                            <p className={styles.serviceDescription}>
+                              {service.description}
+                            </p>
+                            <div className={styles.serviceFooter}>
+                              <span className={styles.servicePrice}>
+                                {service.price} {t("products.currency")}
+                              </span>
+                              <small className={styles.serviceLocation}>
+                                {getDisplayValue(service.country)} -{" "}
+                                {getDisplayValue(service.governorate)}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {pagination.last_page > 1 && (
+                  <div className={styles.paginationContainer}>
+                    <nav>
+                      <ul className="pagination">
+                        <li
+                          className={`page-item ${
+                            pagination.current_page === 1 ? "disabled" : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() =>
+                              handlePageChange(pagination.current_page - 1)
+                            }
+                            disabled={pagination.current_page === 1}
+                          >
+                            {t("settings.previous")}
+                          </button>
+                        </li>
+                        {Array.from(
+                          { length: pagination.last_page },
+                          (_, i) => i + 1
+                        ).map((page) => (
+                          <li
+                            key={page}
+                            className={`page-item ${
+                              page === pagination.current_page ? "active" : ""
+                            }`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => handlePageChange(page)}
+                            >
+                              {page}
+                            </button>
+                          </li>
+                        ))}
+                        <li
+                          className={`page-item ${
+                            pagination.current_page === pagination.last_page
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() =>
+                              handlePageChange(pagination.current_page + 1)
+                            }
+                            disabled={
+                              pagination.current_page === pagination.last_page
+                            }
+                          >
+                            {t("settings.next")}
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className={styles.emptyState}>
+                <p className="text-muted">
+                  No services found in this category.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

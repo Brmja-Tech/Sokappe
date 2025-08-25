@@ -34,7 +34,6 @@ const ProductsServices = ({
   });
   const [loading, setLoading] = useState(false);
 
-
   // fetch services
   const fetchServices = async (page = 1) => {
     try {
@@ -60,7 +59,6 @@ const ProductsServices = ({
   };
 
   useEffect(() => {
-  
     // If relatedServices are provided, use them directly
     if (
       relatedServices &&
@@ -109,8 +107,11 @@ const ProductsServices = ({
                   i18n.language === "ar" ? "float-start" : "float-end"
                 }`}
               >
-                <button className="btn btn-categories">
-                  {t("products.allcategories")}
+                <button
+                  className="btn btn-categories"
+                  onClick={() => (window.location.href = "/requestservice")}
+                >
+                  {t("products.allservices")}
                 </button>
               </div>
             </div>

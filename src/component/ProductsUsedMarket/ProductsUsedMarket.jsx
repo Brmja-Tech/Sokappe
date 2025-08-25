@@ -53,9 +53,9 @@ const ProductsUsedMarket = () => {
             "Products endpoint not found. Please check the API configuration."
           );
         } else if (error.response?.status >= 500) {
-          setError("Server error. Please try again later.");
+          setError(t("settings.serverError") + ". " + t("settings.pleaseTryAgainLater"));
         } else {
-          setError("Failed to load products. Please try again later.");
+                      setError(t("settings.failedToLoadProducts") + ". " + t("settings.pleaseTryAgainLater"));
         }
       } finally {
         setLoading(false);
@@ -125,7 +125,10 @@ const ProductsUsedMarket = () => {
                 i18n.language === "ar" ? "float-start" : "float-end"
               }`}
             >
-              <button className={styles.btnCategories}>
+              <button className={styles.btnCategories}
+                onClick={() => (window.location.href = "/requestcategories")}
+                
+                >
                 {t("products.allcategories")}
               </button>
             </div>

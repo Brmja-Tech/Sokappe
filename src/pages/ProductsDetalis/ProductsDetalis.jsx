@@ -65,7 +65,7 @@ export default function ProductsDetalis() {
         }
       } catch (error) {
         console.error("Error fetching product details:", error);
-        setError("Failed to load product details");
+        setError(t("settings.failedToLoadProductDetails"));
       } finally {
         setLoading(false);
       }

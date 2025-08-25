@@ -150,7 +150,6 @@
   padding-left: 30px;
   border-left: 2px solid rgba(10, 110, 88, 0.2);
   animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  grid-column: 1 / -1;
 }
 
 @keyframes slideDown {
@@ -365,12 +364,12 @@
 }
 
 /* Better visual hierarchy for nested items */
-.category-item[style*="marginLeft: 30px"] .category_card {
+.category-item .subcategories .category_card {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-left: 3px solid var(--main-color);
 }
 
-.category-item[style*="marginLeft: 60px"] .category_card {
+.category-item .subcategories .subcategories .category_card {
   background: linear-gradient(135deg, #f1f3f4 0%, #e8eaed 100%);
   border-left: 2px solid var(--main-color);
 }
@@ -397,5 +396,46 @@
 @media (max-width: 767px) {
   .categories-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Category level styling */
+.category-level {
+  margin-bottom: 2rem;
+}
+
+.level-title {
+  color: var(--main-color);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 110, 88, 0.1) 0%,
+    rgba(10, 110, 88, 0.05) 100%
+  );
+  border-radius: 12px;
+  border-left: 4px solid var(--main-color);
+}
+
+/* Dark theme for level title */
+[data-theme="dark"] .level-title {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 110, 88, 0.2) 0%,
+    rgba(10, 110, 88, 0.1) 100%
+  );
+  color: var(--main-color);
+}
+
+/* Responsive adjustments for level title */
+@media (max-width: 768px) {
+  .level-title {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
   }
 }

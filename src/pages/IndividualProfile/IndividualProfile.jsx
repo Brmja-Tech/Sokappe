@@ -38,6 +38,12 @@ export default function IndividualProfile() {
     email: "",
   });
 
+  // Service Requests state
+  const [requests, setRequests] = useState([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+  const [requestsCurrentPage, setRequestsCurrentPage] = useState(1);
+  const [requestsTotalPages, setRequestsTotalPages] = useState(1);
+
   // API Data States for location
   const [countries, setCountries] = useState([]);
   const [governorates, setGovernorates] = useState([]);
@@ -72,6 +78,20 @@ export default function IndividualProfile() {
     }
   }, [i18n.language]);
 
+  // Fetch requests when tab changes
+  useEffect(() => {
+    if (activeTab === "requests") {
+      fetchRequests();
+    }
+  }, [activeTab]);
+
+  // Refetch requests when page changes
+  useEffect(() => {
+    if (activeTab === "requests" && requestsCurrentPage > 1) {
+      fetchRequests();
+    }
+  }, [requestsCurrentPage]);
+
   // Fetch governorates when country_id changes
   useEffect(() => {
     if (profileData.country_id) {
@@ -92,7 +112,7 @@ export default function IndividualProfile() {
     try {
       const userData = JSON.parse(localStorage.getItem("userData"));
       if (!userData || !userData.token) {
-        toast.error("Authentication required");
+        toast.error(t("settings.authenticationRequired"));
         return;
       }
 
@@ -149,7 +169,7 @@ export default function IndividualProfile() {
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
-      toast.error("Failed to load profile data");
+      toast.error(t("settings.failedToLoadProfileData"));
     } finally {
       setProfileLoading(false);
     }
@@ -209,6 +229,39 @@ export default function IndividualProfile() {
     }
   };
 
+  // Fetch service requests
+  const fetchRequests = async () => {
+    try {
+      setRequestsLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || !userData.token) {
+        toast.error(t("settings.authenticationRequired"));
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/request/services/my-requests?page=${requestsCurrentPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        setRequests(response.data.data.data || []);
+        setRequestsTotalPages(response.data.data.pagination?.last_page || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+      toast.error(t("settings.failedToLoadRequests"));
+    } finally {
+      setRequestsLoading(false);
+    }
+  };
+
   const handleProfileInputChange = (field, value) => {
     setProfileData((prev) => ({
       ...prev,
@@ -221,6 +274,11 @@ export default function IndividualProfile() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  // Handle requests page change
+  const handleRequestsPageChange = (newPage) => {
+    setRequestsCurrentPage(newPage);
   };
 
   const handleProfileSubmit = async (e) => {
@@ -266,7 +324,7 @@ export default function IndividualProfile() {
       );
 
       if (response.data.status === 200) {
-        toast.success("Profile updated successfully!");
+        toast.success(t("settings.profileUpdatedSuccessfully"));
 
         // Since backend is not updating location data properly,
         // we'll update the local state with the new data we sent
@@ -311,7 +369,9 @@ export default function IndividualProfile() {
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error(error.response?.data?.message || "Failed to update profile");
+      toast.error(
+        error.response?.data?.message || t("settings.failedToUpdateProfile")
+      );
     } finally {
       setLoading(false);
     }
@@ -357,6 +417,15 @@ export default function IndividualProfile() {
                   style={{ textAlign: isRTL ? "right" : "left" }}
                 >
                   {t("settings.notificationsTab")}
+                </button>
+                <button
+                  className={`profile-settings-tab-btn${
+                    activeTab === "requests" ? " active" : ""
+                  }`}
+                  onClick={() => setActiveTab("requests")}
+                  style={{ textAlign: isRTL ? "right" : "left" }}
+                >
+                  {t("settings.myRequestsTab")}
                 </button>
               </div>
             </div>
@@ -678,6 +747,153 @@ export default function IndividualProfile() {
                       </div>
                     </div>
                   </form>
+                </div>
+              )}
+              {activeTab === "requests" && (
+                <div className="profile-requests-tab">
+                  <div className="mb-4">
+                    <h4>{t("settings.myRequestsTab")}</h4>
+                  </div>
+
+                  {requestsLoading ? (
+                    <div className="text-center">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="visually-hidden">
+                          {t("settings.loading")}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {requests.length > 0 ? (
+                        <div className="row">
+                          {requests.map((request) => (
+                            <div
+                              key={request.id}
+                              className="col-md-6 col-lg-4 mb-3"
+                            >
+                              <div className="profile-requests-card">
+                                <div className="profile-requests-content">
+                                  <div className="profile-requests-header">
+                                    <h6 className="profile-requests-title">
+                                      {request.service?.name ||
+                                        t("settings.unknown")}
+                                    </h6>
+                                    <span
+                                      className={`profile-requests-status profile-requests-status-${request.status}`}
+                                    >
+                                      {request.status}
+                                    </span>
+                                  </div>
+                                  <div className="profile-requests-details">
+                                    <p className="profile-requests-info">
+                                      <strong>
+                                        {t("settings.requester")}:
+                                      </strong>{" "}
+                                      {request.other_party?.name ||
+                                        t("settings.unknown")}
+                                    </p>
+                                    <p className="profile-requests-info">
+                                      <strong>
+                                        {t("settings.startedAt")}:
+                                      </strong>{" "}
+                                      {request.started_at ||
+                                        t("settings.notAvailable")}
+                                    </p>
+                                  </div>
+                                  <div className="profile-requests-actions">
+                                    <button
+                                      className="profile-requests-view-btn"
+                                      onClick={() => {
+                                        window.location.href = `/request-details/${request.id}`;
+                                      }}
+                                    >
+                                      {t("settings.viewDetails")}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center text-muted">
+                          <p>{t("settings.noRequestsFound")}</p>
+                        </div>
+                      )}
+
+                      {/* Pagination */}
+                      {requestsTotalPages > 1 && (
+                        <div className="d-flex justify-content-center mt-4">
+                          <nav>
+                            <ul className="pagination">
+                              <li
+                                className={`page-item ${
+                                  requestsCurrentPage === 1 ? "disabled" : ""
+                                }`}
+                              >
+                                <button
+                                  className="page-link"
+                                  onClick={() =>
+                                    handleRequestsPageChange(
+                                      requestsCurrentPage - 1
+                                    )
+                                  }
+                                  disabled={requestsCurrentPage === 1}
+                                >
+                                  {t("settings.previous")}
+                                </button>
+                              </li>
+                              {Array.from(
+                                { length: requestsTotalPages },
+                                (_, i) => i + 1
+                              ).map((page) => (
+                                <li
+                                  key={page}
+                                  className={`page-item ${
+                                    page === requestsCurrentPage ? "active" : ""
+                                  }`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() =>
+                                      handleRequestsPageChange(page)
+                                    }
+                                  >
+                                    {page}
+                                  </button>
+                                </li>
+                              ))}
+                              <li
+                                className={`page-item ${
+                                  requestsCurrentPage === requestsTotalPages
+                                    ? "disabled"
+                                    : ""
+                                }`}
+                              >
+                                <button
+                                  className="page-link"
+                                  onClick={() =>
+                                    handleRequestsPageChange(
+                                      requestsCurrentPage + 1
+                                    )
+                                  }
+                                  disabled={
+                                    requestsCurrentPage === requestsTotalPages
+                                  }
+                                >
+                                  {t("settings.next")}
+                                </button>
+                              </li>
+                            </ul>
+                          </nav>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               )}
             </div>

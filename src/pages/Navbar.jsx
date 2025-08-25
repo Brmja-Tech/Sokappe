@@ -135,7 +135,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`navbar navbar-expand-lg ${
+      className={`navbar navbar-expand-xl ${
         isMobileScrolled ? "fixed-top" : ""
       }`}
     >
@@ -197,14 +197,16 @@ const Navbar = () => {
               >
                 <Link
                   className="dropdown-item"
+                  to="/requestcategories"
                   style={{
                     fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
                   }}
                 >
-                  {t("navbar.professionalMarket")}
+                  {t("navbar.newMarket")}
                 </Link>
                 <Link
                   className="dropdown-item"
+                  to="/requestcategories"
                   style={{
                     fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
                   }}
@@ -213,6 +215,16 @@ const Navbar = () => {
                 </Link>
                 <Link
                   className="dropdown-item"
+                  to="/requestcategories"
+                  style={{
+                    fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                  }}
+                >
+                  {t("navbar.openMarket")}
+                </Link>
+                <Link
+                  className="dropdown-item"
+                  to="/requestservice"
                   style={{
                     fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
                   }}
@@ -232,20 +244,20 @@ const Navbar = () => {
               </Link>
             </li>
 
-            {/* Mobile Only - Action Items */}
-            <li className="d-lg-none">
+            {/* Collapsible Action Items */}
+            <li className="d-xl-none">
               <Link className="add" to="/addad">
                 <i className="bi bi-plus"></i> {t("navbar.addAd")}
               </Link>
             </li>
-            <li className="d-lg-none">
+            <li className="d-xl-none">
               <Link className="add" to="/offer-request-service">
                 <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
               </Link>
             </li>
 
-            {/* Mobile Only - Cart */}
-            <li className="d-lg-none">
+            {/* Collapsible Cart */}
+            <li className="d-xl-none">
               <Link className="add" to="/cart">
                 <div className={styles.mobileCounter}>
                   <i className="bi bi-cart3"></i> {t("navbar.cart")}
@@ -260,8 +272,8 @@ const Navbar = () => {
               </Link>
             </li>
 
-            {/* Mobile Only - Wishlist */}
-            <li className="d-lg-none">
+            {/* Collapsible Wishlist */}
+            <li className="d-xl-none">
               <Link className="add" to="/wishlist">
                 <div className={styles.mobileCounter}>
                   <i className="bi bi-heart"></i> {t("navbar.wishlist")}
@@ -276,9 +288,9 @@ const Navbar = () => {
               </Link>
             </li>
 
-            {/* Mobile Only - Notifications */}
+            {/* Collapsible Notifications */}
             {isAuthenticated && (
-              <li className="d-lg-none">
+              <li className="d-xl-none">
                 <Link className="add" to="/notifications">
                   <div className={styles.mobileCounter}>
                     <i className="bi bi-bell"></i>{" "}
@@ -295,8 +307,8 @@ const Navbar = () => {
               </li>
             )}
 
-            {/* Mobile Only - Profile Dropdown */}
-            <li className="nav-item dropdown d-lg-none">
+            {/* Collapsible Profile Dropdown */}
+            <li className="nav-item dropdown d-xl-none">
               <button
                 className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
                 data-bs-toggle="dropdown"
@@ -364,8 +376,8 @@ const Navbar = () => {
               </ul>
             </li>
 
-            {/* Mobile Only - Language Switcher */}
-            <li className="nav-item dropdown d-lg-none">
+            {/* Collapsible Language Switcher */}
+            <li className="nav-item dropdown d-xl-none">
               <button
                 className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
                 data-bs-toggle="dropdown"
@@ -411,27 +423,12 @@ const Navbar = () => {
               </ul>
             </li>
 
-            {/* Mobile Only - Theme Switch */}
-            <li className="nav-item d-lg-none">
-              <div className="switch">
-                <input
-                  type="checkbox"
-                  className="switch__input"
-                  id="Switch"
-                  onChange={toggleTheme}
-                  checked={theme === "dark"}
-                />
-                <label className="switch__label" htmlFor="Switch">
-                  <span className="switch__indicator"></span>
-                  <span className="switch__decoration"></span>
-                </label>
-              </div>
-            </li>
+         
           </ul>
         </div>
 
         {/* Desktop Only - Action Items */}
-        <ul className="actions list-unstyled p-0 d-none d-lg-flex align-items-center gap-3 m-0">
+        <ul className="actions list-unstyled p-0 d-none d-xl-flex align-items-center gap-3 m-0">
           <li>
             <Link className="add" to="/addad">
               <i className="bi bi-plus"></i> {t("navbar.addAd")}
@@ -699,23 +696,6 @@ const Navbar = () => {
                 </button>
               </li>
             </ul>
-          </li>
-
-          {/* Desktop Only - Theme Switch */}
-          <li>
-            <div className="switch">
-              <input
-                type="checkbox"
-                className="switch__input"
-                id="Switch"
-                onChange={toggleTheme}
-                checked={theme === "dark"}
-              />
-              <label className="switch__label" htmlFor="Switch">
-                <span className="switch__indicator"></span>
-                <span className="switch__decoration"></span>
-              </label>
-            </div>
           </li>
         </ul>
       </div>

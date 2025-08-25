@@ -250,7 +250,8 @@ export default function AddService() {
       } else if (error.response?.status === 404) {
         errorMessage = "Categories endpoint not found.";
       } else if (error.response?.status >= 500) {
-        errorMessage = "Server error. Please try again later.";
+        errorMessage =
+          t("settings.serverError") + ". " + t("settings.pleaseTryAgainLater");
       }
 
       setCategoriesError(errorMessage);
@@ -1667,7 +1668,7 @@ export default function AddService() {
       }
     } catch (error) {
       console.error("Error fetching edit main categories:", error);
-      setEditCategoriesError("Failed to load categories");
+      setEditCategoriesError(t("settings.failedToLoadCategories"));
     } finally {
       setEditCategoriesLoading(false);
     }
@@ -1733,7 +1734,11 @@ export default function AddService() {
       setEditCategoryLevels((prev) =>
         prev.map((l) =>
           l.level === level
-            ? { ...l, loading: false, error: "Failed to load categories" }
+            ? {
+                ...l,
+                loading: false,
+                error: t("settings.failedToLoadCategories"),
+              }
             : l
         )
       );

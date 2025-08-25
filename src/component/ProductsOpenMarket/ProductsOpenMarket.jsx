@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import "./ProductsOpenMarket.css";
+import styles from "./ProductsOpenMarket.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
@@ -64,7 +64,7 @@ const ProductsOpenMarket = () => {
   }, [i18n.language]);
 
   return (
-    <div className="products py-5">
+    <div className={styles.products}>
       <div className="container">
         <div className="row">
           <div className="col-xl-5 col-lg-4 col-md-12 col-12">
@@ -78,7 +78,10 @@ const ProductsOpenMarket = () => {
                 i18n.language === "ar" ? "float-start" : "float-end"
               }`}
             >
-              <button className="btn btn-categories">
+              <button className={styles["btn-categories"]}
+              
+              onClick={() => (window.location.href = "/requestcategories")}
+              >
                 {t("products.allcategories")}
               </button>
             </div>
@@ -86,11 +89,13 @@ const ProductsOpenMarket = () => {
         </div>
       </div>
 
-      <div className="products-container">
+      <div className={styles["products-container"]}>
         {loading ? (
-          <p className="loading-message">{t("loading")}...</p>
+          <p className={styles["loading-message"]}>{t("loading")}...</p>
         ) : products.length === 0 ? (
-          <p className="empty-message">No products available</p>
+          <p className={styles["empty-message"]}>
+            {t("settings.noProductsAvailable")}
+          </p>
         ) : (
           <Swiper
             modules={[Autoplay, Pagination]}
@@ -118,16 +123,16 @@ const ProductsOpenMarket = () => {
               <SwiperSlide key={product.id}>
                 <Link
                   to={`/productdetalis/${product.id}`}
-                  className="product-link"
+                  className={styles["product-link"]}
                 >
-                  <div className="product-card">
-                    <div className="product-image-wrapper">
+                  <div className={styles["product-card"]}>
+                    <div className={styles["product-image-wrapper"]}>
                       {/* Action Buttons */}
-                      <div className="product-actions">
+                      <div className={styles["product-actions"]}>
                         <button
-                          className={`action-btn add-to-cart-btn ${
-                            isInCart(product.id) ? "in-cart" : ""
-                          }`}
+                          className={`${styles["action-btn"]} ${
+                            styles["add-to-cart-btn"]
+                          } ${isInCart(product.id) ? styles["in-cart"] : ""}`}
                           onClick={(e) => {
                             e.preventDefault();
                             handleAddToCart(product);
@@ -149,8 +154,12 @@ const ProductsOpenMarket = () => {
                         </button>
 
                         <button
-                          className={`action-btn wishlist-btn ${
-                            isInWishlist(product.id) ? "in-wishlist" : ""
+                          className={`${styles["action-btn"]} ${
+                            styles["wishlist-btn"]
+                          } ${
+                            isInWishlist(product.id)
+                              ? styles["in-wishlist"]
+                              : ""
                           }`}
                           onClick={(e) => {
                             e.preventDefault();
@@ -176,37 +185,43 @@ const ProductsOpenMarket = () => {
                       <img
                         src={
                           product.main_image ||
-                          product.other_images[0] ||
+                          product.other_images?.[0] ||
                           "/placeholder.png"
                         }
                         alt={product.name}
-                        className="product-image"
+                        className={styles["product-image"]}
                         onError={(e) => {
                           e.target.src = "/placeholder.png";
                         }}
                       />
                     </div>
-                    <div className="product-content">
-                      <h3 className="product-title">{product.name}</h3>
-                      <div className="product-price">
+                    <div className={styles["product-content"]}>
+                      <h3 className={styles["product-title"]}>
+                        {product.name}
+                      </h3>
+
+                      <div className={styles["product-price"]}>
                         {product.price} {t("products.currency")}
                       </div>
-                      <div className="product-meta">
-                        <span className="meta-item">
+                      <div className={styles["product-meta"]}>
+                        <span className={styles["meta-item"]}>
                           <i className="bi bi-info-circle"></i>
                           {product.condition}
                         </span>
-                        <span className="meta-item">
-                          <i className="bi bi-geo-alt"></i>
-                          {product.address}
-                        </span>
+                        <div className="mb-2">
+                          <small className="text-muted d-block">
+                            <i className="bi bi-geo-alt-fill me-1"></i>
+                            {product.governorate?.name},{" "}
+                            {product.center_gov?.name}
+                          </small>
+                        </div>
                       </div>
-                      <div className="product-badges">
+                      <div className={styles["product-badges"]}>
                         <span
-                          className={`badge ${
+                          className={`${styles.badge} ${
                             isAvailable(product.has_delivery)
-                              ? "delivery"
-                              : "no-delivery"
+                              ? styles.delivery
+                              : styles["no-delivery"]
                           }`}
                         >
                           <i className="bi bi-truck"></i>
@@ -215,10 +230,10 @@ const ProductsOpenMarket = () => {
                             : t("products.noDelivery")}
                         </span>
                         <span
-                          className={`badge ${
+                          className={`${styles.badge} ${
                             isAvailable(product.has_warranty)
-                              ? "warranty"
-                              : "no-warranty"
+                              ? styles.warranty
+                              : styles["no-warranty"]
                           }`}
                         >
                           <i className="bi bi-shield-check"></i>
