@@ -165,6 +165,8 @@
     "login": "Login",
     "email": "Email",
     "password": "Password",
+    "showPassword": "Show Password",
+    "hidePassword": "Hide Password",
     "forgotPassword": "Forgot Password?",
     "newPassword": "New Password",
     "resetPasswordHelp": "We will help you create your new password.",
@@ -325,6 +327,13 @@
   "services": {
     "title": "Services",
     "yourFeedback": "Your feedback is extremely valuable and the result of great effort...",
+    "level0": "Main Categories",
+    "level1": "Sub Categories",
+    "level2": "Final Categories",
+    "level3": "Sub Categories",
+    "level4": "Final Categories",
+    "noSubcategories": "",
+    "loadingSubcategories": "Loading subcategories...",
     "categories": {
       "jobs": "Jobs",
       "mobilesTablets": "Mobiles & Tablets",
@@ -337,7 +346,14 @@
       "electronics": "Electronics",
       "fashion": "Fashion & Beauty",
       "hobbies": "Hobbies",
-      "services": "Services"
+      "services": "Services",
+      "loading": "Loading...",
+      "retry": "Retry",
+      "noCategories": "No categories available",
+      "noSubcategories": "",
+      "loadingSubcategories": "Loading subcategories...",
+      "failedToLoadCategories": "Failed to load categories",
+      "failedToLoadSubCategories": "Failed to load subcategories"
     }
   },
   "servicePage": {
@@ -546,7 +562,10 @@
     "price": "Filter by Price",
     "brand": "Brand",
     "from": "From",
-    "to": "To"
+    "to": "To",
+    "invalidRequest": "Invalid Request",
+    "selectValidCategory": "Please select a valid service category.",
+    "noServicesFound": "No services found in this category."
   },
   "sort": {
     "latest": "Latest",
@@ -557,7 +576,12 @@
   "categories": {
     "latop": "Laptops",
     "accessories": "Accessories",
-    "phones": "Phones"
+    "phones": "Phones",
+    "level0": "Main Categories",
+    "level1": "Sub Categories",
+    "level2": "Final Categories",
+    "level3": "Sub Categories",
+    "level4": "Final Categories"
   },
   "cities": {
     "cairo": "Cairo",
@@ -859,7 +883,38 @@
   "service": "Service provider",
   "additionalImages": "Additional Images",
   "map": "Map",
+  "discountPrice": "Discount Price",
+  "discountExpiresAt": "Discount Expires At",
+  "deliveryDaysPlaceholder": "Enter delivery days",
+  "discountPricePlaceholder": "Enter discount price",
   "deliveryDays": "Delivery Days",
   "categoriess": "Categories",
-      "yourFeedback": "Your feedback is extremely valuable and the result of great effort..."
+  "yourFeedback": "Your feedback is extremely valuable and the result of great effort...",
+  "orders": {
+  "title": "Product Orders",
+  "orderNumber": "Order Number",
+  "address": "Address",
+  "paymentMethod": "Payment Method",
+  "total": "Total",
+  "requestedProducts": "Requested Products",
+  "price": "Price",
+  "quantity": "Quantity",
+  "noProductsInOrder": "No products in this order",
+  "noOrdersFound": "No product orders found",
+  "noOrdersDescription": "You haven't purchased any products yet",
+  "status": {
+    "pending": "Pending",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered"
+  },
+  "payment": {
+    "cashOnDelivery": "Cash on Delivery",
+    "cash": "Cash",
+    "card": "Credit Card",
+    "bankTransfer": "Bank Transfer"
+  }
+}
 }

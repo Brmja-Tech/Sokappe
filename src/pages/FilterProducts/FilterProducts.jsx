@@ -27,7 +27,14 @@ export default function FilterProducts() {
     if (categoryId && market === "service") {
       fetchServices();
     }
-  }, [categoryId, market]);
+  }, [categoryId, market, i18n.language]);
+
+  // Reset services when language changes
+  useEffect(() => {
+    if (categoryId && market === "service") {
+      fetchServices();
+    }
+  }, [i18n.language]);
 
   const fetchServices = async (page = 1) => {
     try {
@@ -65,8 +72,8 @@ export default function FilterProducts() {
   if (!categoryId || market !== "service") {
     return (
       <div className="container py-5 text-center">
-        <h4>Invalid request</h4>
-        <p>Please select a valid service category.</p>
+        <h4>{t("filter.invalidRequest")}</h4>
+        <p>{t("filter.selectValidCategory")}</p>
       </div>
     );
   }
@@ -230,9 +237,7 @@ export default function FilterProducts() {
               </>
             ) : (
               <div className={styles.emptyState}>
-                <p className="text-muted">
-                  No services found in this category.
-                </p>
+                <p className="text-muted">{t("filter.noServicesFound")}</p>
               </div>
             )}
           </div>

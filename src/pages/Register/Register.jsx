@@ -16,6 +16,11 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [accountType, setAccountType] = useState("physical");
 
+  // Password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirmation, setShowPasswordConfirmation] =
+    useState(false);
+
   // API Data States
   const [countries, setCountries] = useState([]);
   const [governorates, setGovernorates] = useState([]);
@@ -110,6 +115,10 @@ const Register = () => {
       commercial_record_image: null,
       store_image: null,
     });
+
+    // Reset password visibility states
+    setShowPassword(false);
+    setShowPasswordConfirmation(false);
 
     setStep(1);
   };
@@ -490,39 +499,7 @@ const Register = () => {
         </div>
       </div>
 
-      <div className="form-row">
-        <div className="form-group">
-          <label className="form-label">{t("sign.password")}</label>
-          <input
-            className="form-input"
-            type="password"
-            autoComplete="off"
-            placeholder={t("sign.password")}
-            value={formData.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
-            dir={isRTL ? "rtl" : "ltr"}
-            style={{ textAlign: isRTL ? "right" : "left" }}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">{t("sign.confirmPassword")}</label>
-          <input
-            className="form-input"
-            type="password"
-            autoComplete="off"
-            placeholder={t("sign.confirmPassword")}
-            value={formData.password_confirmation}
-            onChange={(e) =>
-              handleInputChange("password_confirmation", e.target.value)
-            }
-            dir={isRTL ? "rtl" : "ltr"}
-            style={{ textAlign: isRTL ? "right" : "left" }}
-            required
-          />
-        </div>
-      </div>
-
+     
       <div className="form-row">
         <div className="form-group">
           <label className="form-label">{t("sign.country")}</label>
@@ -585,7 +562,12 @@ const Register = () => {
             ))}
           </select>
         </div>
-        <div className="form-group">
+       
+      </div>
+
+      <div className="form-row">
+
+      <div className="form-group">
           <label className="form-label">{t("sign.address")} (العربية)</label>
           <textarea
             className="form-textarea"
@@ -596,10 +578,8 @@ const Register = () => {
             style={{ textAlign: "right" }}
             required
           ></textarea>
-        </div>
-      </div>
+        </div> 
 
-      <div className="form-row">
         <div className="form-group">
           <label className="form-label">{t("sign.address")} (English)</label>
           <textarea
@@ -613,6 +593,168 @@ const Register = () => {
           ></textarea>
         </div>
       </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label className="form-label">{t("sign.password")}</label>
+          <div className="password-input-container">
+            <input
+              className="form-input password-input"
+              type={showPassword ? "text" : "password"}
+              autoComplete="off"
+              placeholder={t("sign.password")}
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              dir={isRTL ? "rtl" : "ltr"}
+              style={{ textAlign: isRTL ? "right" : "left" }}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={togglePasswordVisibility}
+              aria-label={
+                showPassword ? t("sign.hidePassword") : t("sign.showPassword")
+              }
+            >
+              {showPassword ? (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">{t("sign.confirmPassword")}</label>
+          <div className="password-input-container">
+            <input
+              className="form-input password-input"
+              type={showPasswordConfirmation ? "text" : "password"}
+              autoComplete="off"
+              placeholder={t("sign.confirmPassword")}
+              value={formData.password_confirmation}
+              onChange={(e) =>
+                handleInputChange("password_confirmation", e.target.value)
+              }
+              dir={isRTL ? "rtl" : "ltr"}
+              style={{ textAlign: isRTL ? "right" : "left" }}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={togglePasswordConfirmationVisibility}
+              aria-label={
+                showPasswordConfirmation
+                  ? t("sign.hidePassword")
+                  : t("sign.showPassword")
+              }
+            >
+              {showPasswordConfirmation ? (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
 
       <button type="submit" className="register-button" disabled={loading}>
         {loading ? t("sign.registering") : t("sign.register")}
@@ -859,38 +1001,7 @@ const Register = () => {
         </div>
       </div>
 
-      <div className="form-row">
-        <div className="form-group">
-          <label className="form-label">{t("sign.password")}</label>
-          <input
-            className="form-input"
-            type="password"
-            autoComplete="off"
-            placeholder={t("sign.password")}
-            value={formData.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
-            dir={isRTL ? "rtl" : "ltr"}
-            style={{ textAlign: isRTL ? "right" : "left" }}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">{t("sign.confirmPassword")}</label>
-          <input
-            className="form-input"
-            type="password"
-            autoComplete="off"
-            placeholder={t("sign.confirmPassword")}
-            value={formData.password_confirmation}
-            onChange={(e) =>
-              handleInputChange("password_confirmation", e.target.value)
-            }
-            dir={isRTL ? "rtl" : "ltr"}
-            style={{ textAlign: isRTL ? "right" : "left" }}
-            required
-          />
-        </div>
-      </div>
+     
 
       <div className="form-row">
         <div className="form-group">
@@ -954,7 +1065,12 @@ const Register = () => {
             ))}
           </select>
         </div>
-        <div className="form-group">
+        
+      </div>
+
+      <div className="form-row">
+
+      <div className="form-group">
           <label className="form-label">{t("sign.address")} (العربية)</label>
           <textarea
             className="form-textarea"
@@ -966,9 +1082,7 @@ const Register = () => {
             required
           ></textarea>
         </div>
-      </div>
 
-      <div className="form-row">
         <div className="form-group">
           <label className="form-label">{t("sign.address")} (English)</label>
           <textarea
@@ -980,6 +1094,167 @@ const Register = () => {
             style={{ textAlign: "left" }}
             required
           ></textarea>
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label className="form-label">{t("sign.password")}</label>
+          <div className="password-input-container">
+            <input
+              className="form-input password-input"
+              type={showPassword ? "text" : "password"}
+              autoComplete="off"
+              placeholder={t("sign.password")}
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              dir={isRTL ? "rtl" : "ltr"}
+              style={{ textAlign: isRTL ? "right" : "left" }}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={togglePasswordVisibility}
+              aria-label={
+                showPassword ? t("sign.hidePassword") : t("sign.showPassword")
+              }
+            >
+              {showPassword ? (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">{t("sign.confirmPassword")}</label>
+          <div className="password-input-container">
+            <input
+              className="form-input password-input"
+              type={showPasswordConfirmation ? "text" : "password"}
+              autoComplete="off"
+              placeholder={t("sign.confirmPassword")}
+              value={formData.password_confirmation}
+              onChange={(e) =>
+                handleInputChange("password_confirmation", e.target.value)
+              }
+              dir={isRTL ? "rtl" : "ltr"}
+              style={{ textAlign: isRTL ? "right" : "left" }}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={togglePasswordConfirmationVisibility}
+              aria-label={
+                showPasswordConfirmation
+                  ? t("sign.hidePassword")
+                  : t("sign.showPassword")
+              }
+            >
+              {showPasswordConfirmation ? (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1373,39 +1648,171 @@ const Register = () => {
             required
           />
         </div>
-        <div className="form-group">
+        
+      </div>
+
+    <div className="form-row">
+    <div className="form-group">
           <label className="form-label">{t("sign.password")}</label>
+          <div className="password-input-container">
+            <input
+              className="form-input password-input"
+              type={showPassword ? "text" : "password"}
+              autoComplete="off"
+              placeholder={t("sign.password")}
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              dir={isRTL ? "rtl" : "ltr"}
+              style={{ textAlign: isRTL ? "right" : "left" }}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={togglePasswordVisibility}
+              aria-label={
+                showPassword ? t("sign.hidePassword") : t("sign.showPassword")
+              }
+            >
+              {showPassword ? (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+      <div className="form-group">
+        <label className="form-label">{t("sign.confirmPassword")}</label>
+        <div className="password-input-container">
           <input
-            className="form-input"
-            type="password"
+            className="form-input password-input"
+            type={showPasswordConfirmation ? "text" : "password"}
             autoComplete="off"
-            placeholder={t("sign.password")}
-            value={formData.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
+            placeholder={t("sign.confirmPassword")}
+            value={formData.password_confirmation}
+            onChange={(e) =>
+              handleInputChange("password_confirmation", e.target.value)
+            }
             dir={isRTL ? "rtl" : "ltr"}
             style={{ textAlign: isRTL ? "right" : "left" }}
             required
           />
+          <button
+            type="button"
+            className="password-toggle-btn"
+            onClick={togglePasswordConfirmationVisibility}
+            aria-label={
+              showPasswordConfirmation
+                ? t("sign.hidePassword")
+                : t("sign.showPassword")
+            }
+          >
+            {showPasswordConfirmation ? (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <line
+                  x1="1"
+                  y1="1"
+                  x2="23"
+                  y2="23"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
 
-      <div className="form-group">
-        <label className="form-label">{t("sign.confirmPassword")}</label>
-        <input
-          className="form-input"
-          type="password"
-          autoComplete="off"
-          placeholder={t("sign.confirmPassword")}
-          value={formData.password_confirmation}
-          onChange={(e) =>
-            handleInputChange("password_confirmation", e.target.value)
-          }
-          dir={isRTL ? "rtl" : "ltr"}
-          style={{ textAlign: isRTL ? "right" : "left" }}
-          required
-        />
-      </div>
-
+    </div>
       <button
         type="button"
         className="register-button"
@@ -1480,7 +1887,11 @@ const Register = () => {
             ))}
           </select>
         </div>
-        <div className="form-group">
+     
+      </div>
+
+      <div className="form-row">
+      <div className="form-group">
           <label className="form-label">{t("sign.address")} (العربية)</label>
           <textarea
             className="form-textarea"
@@ -2085,6 +2496,14 @@ const Register = () => {
     </form>
   );
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const togglePasswordConfirmationVisibility = () => {
+    setShowPasswordConfirmation(!showPasswordConfirmation);
+  };
+
   return (
     <div className="register-page" dir={isRTL ? "rtl" : "ltr"}>
       <div className="register-container">
@@ -2164,7 +2583,7 @@ const Register = () => {
 
         <div className="login-link">
           <span>{t("sign.haveAccount")}</span>
-          <Link to="/login" className="link">
+          <Link to="/login" className="link mx-1">
             {t("sign.login")}
           </Link>
         </div>

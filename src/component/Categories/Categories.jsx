@@ -90,6 +90,7 @@ const Categories = () => {
         {
           headers: {
             Accept: "application/json",
+            "Accept-Language": i18n.language,
           },
         }
       );
@@ -179,6 +180,7 @@ const Categories = () => {
         {
           headers: {
             Accept: "application/json",
+            "Accept-Language": i18n.language,
           },
         }
       );
@@ -379,9 +381,7 @@ const Categories = () => {
         <h4 className="mb-3 main-color text-center title">
           <img src="/shopping-list.gif" alt="--" /> {t("categoriess")}
         </h4>
-        <p className="mb-4 gray-color text-center">
-          {t("yourFeedback")}
-        </p>
+        <p className="mb-4 gray-color text-center">{t("yourFeedback")}</p>
 
         <div className="services_categories py-3">
           {loading ? (

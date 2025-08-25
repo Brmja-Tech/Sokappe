@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "./CompanyProfile.css";
 import { FiCamera } from "react-icons/fi";
+import { FaShoppingCart, FaMapMarkerAlt, FaCreditCard, FaBox } from "react-icons/fa";
 
 export default function CompanyProfile() {
   const { t, i18n } = useTranslation("global");
@@ -68,6 +69,10 @@ export default function CompanyProfile() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Orders state
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
   // API Data States for location
   const [countries, setCountries] = useState([]);
   const [governorates, setGovernorates] = useState([]);
@@ -129,6 +134,13 @@ export default function CompanyProfile() {
       }
     }
   }, [activeTab, profileData.account_type]);
+
+  // Fetch orders when tab changes
+  useEffect(() => {
+    if (activeTab === "orders") {
+      fetchOrders();
+    }
+  }, [activeTab]);
 
   // Refetch data when page changes
   useEffect(() => {
@@ -350,6 +362,38 @@ export default function CompanyProfile() {
     }
   };
 
+  // Fetch user orders
+  const fetchOrders = async () => {
+    try {
+      setOrdersLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || !userData.token) {
+        toast.error(t("settings.authenticationRequired"));
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/user/orders`,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data.status === 200) {
+        setOrders(response.data.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      toast.error(t("settings.failedToLoadOrders"));
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
   // Handle page change
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -407,6 +451,30 @@ export default function CompanyProfile() {
 
     // Fallback to empty string
     return "";
+  };
+
+  // Helper function to get status text in Arabic
+  const getStatusText = (status) => {
+    const statusMap = {
+      pending: t("orders.status.pending"),
+      completed: t("orders.status.completed"),
+      cancelled: t("orders.status.cancelled"),
+      processing: t("orders.status.processing"),
+      shipped: t("orders.status.shipped"),
+      delivered: t("orders.status.delivered"),
+    };
+    return statusMap[status] || status;
+  };
+
+  // Helper function to get payment method text in Arabic
+  const getPaymentMethodText = (method) => {
+    const methodMap = {
+      cash_on_delivery: t("orders.payment.cashOnDelivery"),
+      cash: t("orders.payment.cash"),
+      card: t("orders.payment.card"),
+      bank_transfer: t("orders.payment.bankTransfer"),
+    };
+    return methodMap[method] || method;
   };
 
   const handleProfileSubmit = async (e) => {
@@ -571,6 +639,16 @@ export default function CompanyProfile() {
                   {profileData.account_type === "service"
                     ? t("settings.myServicesTab")
                     : t("settings.myProductsTab")}
+                </button>
+                <button
+                  className={`profile-settings-tab-btn${
+                    activeTab === "orders" ? " active" : ""
+                  }`}
+                  onClick={() => setActiveTab("orders")}
+                  style={{ textAlign: isRTL ? "right" : "left" }}
+                >
+                  <FaShoppingCart className="tab-icon" />
+                  {t("orders.title")}
                 </button>
               </div>
             </div>
@@ -1427,6 +1505,123 @@ export default function CompanyProfile() {
                               </li>
                             </ul>
                           </nav>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+              {activeTab === "orders" && (
+                <div className="profile-orders-tab">
+                  <div className="mb-4">
+                    <h4>{t("orders.title")}</h4>
+                  </div>
+
+                  {ordersLoading ? (
+                    <div className="text-center">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="visually-hidden">{t("settings.loading")}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {orders.length > 0 ? (
+                        <div className="orders-container">
+                          {orders.map((order) => (
+                            <div key={order.id} className="order-card">
+                              <div className="order-header">
+                                <div className="order-info">
+                                  <div className="order-id">
+                                    <FaShoppingCart className="order-icon" />
+                                    <span>{t("orders.orderNumber")}: {order.id}</span>
+                                  </div>
+                                </div>
+                                <div className="order-status">
+                                  <span className={`status-badge ${order.status}`}>
+                                    {getStatusText(order.status)}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="order-details">
+                                <div className="order-location">
+                                  <FaMapMarkerAlt className="detail-icon" />
+                                  <div className="location-info">
+                                    <div className="location-text">{t("orders.address")}</div>
+                                    <div className="location-details">
+                                      {order.address}
+                                    </div>
+                                    <div className="location-details">
+                                      {order.country}, {order.governorate},{" "}
+                                      {order.center_gov}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="order-payment">
+                                  <FaCreditCard className="detail-icon" />
+                                  <div className="payment-info">
+                                    <div className="payment-method">{t("orders.paymentMethod")}</div>
+                                    <div className="location-details">
+                                      {getPaymentMethodText(order.payment_method)}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="order-total">
+                                <div className="total-label">{t("orders.total")}:</div>
+                                <div className="total-amount">
+                                  {order.total_amount}
+                                </div>
+                              </div>
+
+                              {order.items && order.items.length > 0 ? (
+                                <div className="order-items">
+                                  <div className="items-title">
+                                    {t("orders.requestedProducts")}
+                                  </div>
+                                  <div className="items-grid">
+                                    {order.items.map((item, index) => (
+                                      <div key={index} className="item-card">
+                                        <div className="item-name">
+                                          {item.product.name}
+                                        </div>
+                                        <div className="item-description">
+                                          {item.product.description}
+                                        </div>
+                                        <div className="item-details">
+                                          <div className="item-price">
+                                            {t("orders.price")}: {item.product.price}
+                                          </div>
+                                          <div className="item-quantity">
+                                            {t("orders.quantity")}: {item.quantity}
+                                          </div>
+                                          <div className="item-total">
+                                            {t("orders.total")}: {item.total}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="no-items">
+                                  <FaBox className="no-items-icon" />
+                                  <span>{t("orders.noProductsInOrder")}</span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="no-orders">
+                          <FaShoppingCart className="no-orders-icon" />
+                          <p>{t("orders.noOrdersFound")}</p>
+                          <small>{t("orders.noOrdersDescription")}</small>
                         </div>
                       )}
                     </>

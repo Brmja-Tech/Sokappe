@@ -190,6 +190,8 @@
     "login": "تسجيل الدخول",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
     "forgotPassword": "نسيت كلمة المرور؟",
     "newPassword": "كلمة مرور جديدة",
     "resetPasswordHelp": "سوف نساعدك في إنشاء كلمة المرور الجديدة الخاصة بك.",
@@ -350,6 +352,13 @@
   "services": {
     "title": "خدماتنا",
     "yourFeedback": "أرائكم قيّمة للغاية، وهي نتيجة لجهد كبير...",
+    "level0": "الفئات الرئيسية",
+    "level1": "الفئات الفرعية",
+    "level2": "الفئات النهائية",
+    "level3": "الفئات الفرعية",
+    "level4": "الفئات النهائية",
+    "noSubcategories": "",
+    "loadingSubcategories": "جاري تحميل الفئات الفرعية...",
     "categories": {
       "jobs": "وظائف",
       "mobilesTablets": "موبايلات و تابلت",
@@ -362,8 +371,14 @@
       "electronics": "أجهزة إلكترونية",
       "fashion": "الموضة والجمال",
       "hobbies": "هوايات",
-      "services": "خدمات"
-      
+      "services": "خدمات",
+      "loading": "جاري التحميل...",
+      "retry": "إعادة المحاولة",
+      "noSubcategories": "",
+      "loadingSubcategories": "جاري تحميل الفئات الفرعية...",
+      "noCategories": "لا توجد فئات متاحة",
+      "failedToLoadCategories": "فشل في تحميل الفئات",
+      "failedToLoadSubCategories": "فشل في تحميل الفئات الفرعية"
     }
   },
   "servicePage": {
@@ -570,7 +585,10 @@
     "price": "تصفية حسب السعر",
     "brand": "الماركة",
     "from": "من",
-    "to": "إلى"
+    "to": "إلى",
+    "invalidRequest": "طلب غير صحيح",
+    "selectValidCategory": "يرجى اختيار فئة خدمة صحيحة.",
+    "noServicesFound": "لم يتم العثور على خدمات في هذه الفئة."
   },
   "sort": {
     "latest": "الأحدث",
@@ -581,7 +599,13 @@
   "categories": {
     "latop": "لابتوبات",
     "accessories": "إكسسوارات",
-    "phones": "هواتف"
+    "phones": "هواتف",
+    "level0": "الفئات الرئيسية",
+    "level1": "الفئات الفرعية",
+    "level2": "الفئات النهائية",
+    "level3": "الفئات الفرعية",
+    "level4": "الفئات النهائية",
+    "noSubcategories": ""
   },
   "cities": {
     "cairo": "القاهرة",
@@ -843,7 +867,38 @@
   "service": "مقدم خدمة",
   "additionalImages": "صور إضافية",
   "map": "الخريطة",
+  "discountPrice": "سعر الخصم",
+  "discountExpiresAt": "تاريخ انتهاء الخصم",
+  "deliveryDaysPlaceholder": "أدخل أيام التوصيل",
+  "discountPricePlaceholder": "أدخل سعر الخصم",
   "deliveryDays": "أيام التوصيل",
   "categoriess": "الفئات",
-      "yourFeedback": "أرائكم قيّمة للغاية، وهي نتيجة لجهد كبير..."
+  "yourFeedback": "أرائكم قيّمة للغاية، وهي نتيجة لجهد كبير...",
+  "orders": {
+  "title": "طلبات المنتجات",
+  "orderNumber": "رقم الطلب",
+  "address": "العنوان",
+  "paymentMethod": "طريقة الدفع",
+  "total": "المجموع",
+  "requestedProducts": "المنتجات المطلوبة",
+  "price": "السعر",
+  "quantity": "الكمية",
+  "noProductsInOrder": "لا توجد منتجات في هذا الطلب",
+  "noOrdersFound": "لا توجد طلبات منتجات",
+  "noOrdersDescription": "لم تقم بشراء أي منتجات بعد",
+  "status": {
+    "pending": "قيد الانتظار",
+    "completed": "مكتمل",
+    "cancelled": "ملغي",
+    "processing": "قيد المعالجة",
+    "shipped": "تم الشحن",
+    "delivered": "تم التوصيل"
+  },
+  "payment": {
+    "cashOnDelivery": "الدفع عند الاستلام",
+    "cash": "نقداً",
+    "card": "بطاقة ائتمان",
+    "bankTransfer": "تحويل بنكي"
+  }
+}
 }

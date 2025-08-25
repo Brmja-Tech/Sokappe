@@ -43,12 +43,29 @@
   font-size: 0.9rem;
   transition: all 0.3s ease;
   background-color: #fafbfc;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
 }
 
 .filterSelect:focus {
   border-color: #0a6e58;
   box-shadow: 0 0 0 3px rgba(10, 110, 88, 0.1);
   background-color: white;
+}
+
+/* RTL support for dropdown arrows */
+[dir="rtl"] .filterSelect {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m14 8-4 4-4-4'/%3e%3c/svg%3e");
+  background-position: left 0.75rem center;
+  padding-right: 0.75rem;
+  padding-left: 2.5rem;
 }
 
 /* Price inputs */
@@ -363,6 +380,33 @@
 [dir="rtl"] .serviceLocation {
   text-align: left;
   max-width: 40%;
+}
+
+[dir="rtl"] .pagination {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .pagination .page-link {
+  margin: 0 0.25rem;
+}
+
+/* RTL support for filters */
+[dir="rtl"] .filterBlock h6 {
+  text-align: right;
+}
+
+[dir="rtl"] .priceInputs {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .filterSelect option {
+  text-align: right;
+}
+
+/* RTL support for empty state and loading */
+[dir="rtl"] .emptyState,
+[dir="rtl"] .loadingContainer {
+  text-align: center;
 }
 
 /* Smooth animations */

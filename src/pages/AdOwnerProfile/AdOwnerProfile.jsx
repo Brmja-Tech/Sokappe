@@ -1,20 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import PageHeadProfile from "../../component/PageHeadProfile/PageHeadProfile";
-import profile from "../../assests/imgs/WhatsApp Image 3.jpg";
-import { FaStar, FaPhone } from "react-icons/fa";
+import {
+  FaStar,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaBuilding,
+  FaUser,
+} from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 import "./AdOwnerProfile.css";
 
 export default function AdOwnerProfile() {
-  const [activeTab, setActiveTab] = useState("ads");
+  const [activeTab, setActiveTab] = useState("owner");
+  const [ownerData, setOwnerData] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+
+  useEffect(() => {
+    fetchOwnerData();
+  }, [id]);
+
+  const fetchOwnerData = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/products/product-owner/${id}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Language": "ar",
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (data.status === 200) {
+        setOwnerData(data.data.owner);
+        setProducts(data.data.products.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching owner data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>جاري التحميل...</p>
+      </div>
+    );
+  }
+
+  if (!ownerData) {
+    return (
+      <div className="error-container">
+        <p>لم يتم العثور على البيانات</p>
+      </div>
+    );
+  }
 
   return (
     <>
-      <PageHeadProfile name="mahmoud amged" rate={4.8} img={profile} />
+      <PageHeadProfile
+        name={ownerData.user.username}
+        rate={4.8}
+        img={ownerData.company_logo_image || "/avatar.webp"}
+      />
 
       <section className="profile-tabs-section">
         <div className="container">
@@ -22,152 +79,66 @@ export default function AdOwnerProfile() {
           <div className="profile-tabs-navigation">
             <button
               className={`profile-tab-btn ${
-                activeTab === "ads" ? "active" : ""
+                activeTab === "owner" ? "active" : ""
               }`}
-              onClick={() => setActiveTab("ads")}
+              onClick={() => setActiveTab("owner")}
             >
-              الإعلانات
+              <FaUser className="tab-icon" />
+              معلومات المالك
             </button>
             <button
               className={`profile-tab-btn ${
-                activeTab === "services" ? "active" : ""
+                activeTab === "products" ? "active" : ""
               }`}
-              onClick={() => setActiveTab("services")}
+              onClick={() => setActiveTab("products")}
             >
-              الخدمات
-            </button>
-            <button
-              className={`profile-tab-btn ${
-                activeTab === "ratings" ? "active" : ""
-              }`}
-              onClick={() => setActiveTab("ratings")}
-            >
-              التقييمات
+              <FaBuilding className="tab-icon" />
+              المنتجات ({products.length})
             </button>
           </div>
 
           {/* Tabs Content */}
           <div className="profile-tab-content">
-            {/* Ads Tab */}
-            {activeTab === "ads" && (
-              <div className="ads-tab">
-                <div className="row">
-                  {/* Swiper Section - 8 columns */}
-                  <div className="col-lg-8">
-                    <div className="profile-ads-swiper-section">
-                      <Swiper
-                        modules={[Autoplay, Navigation, Pagination]}
-                        spaceBetween={20}
-                        slidesPerView={1}
-                        loop={true}
-                        autoplay={{
-                          delay: 3000,
-                          disableOnInteraction: false,
-                        }}
-                        pagination={{ clickable: true }}
-                        navigation={true}
-                        breakpoints={{
-                          576: {
-                            slidesPerView: 2,
-                          },
-                          768: {
-                            slidesPerView: 3,
-                          },
-                          992: {
-                            slidesPerView: 4,
-                          },
-                        }}
-                        className="profile-ads-swiper"
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-                          <SwiperSlide key={item}>
-                            <div className="profile-ad-card">
-                              <img
-                                src="/car.png"
-                                alt="ad"
-                                className="profile-ad-image"
-                              />
-                            </div>
-                          </SwiperSlide>
-                        ))}
-                      </Swiper>
-                    </div>
-                  </div>
-
-                  {/* Statistics Section - 4 columns */}
-                  <div className="col-lg-4">
-                    <div className="profile-stats-section">
-                      <div className="profile-stat-card">
-                        <h5 className="border-bottom mb-2">إحصائيات</h5>
-                        <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h5 className="m-0 p-0">التقييمات</h5>
-                          <div className="profile-rating-display">
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star" />
-                            <span>4.8</span>
-                          </div>
-                        </div>
-                        <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h5 className="m-0 p-0">الخدمات المنشورة</h5>
-                          <div className="profile-stat-number">24</div>
-                        </div>
-                      </div>
-                      <div className="profile-stat-card">
-                        <button className="profile-contact-btn">
-                          <FaPhone className="profile-phone-icon" />
-                          تحدث مع مقدم الخدمة
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Services Tab */}
-            {activeTab === "services" && (
-              <div className="services-tab">
+            {/* Owner Info Tab */}
+            {activeTab === "owner" && (
+              <div className="owner-tab">
                 <div className="row">
                   <div className="col-lg-8">
-                    <div className="profile-services-grid">
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-                        <div key={item} className="profile-service-card">
+                    <div className="owner-info-card">
+                      <div className="owner-header">
+                        <div className="owner-avatar">
                           <img
-                            src="/car.png"
-                            alt="service"
-                            className="profile-service-image"
+                            src={ownerData.company_logo_image || "/avatar.webp"}
+                            alt="owner"
+                            className="owner-image"
                           />
-                          <div className="profile-service-content">
-                            <h6>خدمة صيانة السيارات</h6>
-                            <p className="profile-service-owner">
-                              Nine One One
-                            </p>
-                            <div className="profile-rating">
-                              <FaStar className="profile-star filled" />
-                              <FaStar className="profile-star filled" />
-                              <FaStar className="profile-star filled" />
-                              <FaStar className="profile-star filled" />
-                              <FaStar className="profile-star" />
-                              <span>(12)</span>
-                            </div>
-                            <div className="profile-price">
-                              يبدأ من <span>200 ريال</span>
-                            </div>
-                          </div>
                         </div>
-                      ))}
+                        <div className="owner-details">
+                          <h3 className="owner-name">
+                            {ownerData.user.username}
+                          </h3>
+                          <p className="owner-type">{ownerData.company_type}</p>
+                          {ownerData.bio && (
+                            <p className="owner-bio">{ownerData.bio}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="owner-contact-info">
+                        <div className="contact-item">
+                          <FaMapMarkerAlt className="contact-icon" />
+                          <span>{ownerData.user.address}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div className="col-lg-4">
                     <div className="profile-stats-section">
                       <div className="profile-stat-card">
-                        <h5 className="border-bottom mb-2">إحصائيات</h5>
-                        <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h5 className="m-0 p-0">التقييمات</h5>
+                        <h5 className="border-bottom mb-3">إحصائيات</h5>
+                        <div className="profile-stat-header d-flex justify-content-between align-items-center mb-3">
+                          <h6 className="m-0">التقييمات</h6>
                           <div className="profile-rating-display">
                             <FaStar className="profile-star filled" />
                             <FaStar className="profile-star filled" />
@@ -178,14 +149,16 @@ export default function AdOwnerProfile() {
                           </div>
                         </div>
                         <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h5 className="m-0 p-0">الخدمات المنشورة</h5>
-                          <div className="profile-stat-number">24</div>
+                          <h6 className="m-0">المنتجات</h6>
+                          <div className="profile-stat-number">
+                            {products.length}
+                          </div>
                         </div>
                       </div>
                       <div className="profile-stat-card">
                         <button className="profile-contact-btn">
                           <FaPhone className="profile-phone-icon" />
-                          تحدث مع مقدم الخدمة
+                          تحدث مع صاحب المنتج
                         </button>
                       </div>
                     </div>
@@ -194,50 +167,117 @@ export default function AdOwnerProfile() {
               </div>
             )}
 
-            {/* Ratings Tab */}
-            {activeTab === "ratings" && (
-              <div className="ratings-tab">
+            {/* Products Tab */}
+            {activeTab === "products" && (
+              <div className="products-tab">
                 <div className="row">
-                  {/* Ratings List - 8 columns */}
                   <div className="col-lg-8">
-                    <div className="profile-ratings-list">
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-                        <div key={item} className="profile-rating-item">
-                          <div className="profile-rating-header">
-                            <img
-                              src="/avatar.webp"
-                              alt="user"
-                              className="profile-user-avatar"
-                            />
-                            <div className="profile-user-info">
-                              <h6>أحمد محمد</h6>
-                              <span className="profile-rating-date">
-                                15 مارس 2024
+                    <div className="profile-products-grid">
+                      {products.map((product) => (
+                        <div key={product.id} className="profile-product-card">
+                          <div className="product-images-swiper">
+                            <Swiper
+                              modules={[Autoplay]}
+                              spaceBetween={0}
+                              slidesPerView={1}
+                              loop={true}
+                              autoplay={{
+                                delay: 3000,
+                                disableOnInteraction: false,
+                              }}
+                              className="product-images-swiper"
+                            >
+                              <SwiperSlide>
+                                <img
+                                  src={product.main_image}
+                                  alt={product.name}
+                                  className="product-main-image"
+                                />
+                              </SwiperSlide>
+                              {product.other_images &&
+                                product.other_images.map((image, index) => (
+                                  <SwiperSlide key={index}>
+                                    <img
+                                      src={image}
+                                      alt={`${product.name} ${index + 2}`}
+                                      className="product-main-image"
+                                    />
+                                  </SwiperSlide>
+                                ))}
+                            </Swiper>
+                          </div>
+
+                          <div className="product-content">
+                            <h5 className="product-title">{product.name}</h5>
+                            <p className="product-description">
+                              {product.description}
+                            </p>
+
+                            <div className="product-details">
+                              <div className="product-location">
+                                <FaMapMarkerAlt className="location-icon" />
+                                <span>
+                                  {product.governorate.name},{" "}
+                                  {product.center_gov.name}
+                                </span>
+                              </div>
+
+                              <div className="product-condition">
+                                <span
+                                  className={`condition-badge ${
+                                    product.condition === "جديد"
+                                      ? "new"
+                                      : "used"
+                                  }`}
+                                >
+                                  {product.condition}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="product-features">
+                              <span
+                                className={`feature-badge ${
+                                  product.has_delivery === 1
+                                    ? "delivery"
+                                    : "disabled"
+                                }`}
+                              >
+                                {product.has_delivery === 1
+                                  ? "توصيل"
+                                  : "لا يوجد توصيل"}
+                              </span>
+                              <span
+                                className={`feature-badge ${
+                                  product.has_warranty === 1
+                                    ? "warranty"
+                                    : "disabled"
+                                }`}
+                              >
+                                {product.has_warranty === 1
+                                  ? `ضمان ${product.warranty_period}`
+                                  : "لا يوجد ضمان"}
+                              </span>
+                            </div>
+
+                            <div className="product-price">
+                              <span className="price-label">السعر:</span>
+                              <span className="price-value">
+                                {product.price}
                               </span>
                             </div>
                           </div>
-                          <div className="profile-rating-stars">
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star filled" />
-                            <FaStar className="profile-star filled" />
-                          </div>
-                          <p className="profile-rating-description">
-                            خدمة ممتازة وسعر مناسب، أنصح بالتعامل معهم
-                          </p>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Statistics Section - 4 columns */}
                   <div className="col-lg-4">
                     <div className="profile-stats-section">
                       <div className="profile-stat-card">
-                        <h5 className="border-bottom mb-2">إحصائيات</h5>
-                        <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h5 className="m-0 p-0">التقييمات</h5>
+                        <h5 className="border-bottom mb-3">إحصائيات</h5>
+                        <div className="profile-stat-header d-flex justify-content-between align-items-center mb-3">
+                          <h6 className="m-0">التقييمات</h6>
                           <div className="profile-rating-display">
                             <FaStar className="profile-star filled" />
                             <FaStar className="profile-star filled" />
@@ -248,14 +288,16 @@ export default function AdOwnerProfile() {
                           </div>
                         </div>
                         <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h5 className="m-0 p-0">الخدمات المنشورة</h5>
-                          <div className="profile-stat-number">24</div>
+                          <h6 className="m-0">المنتجات</h6>
+                          <div className="profile-stat-number">
+                            {products.length}
+                          </div>
                         </div>
                       </div>
                       <div className="profile-stat-card">
                         <button className="profile-contact-btn">
                           <FaPhone className="profile-phone-icon" />
-                          تحدث مع مقدم الخدمة
+                          تحدث مع صاحب المنتج
                         </button>
                       </div>
                     </div>

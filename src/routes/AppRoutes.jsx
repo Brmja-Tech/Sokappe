@@ -84,7 +84,7 @@ export default function Applayout() {
         <Route path="/addad" element={<AddAd />} />
         <Route path="/addservice" element={<AddService />} />
         <Route path="/addproduct" element={<AddProduct />} />
-        <Route path="/adownerprofile" element={<AdOwnerProfile />} />
+        <Route path="/adownerprofile/:id" element={<AdOwnerProfile />} />
         <Route path="/individualprofile" element={<IndividualProfile />} />
         <Route path="/companyprofile" element={<CompanyProfile />} />
         <Route path="/vendorprofile" element={<VendorProfile />} />

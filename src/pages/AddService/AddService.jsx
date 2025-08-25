@@ -1263,9 +1263,6 @@ export default function AddService() {
               required
             />
           </div>
-        </div>
-
-        <div className="form-row">
           <div className="form-group">
             <label>{t("deliveryDays")}</label>
             <input
@@ -2249,9 +2246,7 @@ export default function AddService() {
                       required
                     />
                   </div>
-                </div>
 
-                <div className="form-row">
                   <div className="form-group">
                     <label>{t("deliveryDays")}</label>
                     <input

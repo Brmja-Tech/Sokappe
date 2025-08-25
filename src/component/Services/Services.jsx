@@ -21,6 +21,7 @@ import {
   FaChevronDown,
   FaChevronRight,
   FaExclamationTriangle,
+  FaChevronLeft,
 } from "react-icons/fa";
 import axios from "axios";
 import "./Services.css";
@@ -62,7 +63,14 @@ const Services = () => {
   // Fetch main categories on component mount
   useEffect(() => {
     fetchMainCategories();
-  }, []);
+  }, [i18n.language]);
+
+  // Reset expanded categories when language changes
+  useEffect(() => {
+    setExpandedCategories({});
+    setCategoryLevels([]);
+    fetchMainCategories();
+  }, [i18n.language]);
 
   // Fetch main categories - exactly like Categories.jsx
   const fetchMainCategories = async () => {
@@ -77,6 +85,7 @@ const Services = () => {
         {
           headers: {
             Accept: "application/json",
+            "Accept-Language": i18n.language,
           },
         }
       );
@@ -168,6 +177,7 @@ const Services = () => {
         {
           headers: {
             Accept: "application/json",
+            "Accept-Language": i18n.language,
           },
         }
       );
@@ -308,7 +318,17 @@ const Services = () => {
             <h5>{category.name}</h5>
             {hasChildren && (
               <span className="expand-icon" aria-hidden="true">
-                {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
+                {i18n.dir() === "rtl" ? (
+                  isExpanded ? (
+                    <FaChevronDown />
+                  ) : (
+                    <FaChevronLeft />
+                  )
+                ) : isExpanded ? (
+                  <FaChevronDown />
+                ) : (
+                  <FaChevronRight />
+                )}
               </span>
             )}
           </div>
@@ -345,7 +365,7 @@ const Services = () => {
               } else {
                 return (
                   <div className="text-center text-muted py-2">
-                    No subcategories available
+                    {t("services.noSubcategories")}
                   </div>
                 );
               }
@@ -390,7 +410,7 @@ const Services = () => {
                 className="btn btn-outline-primary btn-sm"
                 onClick={handleRetry}
               >
-                {t("cart.retry")}
+                {t("retry")}
               </button>
             </div>
           ) : categoryLevels.length > 0 ? (
@@ -406,9 +426,11 @@ const Services = () => {
                         className="spinner-border text-primary"
                         role="status"
                       >
-                        <span className="visually-hidden">Loading...</span>
+                        <span className="visually-hidden">{t("loading")}</span>
                       </div>
-                      <p className="mt-2 text-muted">Loading categories...</p>
+                      <p className="mt-2 text-muted">
+                        {t("services.loadingSubcategories")}
+                      </p>
                     </div>
                   ) : level.error ? (
                     <div className="text-center text-danger py-3">
@@ -422,7 +444,7 @@ const Services = () => {
                           )
                         }
                       >
-                        Retry
+                        {t("retry")}
                       </button>
                     </div>
                   ) : level.categories.length > 0 ? (
@@ -431,7 +453,7 @@ const Services = () => {
                     )
                   ) : (
                     <div className="text-center text-muted py-3">
-                      No categories available at this level.
+                      {t("services.noSubcategories")}
                     </div>
                   )}
                 </div>
@@ -442,7 +464,7 @@ const Services = () => {
               <div className="empty-icon mb-3">
                 <FaFolder size={48} />
               </div>
-              <p>No categories available</p>
+              <p>{t("services.noSubcategories")}</p>
             </div>
           )}
         </div>

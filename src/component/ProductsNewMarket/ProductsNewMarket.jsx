@@ -266,7 +266,9 @@ const ProductsNewMarket = () => {
                         }`}
                       >
                         <i className="bi bi-shield-check me-1"></i>
-                        {product.has_warranty ? "Warranty" : "No Warranty"}
+                        {product.has_warranty
+                          ? t("products.warranty")
+                          : t("products.noWarranty")}
                       </span>
 
                       {/* Delivery Badge */}
@@ -278,7 +280,9 @@ const ProductsNewMarket = () => {
                         }`}
                       >
                         <i className="bi bi-truck me-1"></i>
-                        {product.has_delivery ? "Delivery" : "No Delivery"}
+                        {product.has_delivery
+                          ? t("products.delivery")
+                          : t("products.noDelivery")}
                       </span>
                     </div>
                   </div>

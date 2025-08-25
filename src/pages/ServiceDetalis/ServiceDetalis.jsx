@@ -520,7 +520,7 @@ export default function ServiceDetalis() {
 
           <div className="sellerSection">
             <Link
-              to={`/vendorprofile/${service.owner.id}`}
+              to={`/adownerprofile/${service.owner.id}`}
               className="sellerLink"
             >
               <div className="sellerCard">
