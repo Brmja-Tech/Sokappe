@@ -63,7 +63,12 @@ const cartReducer = (state, action) => {
       return { ...state, loading: false, error: null };
 
     case CART_ACTIONS.UPDATE_CART_ITEM:
-      return { ...state, loading: false, error: null };
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        cartItems: action.payload || state.cartItems,
+      };
 
     case CART_ACTIONS.CLEAR_CART:
       return {
@@ -188,14 +193,22 @@ export const CartProvider = ({ children }) => {
   // Remove item from cart
   const removeFromCart = async (itemId) => {
     try {
-      dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
-
       const token = getAuthToken();
       if (!token) {
         toast.error("Please login to remove items from cart");
         return;
       }
 
+      // Remove item locally first for immediate UI update
+      const updatedCartItems = state.cartItems.filter(
+        (item) => item.id !== itemId
+      );
+      dispatch({
+        type: CART_ACTIONS.SET_CART_ITEMS,
+        payload: updatedCartItems,
+      });
+
+      // Send delete request to server in background
       const response = await axios.delete(
         `${process.env.REACT_APP_BASE_URL}/cart/delete/item?item_id=${itemId}`,
         {
@@ -209,14 +222,14 @@ export const CartProvider = ({ children }) => {
 
       if (response.data?.status === 200) {
         toast.success("Item removed from cart successfully!");
-        // Refresh cart items
-        await fetchCartItems();
-        dispatch({ type: CART_ACTIONS.REMOVE_FROM_CART });
       }
     } catch (error) {
       console.error("Error removing from cart:", error);
       const errorMessage =
         error.response?.data?.message || "Failed to remove item from cart";
+
+      // Revert local changes if server delete failed
+      await fetchCartItems();
       dispatch({ type: CART_ACTIONS.SET_ERROR, payload: errorMessage });
       toast.error(errorMessage);
     }
@@ -225,14 +238,30 @@ export const CartProvider = ({ children }) => {
   // Update cart item quantity
   const updateCartItem = async (itemId, quantity) => {
     try {
-      dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
-
       const token = getAuthToken();
       if (!token) {
         toast.error("Please login to update cart items");
         return;
       }
 
+      // Update the cart item locally first for immediate UI update
+      const updatedCartItems = state.cartItems.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              quantity,
+              subtotal:
+                (item.product.discount_price || item.product.price) * quantity,
+            }
+          : item
+      );
+
+      dispatch({
+        type: CART_ACTIONS.SET_CART_ITEMS,
+        payload: updatedCartItems,
+      });
+
+      // Send update to server in background
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/cart/update/item?item_id=${itemId}&quantity=${quantity}`,
         {},
@@ -247,14 +276,14 @@ export const CartProvider = ({ children }) => {
 
       if (response.data?.status === 200) {
         toast.success("Cart updated successfully!");
-        // Refresh cart items
-        await fetchCartItems();
-        dispatch({ type: CART_ACTIONS.UPDATE_CART_ITEM });
       }
     } catch (error) {
       console.error("Error updating cart:", error);
       const errorMessage =
         error.response?.data?.message || "Failed to update cart item";
+
+      // Revert local changes if server update failed
+      await fetchCartItems();
       dispatch({ type: CART_ACTIONS.SET_ERROR, payload: errorMessage });
       toast.error(errorMessage);
     }

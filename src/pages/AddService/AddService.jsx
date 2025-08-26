@@ -5,7 +5,10 @@ import { FiCamera, FiPlus, FiEdit, FiTrash2, FiEye, FiX } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import "./AddService.css";
+import styles from "./AddService.module.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 
 export default function AddService() {
   const { t, i18n } = useTranslation("global");
@@ -1013,16 +1016,16 @@ export default function AddService() {
   };
 
   const renderAddProductForm = () => (
-    <form onSubmit={handleSubmit} className="product-form">
-      <div className="form-section">
+    <form onSubmit={handleSubmit} className={styles.productForm}>
+      <div className={styles.formSection}>
         <h4>{t("categorySelection")}</h4>
 
         {/* Category Progress Bar */}
         {categoryLevels.length > 0 && (
-          <div className="category-progress-container">
-            <div className="category-progress-bar">
+          <div className={styles.categoryProgressContainer}>
+            <div className={styles.categoryProgressBar}>
               <div
-                className="category-progress-fill"
+                className={styles.categoryProgressFill}
                 style={{
                   width: `${Math.min(
                     (Object.keys(selectedCategories).length /
@@ -1033,7 +1036,7 @@ export default function AddService() {
                 }}
               ></div>
             </div>
-            <div className="category-progress-text">
+            <div className={styles.categoryProgressText}>
               {t("categoryProgress")}: {Object.keys(selectedCategories).length}{" "}
               / {categoryLevels.length}
             </div>
@@ -1048,11 +1051,11 @@ export default function AddService() {
             const secondLevel = categoryLevels[i + 1];
 
             rows.push(
-              <div key={`row-${i}`} className="form-row">
+              <div key={`row-${i}`} className={styles.formRow}>
                 {/* First Level in this row */}
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label>
-                    <span className="category-level-indicator">
+                    <span className={styles.categoryLevelIndicator}>
                       {firstLevel.level + 1}
                     </span>
                     {firstLevel.level === 0
@@ -1078,7 +1081,9 @@ export default function AddService() {
                         !selectedCategories[firstLevel.level - 1]) ||
                       firstLevel.loading
                     }
-                    className={`category-select level-${firstLevel.level}`}
+                    className={`${styles.categorySelect} ${
+                      styles[`level${firstLevel.level}`]
+                    }`}
                   >
                     <option value="">
                       {firstLevel.loading
@@ -1099,18 +1104,22 @@ export default function AddService() {
                       ))}
                   </select>
                   {firstLevel.loading && (
-                    <div className="loading-indicator">{t("loading")}</div>
+                    <div className={styles.loadingIndicator}>
+                      {t("loading")}
+                    </div>
                   )}
                   {firstLevel.error && (
-                    <div className="error-message">{firstLevel.error}</div>
+                    <div className={styles.errorMessage}>
+                      {firstLevel.error}
+                    </div>
                   )}
                 </div>
 
                 {/* Second Level in this row (if exists) */}
                 {secondLevel && (
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>
-                      <span className="category-level-indicator">
+                      <span className={styles.categoryLevelIndicator}>
                         {secondLevel.level + 1}
                       </span>
                       {secondLevel.level === 0
@@ -1136,7 +1145,9 @@ export default function AddService() {
                           !selectedCategories[secondLevel.level - 1]) ||
                         secondLevel.loading
                       }
-                      className={`category-select level-${secondLevel.level}`}
+                      className={`${styles.categorySelect} ${
+                        styles[`level${secondLevel.level}`]
+                      }`}
                     >
                       <option value="">
                         {secondLevel.loading
@@ -1157,16 +1168,20 @@ export default function AddService() {
                         ))}
                     </select>
                     {secondLevel.loading && (
-                      <div className="loading-indicator">{t("loading")}</div>
+                      <div className={styles.loadingIndicator}>
+                        {t("loading")}
+                      </div>
                     )}
                     {secondLevel.error && (
-                      <div className="error-message">{secondLevel.error}</div>
+                      <div className={styles.errorMessage}>
+                        {secondLevel.error}
+                      </div>
                     )}
                   </div>
                 )}
 
                 {/* Empty div to maintain grid if only one level in this row */}
-                {!secondLevel && <div className="form-group"></div>}
+                {!secondLevel && <div className={styles.formGroup}></div>}
               </div>
             );
           }
@@ -1175,12 +1190,12 @@ export default function AddService() {
 
         {/* Reset Button */}
         {categoryLevels.length > 0 && (
-          <div className="form-row">
-            <div className="form-group">
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
               <button
                 type="button"
                 onClick={resetCategorySelection}
-                className="reset-category-btn"
+                className={styles.resetCategoryBtn}
               >
                 {t("resetCategories")}
               </button>
@@ -1190,17 +1205,19 @@ export default function AddService() {
 
         {/* Selected Categories Display */}
         {formData.category_id && (
-          <div className="form-row">
-            <div className="form-group">
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
               <label>{t("selectedCategory")}</label>
-              <div className="selected-category-display">
+              <div className={styles.selectedCategoryDisplay}>
                 {categoryLevels.map((level, index) => {
                   const selectedCategoryId = selectedCategories[level.level];
                   if (selectedCategoryId) {
                     return (
                       <span
                         key={level.level}
-                        className={`category-badge level-${level.level}`}
+                        className={`${styles.categoryBadge} ${
+                          styles[`level${level.level}`]
+                        }`}
                       >
                         {getCategoryName(selectedCategoryId, level.level)}
                       </span>
@@ -1215,9 +1232,9 @@ export default function AddService() {
 
         {/* Category Validation Message */}
         {!formData.category_id && categoryLevels.length > 0 && (
-          <div className="form-row">
-            <div className="form-group">
-              <div className="category-validation-message">
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <div className={styles.categoryValidationMessage}>
                 {t("pleaseCompleteCategorySelection")}
               </div>
             </div>
@@ -1225,11 +1242,11 @@ export default function AddService() {
         )}
       </div>
 
-      <div className="form-section">
+      <div className={styles.formSection}>
         <h4>{t("basicInformation")}</h4>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
             <label>{t("serviceNameArabic")}</label>
             <input
               type="text"
@@ -1239,7 +1256,7 @@ export default function AddService() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t("serviceNameEnglish")}</label>
             <input
               type="text"
@@ -1251,8 +1268,8 @@ export default function AddService() {
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
             <label>{t("price")}</label>
             <input
               type="number"
@@ -1263,7 +1280,7 @@ export default function AddService() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t("deliveryDays")}</label>
             <input
               type="number"
@@ -1277,8 +1294,8 @@ export default function AddService() {
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
             <label>{t("discountPrice")}</label>
             <input
               type="number"
@@ -1291,7 +1308,7 @@ export default function AddService() {
               min="0"
             />
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t("discountExpiresAt")}</label>
             <input
               type="date"
@@ -1305,11 +1322,11 @@ export default function AddService() {
         </div>
       </div>
 
-      <div className="form-section">
+      <div className={styles.formSection}>
         <h4>{t("locationInformation")}</h4>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
             <label>{t("useProfileAddress")}</label>
             <select
               value={formData.use_profile_address}
@@ -1322,7 +1339,7 @@ export default function AddService() {
               <option value="1">{t("yes")}</option>
             </select>
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t("country")}</label>
             <select
               value={formData.country_id}
@@ -1340,8 +1357,8 @@ export default function AddService() {
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
             <label>{t("governorate")}</label>
             <select
               value={formData.governorate_id}
@@ -1361,7 +1378,7 @@ export default function AddService() {
               ))}
             </select>
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t("centerGovernorate")}</label>
             <select
               value={formData.center_gov_id}
@@ -1383,8 +1400,8 @@ export default function AddService() {
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
             <label>{t("addressArabic")}</label>
             <textarea
               value={formData.address.ar}
@@ -1395,7 +1412,7 @@ export default function AddService() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t("addressEnglish")}</label>
             <textarea
               value={formData.address.en}
@@ -1409,11 +1426,11 @@ export default function AddService() {
         </div>
       </div>
 
-      <div className="form-section">
+      <div className={styles.formSection}>
         <h4>{t("description")}</h4>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
             <label>{t("descriptionArabic")}</label>
             <textarea
               value={formData.description.ar}
@@ -1424,7 +1441,7 @@ export default function AddService() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>{t("descriptionEnglish")}</label>
             <textarea
               value={formData.description.en}
@@ -1438,19 +1455,19 @@ export default function AddService() {
         </div>
       </div>
 
-      <div className="form-section">
+      <div className={styles.formSection}>
         <h4>{t("images")}</h4>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>{t("mainImage")}</label>
-          <div className="image-upload">
+          <div className={styles.imageUpload}>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange("main_image", e.target.files)}
               required
             />
-            <div className="upload-placeholder">
+            <div className={styles.uploadPlaceholder}>
               <FiCamera />
               <span>{t("uploadMainImage")}</span>
             </div>
@@ -1458,16 +1475,18 @@ export default function AddService() {
 
           {/* Main Image Preview */}
           {formData.main_image && (
-            <div className="image-preview">
-              <div className="preview-container">
+            <div className={styles.imagePreview}>
+              <div className={styles.previewContainer}>
                 <img
                   src={URL.createObjectURL(formData.main_image)}
                   alt="Main Image Preview"
-                  className="preview-image"
+                  className={styles.previewImage}
                 />
-                <div className="image-info">
-                  <span className="image-name">{formData.main_image.name}</span>
-                  <span className="image-size">
+                <div className={styles.imageInfo}>
+                  <span className={styles.imageName}>
+                    {formData.main_image.name}
+                  </span>
+                  <span className={styles.imageSize}>
                     {(formData.main_image.size / 1024 / 1024).toFixed(2)} MB
                   </span>
                 </div>
@@ -1476,7 +1495,7 @@ export default function AddService() {
                   onClick={() =>
                     setFormData((prev) => ({ ...prev, main_image: null }))
                   }
-                  className="remove-image-btn"
+                  className={styles.removeImageBtn}
                 >
                   <FiX />
                 </button>
@@ -1485,16 +1504,16 @@ export default function AddService() {
           )}
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>{t("otherImages")}</label>
-          <div className="image-upload">
+          <div className={styles.imageUpload}>
             <input
               type="file"
               accept="image/*"
               multiple
               onChange={(e) => handleFileChange("other_images", e.target.files)}
             />
-            <div className="upload-placeholder">
+            <div className={styles.uploadPlaceholder}>
               <FiCamera />
               <span>{t("uploadAdditionalImages")}</span>
             </div>
@@ -1502,19 +1521,19 @@ export default function AddService() {
 
           {/* Other Images Preview */}
           {formData.other_images && formData.other_images.length > 0 && (
-            <div className="other-images-preview">
-              <h5 className="preview-title">{t("selectedImages")}</h5>
-              <div className="images-grid">
+            <div className={styles.otherImagesPreview}>
+              <h5 className={styles.previewTitle}>{t("selectedImages")}</h5>
+              <div className={styles.imagesGrid}>
                 {formData.other_images.map((image, index) => (
-                  <div key={index} className="image-preview-item">
+                  <div key={index} className={styles.imagePreviewItem}>
                     <img
                       src={URL.createObjectURL(image)}
                       alt={`Image ${index + 1}`}
-                      className="preview-image small"
+                      className={`${styles.previewImage} ${styles.small}`}
                     />
-                    <div className="image-info">
-                      <span className="image-name">{image.name}</span>
-                      <span className="image-size">
+                    <div className={styles.imageInfo}>
+                      <span className={styles.imageName}>{image.name}</span>
+                      <span className={styles.imageSize}>
                         {(image.size / 1024 / 1024).toFixed(2)} MB
                       </span>
                     </div>
@@ -1529,7 +1548,7 @@ export default function AddService() {
                           other_images: newImages,
                         }));
                       }}
-                      className="remove-image-btn small"
+                      className={`${styles.removeImageBtn} ${styles.small}`}
                     >
                       <FiX />
                     </button>
@@ -1541,19 +1560,19 @@ export default function AddService() {
         </div>
       </div>
 
-      <button type="submit" className="submit-btn" disabled={loading}>
+      <button type="submit" className={styles.submitBtn} disabled={loading}>
         {loading ? t("addingService") : t("navbar.addService")}
       </button>
     </form>
   );
 
   const renderProductsList = () => (
-    <div className="products-section">
-      <div className="filters">
+    <div className={styles.productsSection}>
+      <div className={styles.filters}>
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="category-filter"
+          className={styles.categoryFilter}
         >
           <option value="">{t("allCategories")}</option>
           {categories.map((cat) => (
@@ -1564,26 +1583,57 @@ export default function AddService() {
         </select>
       </div>
 
-      <div className="products-grid">
+      <div className={styles.productsGrid}>
         {products.map((product) => (
-          <div key={product.id} className="product-card">
-            <div className="product-image">
-              <img src={product.main_image} alt={product.name} />
-              <div className="product-actions">
+          <div key={product.id} className={styles.productCard}>
+            <div className={styles.productImage}>
+              {/* Swiper for product images */}
+              <Swiper
+                modules={[Autoplay]}
+                spaceBetween={0}
+                slidesPerView={1}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }}
+                loop={true}
+                className={styles.swiperContainer}
+              >
+                {/* Main image first */}
+                <SwiperSlide className={styles.swiperSlide}>
+                  <img
+                    src={product.main_image}
+                    alt={getLocalizedName(product)}
+                  />
+                </SwiperSlide>
+                {/* Other images */}
+                {product.other_images &&
+                  product.other_images.length > 0 &&
+                  product.other_images.map((image, index) => (
+                    <SwiperSlide key={index} className={styles.swiperSlide}>
+                      <img
+                        src={image}
+                        alt={`${getLocalizedName(product)} ${index + 1}`}
+                      />
+                    </SwiperSlide>
+                  ))}
+              </Swiper>
+
+              <div className={styles.productActions}>
                 <button
                   onClick={() => handleEdit(product)}
-                  className="action-btn edit"
+                  className={`${styles.actionBtn} ${styles.edit}`}
                 >
                   <FiEdit />
                 </button>
                 <button
                   onClick={() => handleDelete(product.id)}
-                  className="action-btn delete"
+                  className={`${styles.actionBtn} ${styles.delete}`}
                 >
                   <FiTrash2 />
                 </button>
                 <button
-                  className="action-btn view"
+                  className={`${styles.actionBtn} ${styles.view}`}
                   onClick={() => handleViewProduct(product.id)}
                   disabled={viewLoading}
                 >
@@ -1591,18 +1641,19 @@ export default function AddService() {
                 </button>
               </div>
             </div>
-            <div className="product-info">
+            <div className={styles.productInfo}>
               <h4>{getLocalizedName(product)}</h4>
-              <p className="price">{product.price} EGP</p>
-
-              <p className="address">{product.address}</p>
+              <p className={styles.price}>{product.price} EGP</p>
+              <p className={styles.location}>
+                {product.country} - {product.governorate} - {product.centerGov}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
       {totalPages > 1 && (
-        <div className="pagination">
+        <div className={styles.pagination}>
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
@@ -1894,24 +1945,28 @@ export default function AddService() {
     <>
       <PageHead header={t("navbar.addService")} />
 
-      <div className="add-product-page">
-        <div className="sidebar">
-          <div className="sidebar-tabs">
+      <div className={styles.addProductPage}>
+        <div className={styles.sidebar}>
+          <div className={styles.sidebarTabs}>
             <button
-              className={`tab-btn ${activeTab === "add" ? "active" : ""}`}
+              className={`${styles.tabBtn} ${
+                activeTab === "add" ? styles.active : ""
+              }`}
               onClick={() => setActiveTab("add")}
             >
               {t("navbar.addService")}
             </button>
             <button
-              className={`tab-btn ${activeTab === "products" ? "active" : ""}`}
+              className={`${styles.tabBtn} ${
+                activeTab === "products" ? styles.active : ""
+              }`}
               onClick={() => setActiveTab("products")}
             >
               {t("myServices")}
             </button>
           </div>
 
-          <div className="sidebar-content">
+          <div className={styles.sidebarContent}>
             {activeTab === "add"
               ? renderAddProductForm()
               : renderProductsList()}
@@ -1921,34 +1976,36 @@ export default function AddService() {
 
       {/* Edit Modal */}
       {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal edit-modal">
-            <div className="modal-header">
+        <div className={styles.modalOverlay}>
+          <div className={`${styles.modal} ${styles.editModal}`}>
+            <div className={styles.modalHeader}>
               <h3>{t("editService")}</h3>
               <button
                 onClick={() => setShowEditModal(false)}
-                className="close-btn"
+                className={styles.closeBtn}
               >
                 <FiX />
               </button>
             </div>
-            <form onSubmit={handleUpdate} className="edit-form">
+            <form onSubmit={handleUpdate} className={styles.editForm}>
               {/* Category Selection Section */}
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <h4>{t("categorySelection")}</h4>
 
                 {/* Show Selected Categories from category_path */}
                 {editFormData.category_path &&
                 editFormData.category_path.length > 0 ? (
-                  <div className="selected-categories-display">
-                    <div className="form-row">
-                      <div className="form-group">
+                  <div className={styles.selectedCategoriesDisplay}>
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
                         <label>{t("selectedCategory")}</label>
-                        <div className="selected-category-display">
+                        <div className={styles.selectedCategoryDisplay}>
                           {editFormData.category_path.map((category, index) => (
                             <span
                               key={index}
-                              className={`category-badge level-${index}`}
+                              className={`${styles.categoryBadge} ${
+                                styles[`level${index}`]
+                              }`}
                             >
                               {category.name}
                             </span>
@@ -1958,12 +2015,12 @@ export default function AddService() {
                     </div>
 
                     {/* Reset Button */}
-                    <div className="form-row">
-                      <div className="form-group">
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
                         <button
                           type="button"
                           onClick={resetEditCategorySelection}
-                          className="reset-category-btn"
+                          className={styles.resetCategoryBtn}
                         >
                           {t("resetCategories")}
                         </button>
@@ -1972,12 +2029,12 @@ export default function AddService() {
                   </div>
                 ) : (
                   /* Show Main Category Select when no categories are selected */
-                  <div className="main-category-select">
+                  <div className={styles.mainCategorySelect}>
                     {/* Show Currently Selected Categories */}
                     {Object.keys(editSelectedCategories).length > 0 && (
-                      <div className="current-selected-categories">
+                      <div className={styles.currentSelectedCategories}>
                         <label>{t("currentlySelected")}</label>
-                        <div className="selected-category-display">
+                        <div className={styles.selectedCategoryDisplay}>
                           {editCategoryLevels.map((level) => {
                             const selectedCategoryId =
                               editSelectedCategories[level.level];
@@ -1988,7 +2045,9 @@ export default function AddService() {
                               return category ? (
                                 <span
                                   key={level.level}
-                                  className={`category-badge level-${level.level}`}
+                                  className={`${styles.categoryBadge} ${
+                                    styles[`level${level.level}`]
+                                  }`}
                                 >
                                   {category.name}
                                 </span>
@@ -2000,10 +2059,12 @@ export default function AddService() {
                       </div>
                     )}
 
-                    <div className="form-row">
-                      <div className="form-group">
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
                         <label>
-                          <span className="category-level-indicator">1</span>
+                          <span className={styles.categoryLevelIndicator}>
+                            1
+                          </span>
                           {t("mainCategory")}
                         </label>
                         <select
@@ -2013,7 +2074,7 @@ export default function AddService() {
                           }
                           required
                           disabled={editCategoriesLoading}
-                          className="category-select level-0"
+                          className={`${styles.categorySelect} ${styles.level0}`}
                         >
                           <option value="">
                             {editCategoriesLoading
@@ -2028,12 +2089,12 @@ export default function AddService() {
                             ))}
                         </select>
                         {editCategoriesLoading && (
-                          <div className="loading-indicator">
+                          <div className={styles.loadingIndicator}>
                             {t("loading")}
                           </div>
                         )}
                         {editCategoriesError && (
-                          <div className="error-message">
+                          <div className={styles.errorMessage}>
                             {editCategoriesError}
                           </div>
                         )}
@@ -2048,11 +2109,11 @@ export default function AddService() {
                         const secondLevel = editCategoryLevels[i + 1];
 
                         rows.push(
-                          <div key={`edit-row-${i}`} className="form-row">
+                          <div key={`edit-row-${i}`} className={styles.formRow}>
                             {/* First Level in this row */}
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                               <label>
-                                <span className="category-level-indicator">
+                                <span className={styles.categoryLevelIndicator}>
                                   {firstLevel.level + 1}
                                 </span>
                                 {firstLevel.level === 1
@@ -2082,7 +2143,9 @@ export default function AddService() {
                                     ]) ||
                                   firstLevel.loading
                                 }
-                                className={`category-select level-${firstLevel.level}`}
+                                className={`${styles.categorySelect} ${
+                                  styles[`level${firstLevel.level}`]
+                                }`}
                               >
                                 <option value="">
                                   {firstLevel.loading
@@ -2102,12 +2165,12 @@ export default function AddService() {
                                   ))}
                               </select>
                               {firstLevel.loading && (
-                                <div className="loading-indicator">
+                                <div className={styles.loadingIndicator}>
                                   {t("loading")}
                                 </div>
                               )}
                               {firstLevel.error && (
-                                <div className="error-message">
+                                <div className={styles.errorMessage}>
                                   {firstLevel.error}
                                 </div>
                               )}
@@ -2115,9 +2178,11 @@ export default function AddService() {
 
                             {/* Second Level in this row (if exists) */}
                             {secondLevel && (
-                              <div className="form-group">
+                              <div className={styles.formGroup}>
                                 <label>
-                                  <span className="category-level-indicator">
+                                  <span
+                                    className={styles.categoryLevelIndicator}
+                                  >
                                     {secondLevel.level + 1}
                                   </span>
                                   {secondLevel.level === 1
@@ -2152,7 +2217,9 @@ export default function AddService() {
                                       ]) ||
                                     secondLevel.loading
                                   }
-                                  className={`category-select level-${secondLevel.level}`}
+                                  className={`${styles.categorySelect} ${
+                                    styles[`level${secondLevel.level}`]
+                                  }`}
                                 >
                                   <option value="">
                                     {secondLevel.loading
@@ -2172,12 +2239,12 @@ export default function AddService() {
                                     ))}
                                 </select>
                                 {secondLevel.loading && (
-                                  <div className="loading-indicator">
+                                  <div className={styles.loadingIndicator}>
                                     {t("loading")}
                                   </div>
                                 )}
                                 {secondLevel.error && (
-                                  <div className="error-message">
+                                  <div className={styles.errorMessage}>
                                     {secondLevel.error}
                                   </div>
                                 )}
@@ -2185,7 +2252,9 @@ export default function AddService() {
                             )}
 
                             {/* Empty div to maintain grid if only one level in this row */}
-                            {!secondLevel && <div className="form-group"></div>}
+                            {!secondLevel && (
+                              <div className={styles.formGroup}></div>
+                            )}
                           </div>
                         );
                       }
@@ -2196,11 +2265,11 @@ export default function AddService() {
               </div>
 
               {/* Basic Information Section */}
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <h4>{t("basicInformation")}</h4>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <label>{t("serviceNameArabic")}</label>
                     <input
                       type="text"
@@ -2214,7 +2283,7 @@ export default function AddService() {
                       required
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>{t("serviceNameEnglish")}</label>
                     <input
                       type="text"
@@ -2230,8 +2299,8 @@ export default function AddService() {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <label>{t("price")}</label>
                     <input
                       type="number"
@@ -2247,7 +2316,7 @@ export default function AddService() {
                     />
                   </div>
 
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>{t("deliveryDays")}</label>
                     <input
                       type="number"
@@ -2263,8 +2332,8 @@ export default function AddService() {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <label>{t("discountPrice")}</label>
                     <input
                       type="number"
@@ -2279,7 +2348,7 @@ export default function AddService() {
                       min="0"
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>{t("discountExpiresAt")}</label>
                     <input
                       type="date"
@@ -2296,11 +2365,11 @@ export default function AddService() {
               </div>
 
               {/* Location Information Section */}
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <h4>{t("locationInformation")}</h4>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <label>{t("useProfileAddress")}</label>
                     <select
                       value={editFormData.use_profile_address || "0"}
@@ -2316,7 +2385,7 @@ export default function AddService() {
                       <option value="1">{t("yes")}</option>
                     </select>
                   </div>
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>{t("country")}</label>
                     <select
                       value={editFormData.country_id || ""}
@@ -2339,8 +2408,8 @@ export default function AddService() {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <label>{t("governorate")}</label>
                     <select
                       value={editFormData.governorate_id || ""}
@@ -2365,7 +2434,7 @@ export default function AddService() {
                     </select>
                   </div>
 
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>{t("centerGovernorate")}</label>
                     <select
                       value={editFormData.center_gov_id || ""}
@@ -2391,8 +2460,8 @@ export default function AddService() {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <label>{t("addressArabic")}</label>
                     <textarea
                       value={editFormData.address?.ar || ""}
@@ -2408,7 +2477,7 @@ export default function AddService() {
                       required
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>{t("addressEnglish")}</label>
                     <textarea
                       value={editFormData.address?.en || ""}
@@ -2428,11 +2497,11 @@ export default function AddService() {
               </div>
 
               {/* Description Section */}
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <h4>{t("description")}</h4>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <label>{t("descriptionArabic")}</label>
                     <textarea
                       value={editFormData.description?.ar || ""}
@@ -2448,7 +2517,7 @@ export default function AddService() {
                       required
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={styles.formGroup}>
                     <label>{t("descriptionEnglish")}</label>
                     <textarea
                       value={editFormData.description?.en || ""}
@@ -2468,12 +2537,12 @@ export default function AddService() {
               </div>
 
               {/* Images Section */}
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <h4>{t("images")}</h4>
 
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label>{t("mainImage")}</label>
-                  <div className="image-upload">
+                  <div className={styles.imageUpload}>
                     <input
                       type="file"
                       accept="image/*"
@@ -2481,7 +2550,7 @@ export default function AddService() {
                         handleEditFileChange("main_image", e.target.files)
                       }
                     />
-                    <div className="upload-placeholder">
+                    <div className={styles.uploadPlaceholder}>
                       <FiCamera />
                       <span>{t("uploadMainImage")}</span>
                     </div>
@@ -2489,8 +2558,8 @@ export default function AddService() {
 
                   {/* Main Image Preview */}
                   {editFormData.main_image && (
-                    <div className="image-preview">
-                      <div className="preview-container">
+                    <div className={styles.imagePreview}>
+                      <div className={styles.previewContainer}>
                         <img
                           src={
                             editFormData.main_image instanceof File
@@ -2498,16 +2567,16 @@ export default function AddService() {
                               : editFormData.main_image
                           }
                           alt="Main Image Preview"
-                          className="preview-image"
+                          className={styles.previewImage}
                         />
-                        <div className="image-info">
-                          <span className="image-name">
+                        <div className={styles.imageInfo}>
+                          <span className={styles.imageName}>
                             {editFormData.main_image instanceof File
                               ? editFormData.main_image.name
                               : "Current Image"}
                           </span>
                           {editFormData.main_image instanceof File && (
-                            <span className="image-size">
+                            <span className={styles.imageSize}>
                               {(
                                 editFormData.main_image.size /
                                 1024 /
@@ -2525,7 +2594,7 @@ export default function AddService() {
                               main_image: null,
                             }))
                           }
-                          className="remove-image-btn"
+                          className={styles.removeImageBtn}
                         >
                           <FiX />
                         </button>
@@ -2534,9 +2603,9 @@ export default function AddService() {
                   )}
                 </div>
 
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label>{t("otherImages")}</label>
-                  <div className="image-upload">
+                  <div className={styles.imageUpload}>
                     <input
                       type="file"
                       accept="image/*"
@@ -2545,7 +2614,7 @@ export default function AddService() {
                         handleEditFileChange("other_images", e.target.files)
                       }
                     />
-                    <div className="upload-placeholder">
+                    <div className={styles.uploadPlaceholder}>
                       <FiCamera />
                       <span>{t("uploadAdditionalImages")}</span>
                     </div>
@@ -2554,11 +2623,16 @@ export default function AddService() {
                   {/* Other Images Preview */}
                   {editFormData.other_images &&
                     editFormData.other_images.length > 0 && (
-                      <div className="other-images-preview">
-                        <h5 className="preview-title">{t("selectedImages")}</h5>
-                        <div className="images-grid">
+                      <div className={styles.otherImagesPreview}>
+                        <h5 className={styles.previewTitle}>
+                          {t("selectedImages")}
+                        </h5>
+                        <div className={styles.imagesGrid}>
                           {editFormData.other_images.map((image, index) => (
-                            <div key={index} className="image-preview-item">
+                            <div
+                              key={index}
+                              className={styles.imagePreviewItem}
+                            >
                               <img
                                 src={
                                   image instanceof File
@@ -2566,16 +2640,16 @@ export default function AddService() {
                                     : image
                                 }
                                 alt={`Image ${index + 1}`}
-                                className="preview-image small"
+                                className={`${styles.previewImage} ${styles.small}`}
                               />
-                              <div className="image-info">
-                                <span className="image-name">
+                              <div className={styles.imageInfo}>
+                                <span className={styles.imageName}>
                                   {image instanceof File
                                     ? image.name
                                     : `Image ${index + 1}`}
                                 </span>
                                 {image instanceof File && (
-                                  <span className="image-size">
+                                  <span className={styles.imageSize}>
                                     {(image.size / 1024 / 1024).toFixed(2)} MB
                                   </span>
                                 )}
@@ -2592,7 +2666,7 @@ export default function AddService() {
                                     other_images: newImages,
                                   }));
                                 }}
-                                className="remove-image-btn small"
+                                className={`${styles.removeImageBtn} ${styles.small}`}
                               >
                                 <FiX />
                               </button>
@@ -2605,8 +2679,8 @@ export default function AddService() {
 
                 {/* Reset Location Fields Button */}
                 {editFormData.use_profile_address === "1" && (
-                  <div className="form-row">
-                    <div className="form-group">
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
                       <button
                         type="button"
                         onClick={() => {
@@ -2617,7 +2691,7 @@ export default function AddService() {
                             center_gov_id: "",
                           }));
                         }}
-                        className="reset-location-btn"
+                        className={styles.resetLocationBtn}
                       >
                         {t("resetLocationFields")}
                       </button>
@@ -2626,15 +2700,19 @@ export default function AddService() {
                 )}
               </div>
 
-              <div className="modal-actions">
+              <div className={styles.modalActions}>
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="cancel-btn"
+                  className={styles.cancelBtn}
                 >
                   {t("cancel")}
                 </button>
-                <button type="submit" className="update-btn" disabled={loading}>
+                <button
+                  type="submit"
+                  className={styles.updateBtn}
+                  disabled={loading}
+                >
                   {loading ? t("updatingService") : t("updateService")}
                 </button>
               </div>
@@ -2645,53 +2723,69 @@ export default function AddService() {
 
       {/* View Product Modal */}
       {showViewModal && viewingProduct && (
-        <div className="modal-overlay">
-          <div className="modal view-modal">
-            <div className="modal-header">
+        <div className={styles.modalOverlay}>
+          <div
+            className={`${styles.modal} ${styles.viewModal}`}
+            dir={i18n.language === "ar" ? "rtl" : "ltr"}
+          >
+            <div className={styles.modalHeader}>
               <h3>{t("serviceDetails")}</h3>
               <button
                 onClick={() => setShowViewModal(false)}
-                className="close-btn"
+                className={styles.closeBtn}
               >
                 <FiX />
               </button>
             </div>
-            <div className="view-product-content">
+            <div className={styles.viewProductContent}>
               {viewLoading ? (
-                <div className="loading-spinner">
-                  <div className="spinner"></div>
+                <div className={styles.loadingSpinner}>
+                  <div className={styles.spinner}></div>
                   <p>{t("loading")}</p>
                 </div>
               ) : (
                 <>
-                  <div className="product-images">
-                    <div className="main-image">
-                      <img
-                        src={viewingProduct.main_image}
-                        alt="Main"
-                        onClick={() =>
-                          handleImageClick(viewingProduct.main_image)
-                        }
-                        className="clickable-image"
-                      />
-                      <div className="image-overlay">
+                  <div className={styles.productImages}>
+                    <div className={styles.mainImage}>
+                      {viewingProduct.main_image &&
+                      viewingProduct.main_image.startsWith("http") ? (
+                        <img
+                          src={viewingProduct.main_image}
+                          alt="Main"
+                          onClick={() =>
+                            handleImageClick(viewingProduct.main_image)
+                          }
+                          className={styles.clickableImage}
+                        />
+                      ) : (
+                        <div className={styles.noImage}>
+                          <span>{t("noImage")}</span>
+                        </div>
+                      )}
+                      <div className={styles.imageOverlay}>
                         <span>{t("clickToEnlarge")}</span>
                       </div>
                     </div>
                     {viewingProduct.other_images &&
                       viewingProduct.other_images.length > 0 && (
-                        <div className="other-images">
+                        <div className={styles.otherImages}>
                           <h5>{t("additionalImages")}</h5>
-                          <div className="images-grid">
+                          <div className={styles.imagesGrid}>
                             {viewingProduct.other_images.map((image, index) => (
-                              <div key={index} className="other-image">
-                                <img
-                                  src={image}
-                                  alt={`Additional ${index + 1}`}
-                                  onClick={() => handleImageClick(image)}
-                                  className="clickable-image"
-                                />
-                                <div className="image-overlay">
+                              <div key={index} className={styles.otherImage}>
+                                {image && image.startsWith("http") ? (
+                                  <img
+                                    src={image}
+                                    alt={`Additional ${index + 1}`}
+                                    onClick={() => handleImageClick(image)}
+                                    className={styles.clickableImage}
+                                  />
+                                ) : (
+                                  <div className={styles.noImage}>
+                                    <span>{t("noImage")}</span>
+                                  </div>
+                                )}
+                                <div className={styles.imageOverlay}>
                                   <span>{t("clickToEnlarge")}</span>
                                 </div>
                               </div>
@@ -2701,131 +2795,149 @@ export default function AddService() {
                       )}
                   </div>
 
-                  <div className="product-details">
-                    <div className="detail-section">
+                  <div className={styles.productDetails}>
+                    <div className={styles.detailSection}>
                       <h4>{t("basicInformation")}</h4>
-                      <div className="detail-row">
-                        <span className="detail-label">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
                           {t("productNameArabic")}:
                         </span>
-                        <span className="detail-value">
-                          {viewingProduct.name?.ar || viewingProduct.name}
+                        <span className={styles.detailValue}>
+                          {typeof viewingProduct.name === "object"
+                            ? viewingProduct.name.ar
+                            : viewingProduct.name}
                         </span>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
                           {t("productNameEnglish")}:
                         </span>
-                        <span className="detail-value">
-                          {viewingProduct.name?.en || viewingProduct.name}
+                        <span className={styles.detailValue}>
+                          {typeof viewingProduct.name === "object"
+                            ? viewingProduct.name.en
+                            : viewingProduct.name}
                         </span>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("category")}:</span>
-                        <span className="detail-value">
-                          {i18n.language === "ar"
-                            ? viewingProduct.category?.ar ||
-                              viewingProduct.category?.en ||
-                              viewingProduct.category
-                            : viewingProduct.category?.en ||
-                              viewingProduct.category?.ar ||
-                              viewingProduct.category}
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
+                          {t("category")}:
+                        </span>
+                        <span className={styles.detailValue}>
+                          {typeof viewingProduct.category === "object"
+                            ? i18n.language === "ar"
+                              ? viewingProduct.category.ar
+                              : viewingProduct.category.en
+                            : viewingProduct.category}
                         </span>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("price")}:</span>
-                        <span className="detail-value price">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
+                          {t("price")}:
+                        </span>
+                        <span
+                          className={`${styles.detailValue} ${styles.price}`}
+                        >
                           {viewingProduct.price} EGP
                         </span>
                       </div>
                     </div>
 
-                    <div className="detail-section">
+                    <div className={styles.detailSection}>
                       <h4>{t("description")}</h4>
-                      <div className="detail-row">
-                        <span className="detail-label">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
                           {t("descriptionArabic")}:
                         </span>
-                        <span className="detail-value">
-                          {viewingProduct.description?.ar ||
-                            viewingProduct.description}
+                        <span className={styles.detailValue}>
+                          {typeof viewingProduct.description === "object"
+                            ? viewingProduct.description.ar
+                            : viewingProduct.description}
                         </span>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
                           {t("descriptionEnglish")}:
                         </span>
-                        <span className="detail-value">
-                          {viewingProduct.description?.en ||
-                            viewingProduct.description}
+                        <span className={styles.detailValue}>
+                          {typeof viewingProduct.description === "object"
+                            ? viewingProduct.description.en
+                            : viewingProduct.description}
                         </span>
                       </div>
                     </div>
 
-                    <div className="detail-section">
+                    <div className={styles.detailSection}>
                       <h4>{t("locationInformation")}</h4>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("country")}:</span>
-                        <span className="detail-value">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
+                          {t("country")}:
+                        </span>
+                        <span className={styles.detailValue}>
                           {viewingProduct.country?.name ||
                             viewingProduct.country}
                         </span>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
                           {t("governorate")}:
                         </span>
-                        <span className="detail-value">
+                        <span className={styles.detailValue}>
                           {viewingProduct.governorate?.name ||
                             viewingProduct.governorate}
                         </span>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
                           {t("centerGovernorate")}:
                         </span>
-                        <span className="detail-value">
+                        <span className={styles.detailValue}>
                           {viewingProduct.center_gov?.name ||
                             viewingProduct.center_gov}
                         </span>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("address")}:</span>
-                        <span className="detail-value">
-                          {viewingProduct.address?.ar || viewingProduct.address}
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>
+                          {t("address")}:
+                        </span>
+                        <span className={styles.detailValue}>
+                          {typeof viewingProduct.address === "object"
+                            ? viewingProduct.address.ar
+                            : viewingProduct.address}
                         </span>
                       </div>
                     </div>
 
-                    <div className="detail-section">
+                    <div className={styles.detailSection}>
                       <h4>{t("additionalInformation")}</h4>
 
                       {viewingProduct.delivery_days && (
-                        <div className="detail-row">
-                          <span className="detail-label">
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>
                             {t("deliveryDays")}:
                           </span>
-                          <span className="detail-value">
+                          <span className={styles.detailValue}>
                             {viewingProduct.delivery_days} {t("days")}
                           </span>
                         </div>
                       )}
                       {viewingProduct.discount_price && (
-                        <div className="detail-row">
-                          <span className="detail-label">
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>
                             {t("discountPrice")}:
                           </span>
-                          <span className="detail-value price">
+                          <span
+                            className={`${styles.detailValue} ${styles.price}`}
+                          >
                             {viewingProduct.discount_price} EGP
                           </span>
                         </div>
                       )}
                       {viewingProduct.discount_expires_at && (
-                        <div className="detail-row">
-                          <span className="detail-label">
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>
                             {t("discountExpiresAt")}:
                           </span>
-                          <span className="detail-value">
+                          <span className={styles.detailValue}>
                             {new Date(
                               viewingProduct.discount_expires_at
                             ).toLocaleDateString()}
@@ -2843,17 +2955,17 @@ export default function AddService() {
 
       {/* Image Modal */}
       {showImageModal && selectedImage && (
-        <div className="modal-overlay image-modal-overlay">
-          <div className="image-modal">
-            <div className="image-modal-header">
+        <div className={styles.modalOverlay}>
+          <div className={styles.imageModal}>
+            <div className={styles.imageModalHeader}>
               <button
                 onClick={() => setShowImageModal(false)}
-                className="close-btn"
+                className={styles.closeBtn}
               >
                 <FiX />
               </button>
             </div>
-            <div className="image-modal-content">
+            <div className={styles.imageModalContent}>
               <img src={selectedImage} alt="Full size" />
             </div>
           </div>

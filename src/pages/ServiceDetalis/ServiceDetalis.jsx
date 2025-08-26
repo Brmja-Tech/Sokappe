@@ -26,6 +26,33 @@ export default function ServiceDetalis() {
   const [requestLoading, setRequestLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
 
+  // Chat states
+  const [showChat, setShowChat] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+
+  // Initialize chat with welcome message
+  useEffect(() => {
+    if (showChat && messages.length === 0) {
+      const welcomeMessage = {
+        id: 1,
+        text:
+          i18n.language === "ar"
+            ? `مرحباً! أنا ${
+                service?.owner?.username || "صاحب الخدمة"
+              }. كيف يمكنني مساعدتك؟`
+            : `Hello! I'm ${
+                service?.owner?.username || "the service owner"
+              }. How can I help you?`,
+        sender: "service_owner",
+        timestamp: new Date(),
+        isWelcome: true,
+      };
+      setMessages([welcomeMessage]);
+    }
+  }, [showChat, service, i18n.language]);
+
   // Fetch service details
   const fetchServiceDetails = async () => {
     try {
@@ -253,6 +280,85 @@ export default function ServiceDetalis() {
     }
   };
 
+  // Chat functions
+  const openChat = () => {
+    setShowChat(true);
+    // Prevent body scroll when chat is open
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeChat = () => {
+    setShowChat(false);
+    // Restore body scroll when chat is closed
+    document.body.style.overflow = "unset";
+  };
+
+  const handleChatBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      closeChat();
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    const userMessage = {
+      id: Date.now(),
+      text: newMessage,
+      sender: "user",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setNewMessage("");
+    setChatLoading(true);
+
+    // Scroll to bottom of chat
+    setTimeout(() => {
+      const chatMessages = document.querySelector(".chatMessages");
+      if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }, 100);
+
+    // Simulate service owner typing and response
+    setTimeout(() => {
+      const ownerResponse = {
+        id: Date.now() + 1,
+        text:
+          i18n.language === "ar"
+            ? "شكراً لك على رسالتك! سأقوم بالرد عليك قريباً."
+            : "Thank you for your message! I'll get back to you soon.",
+        sender: "service_owner",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, ownerResponse]);
+      setChatLoading(false);
+
+      // Scroll to bottom after response
+      setTimeout(() => {
+        const chatMessages = document.querySelector(".chatMessages");
+        if (chatMessages) {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }, 100);
+    }, 2000);
+
+    // TODO: Replace with actual API call when backend is ready
+    // const response = await axios.post('/chat/send', {
+    //   serviceId: id,
+    //   message: newMessage,
+    //   receiverId: service.owner.id
+    // });
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchServiceDetails();
@@ -355,8 +461,8 @@ export default function ServiceDetalis() {
                 )}
               </div>
 
-              <button className="contactBtn">
-                <i className={`bi bi-envelope-fill btnIcon`}></i>
+              <button className="contactBtn" onClick={openChat}>
+                <i className={`bi bi-chat-dots-fill btnIcon`}></i>
                 {t("servicePage.contactSeller")}
               </button>
 
@@ -569,6 +675,105 @@ export default function ServiceDetalis() {
             relatedServices={service.related}
           />
         </section>
+      )}
+
+      {/* Chat Modal */}
+      {showChat && (
+        <div className="chatModal" onClick={handleChatBackdropClick}>
+          <div className="chatModalContent">
+            <div className="chatHeader">
+              <div className="chatUserInfo">
+                <img
+                  src={service.owner.avatar || "/avatar.webp"}
+                  alt={service.owner.username}
+                  className="chatUserAvatar"
+                />
+                <div className="chatUserDetails">
+                  <h4 className="chatUserName">{service.owner.username}</h4>
+                  <span className="chatUserStatus">
+                    <span className="statusDot online"></span>
+                    {i18n.language === "ar" ? "متصل الآن" : "Online now"}
+                  </span>
+                </div>
+              </div>
+              <button className="closeChatBtn" onClick={closeChat}>
+                <i className="bi bi-x-lg"></i>
+              </button>
+            </div>
+
+            <div
+              className="chatMessages"
+              dir={i18n.language === "ar" ? "rtl" : "ltr"}
+            >
+              {messages.map((message, index) => (
+                <div
+                  key={message.id}
+                  className={`message ${
+                    message.sender === "user" ? "userMessage" : "ownerMessage"
+                  } ${message.isWelcome ? "welcome" : ""}`}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {message.sender === "service_owner" && (
+                    <img
+                      src={service.owner.avatar || "/avatar.webp"}
+                      alt={service.owner.username}
+                      className="messageAvatar"
+                    />
+                  )}
+                  <div className="messageContent">
+                    <div className="messageText">{message.text}</div>
+                    <div className="messageTime">
+                      {message.timestamp.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {chatLoading && (
+                <div className="message ownerMessage typingMessage">
+                  <img
+                    src={service.owner.avatar || "/avatar.webp"}
+                    alt={service.owner.username}
+                    className="messageAvatar"
+                  />
+                  <div className="messageContent">
+                    <div className="typingIndicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="chatInput">
+              <div className="inputWrapper">
+                <textarea
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={
+                    i18n.language === "ar"
+                      ? "اكتب رسالتك هنا..."
+                      : "Type your message here..."
+                  }
+                  className="messageInput"
+                  rows="1"
+                />
+                <button
+                  onClick={sendMessage}
+                  disabled={!newMessage.trim() || chatLoading}
+                  className="sendMessageBtn"
+                >
+                  <i className="bi bi-send-fill"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
