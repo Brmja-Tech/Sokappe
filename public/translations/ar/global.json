@@ -875,30 +875,51 @@
   "categoriess": "الفئات",
   "yourFeedback": "أرائكم قيّمة للغاية، وهي نتيجة لجهد كبير...",
   "orders": {
-  "title": "طلبات المنتجات",
-  "orderNumber": "رقم الطلب",
-  "address": "العنوان",
-  "paymentMethod": "طريقة الدفع",
-  "total": "المجموع",
-  "requestedProducts": "المنتجات المطلوبة",
-  "price": "السعر",
-  "quantity": "الكمية",
-  "noProductsInOrder": "لا توجد منتجات في هذا الطلب",
-  "noOrdersFound": "لا توجد طلبات منتجات",
-  "noOrdersDescription": "لم تقم بشراء أي منتجات بعد",
-  "status": {
-    "pending": "قيد الانتظار",
-    "completed": "مكتمل",
-    "cancelled": "ملغي",
-    "processing": "قيد المعالجة",
-    "shipped": "تم الشحن",
-    "delivered": "تم التوصيل"
+    "title": "طلبات المنتجات",
+    "orderNumber": "رقم الطلب",
+    "address": "العنوان",
+    "paymentMethod": "طريقة الدفع",
+    "total": "المجموع",
+    "requestedProducts": "المنتجات المطلوبة",
+    "price": "السعر",
+    "quantity": "الكمية",
+    "noProductsInOrder": "لا توجد منتجات في هذا الطلب",
+    "noOrdersFound": "لا توجد طلبات منتجات",
+    "noOrdersDescription": "لم تقم بشراء أي منتجات بعد",
+    "status": {
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "cancelled": "ملغي",
+      "processing": "قيد المعالجة",
+      "shipped": "تم الشحن",
+      "delivered": "تم التوصيل"
+    },
+    "payment": {
+      "cashOnDelivery": "الدفع عند الاستلام",
+      "cash": "نقداً",
+      "card": "بطاقة ائتمان",
+      "bankTransfer": "تحويل بنكي"
+    }
   },
-  "payment": {
-    "cashOnDelivery": "الدفع عند الاستلام",
-    "cash": "نقداً",
-    "card": "بطاقة ائتمان",
-    "bankTransfer": "تحويل بنكي"
+  "chat": {
+    "title": "المحادثات",
+    "searchPlaceholder": "البحث في المحادثات...",
+    "noChats": "لا توجد محادثات",
+    "noChatsDescription": "ابدأ محادثة جديدة من صفحة الخدمة",
+    "noSearchResults": "لا توجد نتائج بحث",
+    "noSearchResultsDescription": "جرب البحث بكلمات مختلفة",
+    "online": "متصل الآن",
+    "startConversation": "ابدأ المحادثة الآن!",
+    "typeMessage": "اكتب رسالتك هنا...",
+    "sendMessage": "إرسال رسالة",
+    "messageSent": "تم إرسال الرسالة",
+    "messageReceived": "تم استلام الرسالة",
+    "chatWith": "التحدث مع",
+    "serviceOwner": "صاحب الخدمة",
+    "welcomeMessage": "مرحباً! كيف يمكنني مساعدتك؟",
+    "loading": "جاري التحميل...",
+    "startingConversation": "جاري بدء المحادثة...",
+    "noMessages": "لا توجد رسائل بعد",
+    "noMessagesDescription": "ابدأ المحادثة الآن!"
   }
-}
 }

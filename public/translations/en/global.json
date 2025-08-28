@@ -891,30 +891,51 @@
   "categoriess": "Categories",
   "yourFeedback": "Your feedback is extremely valuable and the result of great effort...",
   "orders": {
-  "title": "Product Orders",
-  "orderNumber": "Order Number",
-  "address": "Address",
-  "paymentMethod": "Payment Method",
-  "total": "Total",
-  "requestedProducts": "Requested Products",
-  "price": "Price",
-  "quantity": "Quantity",
-  "noProductsInOrder": "No products in this order",
-  "noOrdersFound": "No product orders found",
-  "noOrdersDescription": "You haven't purchased any products yet",
-  "status": {
-    "pending": "Pending",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "processing": "Processing",
-    "shipped": "Shipped",
-    "delivered": "Delivered"
+    "title": "Product Orders",
+    "orderNumber": "Order Number",
+    "address": "Address",
+    "paymentMethod": "Payment Method",
+    "total": "Total",
+    "requestedProducts": "Requested Products",
+    "price": "Price",
+    "quantity": "Quantity",
+    "noProductsInOrder": "No products in this order",
+    "noOrdersFound": "No product orders found",
+    "noOrdersDescription": "You haven't purchased any products yet",
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered"
+    },
+    "payment": {
+      "cashOnDelivery": "Cash on Delivery",
+      "cash": "Cash",
+      "card": "Credit Card",
+      "bankTransfer": "Bank Transfer"
+    }
   },
-  "payment": {
-    "cashOnDelivery": "Cash on Delivery",
-    "cash": "Cash",
-    "card": "Credit Card",
-    "bankTransfer": "Bank Transfer"
+  "chat": {
+    "title": "Chats",
+    "searchPlaceholder": "Search chats...",
+    "noChats": "No chats yet",
+    "noChatsDescription": "Start a new chat from a service page",
+    "noSearchResults": "No search results",
+    "noSearchResultsDescription": "Try searching with different words",
+    "online": "Online now",
+    "startConversation": "Start the conversation now!",
+    "typeMessage": "Type your message here...",
+    "sendMessage": "Send Message",
+    "messageSent": "Message sent",
+    "messageReceived": "Message received",
+    "chatWith": "Chat with",
+    "serviceOwner": "Service Owner",
+    "welcomeMessage": "Hello! How can I help you?",
+    "loading": "Loading...",
+    "startingConversation": "Starting conversation...",
+    "noMessages": "No messages yet",
+    "noMessagesDescription": "Start the conversation now!"
   }
-}
 }

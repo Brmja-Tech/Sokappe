@@ -37,6 +37,7 @@ const Login = () => {
       const formDataToSend = new FormData();
       formDataToSend.append("email", formData.email);
       formDataToSend.append("password", formData.password);
+      formDataToSend.append("fcm_token", "34434");
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/login`,

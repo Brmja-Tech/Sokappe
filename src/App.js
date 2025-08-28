@@ -7,6 +7,7 @@ import AppRoutes from "./routes/AppRoutes";
 import CartProvider from "./context/CartContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import { BannerProvider } from "./context/BannerContext";
+import { ChatProvider } from "./context/ChatContext";
 import ScrollToTop from "./component/ScrollToTop/ScrollToTop";
 import "./App.css";
 import AOS from "aos";
@@ -23,22 +24,24 @@ function App() {
     <CartProvider>
       <NotificationProvider>
         <BannerProvider>
-          <BrowserRouter>
-            <AppRoutes />
-            <ScrollToTop />
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-          </BrowserRouter>
+          <ChatProvider>
+            <BrowserRouter>
+              <AppRoutes />
+              <ScrollToTop />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
+            </BrowserRouter>
+          </ChatProvider>
         </BannerProvider>
       </NotificationProvider>
     </CartProvider>

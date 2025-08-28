@@ -52,6 +52,211 @@
   background: #ff9800;
 }
 
+.chatMessage {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Chats Dropdown Specific Styles */
+.chatsDropdown {
+  width: 580px !important;
+  max-height: 550px !important;
+  overflow: hidden;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  padding: 0;
+  margin-top: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+/* RTL Support */
+.chatsDropdown[dir="rtl"] {
+  text-align: right;
+}
+
+.chatsDropdown[dir="rtl"] .chatItem {
+  flex-direction: row-reverse;
+}
+
+.chatsDropdown[dir="rtl"] .chatContent {
+  margin-right: 12px;
+  margin-left: 0;
+}
+
+.chatsDropdown[dir="rtl"] .chatTime {
+  text-align: left;
+}
+
+.chatsDropdown[dir="rtl"] .chatUnreadIndicator {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+/* LTR Support */
+.chatsDropdown[dir="ltr"] {
+  text-align: left;
+}
+
+.chatsDropdown[dir="ltr"] .chatItem {
+  flex-direction: row;
+}
+
+.chatsDropdown[dir="ltr"] .chatContent {
+  margin-left: 12px;
+  margin-right: 0;
+}
+
+.chatsDropdown[dir="ltr"] .chatTime {
+  text-align: right;
+}
+
+.chatsDropdown[dir="ltr"] .chatUnreadIndicator {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+.chatItem {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 70px;
+}
+
+.chatItem:hover {
+  background: rgba(10, 110, 88, 0.05);
+}
+
+.chatItem:last-child {
+  border-bottom: none;
+}
+
+.chatAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a6e58, #0d9488);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.chatContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.chatUserName {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.2;
+}
+
+.chatUserName i {
+  color: #0a6e58;
+  font-size: 0.9rem;
+}
+
+.chatLastMessage {
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chatTime {
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.chatUnreadIndicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0a6e58;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.chatCounter {
+  background: #0a6e58;
+}
+
+.viewAllLink {
+  color: #0a6e58;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  display: block;
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin: 0 16px;
+}
+
+.viewAllLink:hover {
+  background: #f0fdf4;
+  color: #0a6e58;
+}
+
+.dropdownFooterButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.addAdButton {
+  color: #0a6e58;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  border: 1px solid #d1fae5;
+}
+
+.addAdButton:hover {
+  background: #dcfce7;
+  color: #0a6e58;
+  text-decoration: none;
+}
+
+.addAdButton i {
+  font-size: 0.8rem;
+}
+
 /* Notifications Dropdown */
 .notificationsDropdown {
   width: 380px;
@@ -70,14 +275,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.2rem 3rem;
-  border-bottom: 1px solid rgba(10, 110, 88, 0.1);
-  background: linear-gradient(
-    135deg,
-    rgba(10, 110, 88, 0.08) 0%,
-    rgba(10, 110, 88, 0.03) 100%
-  );
-  border-radius: 16px 16px 0 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-radius: 12px 12px 0 0;
 }
 
 .dropdownHeader h6 {
@@ -244,14 +445,10 @@
 }
 
 .dropdownFooter {
-  border-top: 1px solid rgba(10, 110, 88, 0.1);
-  background: linear-gradient(
-    135deg,
-    rgba(10, 110, 88, 0.05) 0%,
-    rgba(10, 110, 88, 0.02) 100%
-  );
-  border-radius: 0 0 16px 16px;
-  padding: 0.5rem 0;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-radius: 0 0 12px 12px;
+  padding: 12px 0;
 }
 
 .viewAllBtn {

@@ -1,4 +1,5 @@
 /* أنماط الصفحة الرئيسية */
+
 .mainContainer {
   max-width: 1200px;
   margin: 0 auto;
@@ -1302,4 +1303,57 @@
   .sendMessageBtn i {
     font-size: 1rem;
   }
+}
+
+/* Chat Section Styles */
+.chatSection {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.chatWithOwnerBtn {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.chatWithOwnerBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.chatWithOwnerBtn:active {
+  transform: translateY(0);
+}
+
+.chatWithOwnerBtn i {
+  font-size: 1.1rem;
+}
+
+/* Dark theme support for chat button */
+[data-theme="dark"] .chatSection {
+  background: #2d3748;
+  border-color: #4a5568;
+}
+
+[data-theme="dark"] .chatWithOwnerBtn {
+  background: linear-gradient(135deg, #3182ce 0%, #553c9a 100%);
+}
+
+[data-theme="dark"] .chatWithOwnerBtn:hover {
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
 }

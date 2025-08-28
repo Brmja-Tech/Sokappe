@@ -34,6 +34,9 @@ import Wishlist from "../pages/Wishlist/Wishlist";
 import Notifications from "../pages/Notifications/Notifications";
 import RequestDetails from "../pages/RequestDetails/RequestDetails";
 import RequestCategories from "../pages/RequestCategories/RequestCategories";
+import ServiceOwnerProfile from "../pages/ServiceOwnerProfile/ServiceOwnerProfile";
+import Chats from "../pages/Chats/Chats";
+import Chat from "../pages/Chat/Chat";
 
 export default function Applayout() {
   const location = useLocation();
@@ -85,12 +88,20 @@ export default function Applayout() {
         <Route path="/addservice" element={<AddService />} />
         <Route path="/addproduct" element={<AddProduct />} />
         <Route path="/adownerprofile/:id" element={<AdOwnerProfile />} />
+        <Route
+          path="/serviceownerprofile/:id"
+          element={<ServiceOwnerProfile />}
+        />
         <Route path="/individualprofile" element={<IndividualProfile />} />
         <Route path="/companyprofile" element={<CompanyProfile />} />
         <Route path="/vendorprofile" element={<VendorProfile />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/chats" element={<Chats />} />
+        <Route path="/chats/new" element={<Chat />} />
+        <Route path="/chats/:chatId" element={<Chat />} />
+
         <Route
           path="/request-details/:requestId"
           element={<RequestDetails />}
