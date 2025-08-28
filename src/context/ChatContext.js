@@ -103,7 +103,7 @@ export const ChatProvider = ({ children }) => {
             // لو الـAPI بعتهالك is_me فاحسب user_id بناء عليها
             user_id: m.is_me ? getCurrentUserId() : chatData.other_user_id,
             created_at_ms: Date.parse(m.created_at) || Date.now(),
-            is_me: m.is_me ?? (String(m.user_id) === String(getCurrentUserId())),
+            is_me: m.is_me ?? String(m.user_id) === String(getCurrentUserId()),
           }));
 
           setCurrentChat({
@@ -128,7 +128,11 @@ export const ChatProvider = ({ children }) => {
         onAdded: (msg) => {
           // نتوقع msg فيه: {id, chat_id, user_id, message, read, created_at, created_at_ms}
           if (!msg?.id) return;
-          if (seenIdsRef.current.has(msg.id)) return; // منع التكرار
+
+          console.log("🔥 Firebase onAdded callback:", msg);
+
+          // منع التكرار
+          if (seenIdsRef.current.has(msg.id)) return;
           seenIdsRef.current.add(msg.id);
 
           setMessages((prev) => {
@@ -137,7 +141,7 @@ export const ChatProvider = ({ children }) => {
               {
                 ...msg,
                 chat_id: String(chatId),
-                is_me: String(msg.user_id) === String(getCurrentUserId()), // <-- هنا
+                is_me: String(msg.user_id) === String(getCurrentUserId()),
                 created_at_ms:
                   msg.created_at_ms ||
                   (msg.created_at ? Date.parse(msg.created_at) : Date.now()),
@@ -149,13 +153,15 @@ export const ChatProvider = ({ children }) => {
         },
         onChanged: (msg) => {
           if (!msg?.id) return;
+
           setMessages((prev) => {
             const idx = prev.findIndex((x) => x.id === msg.id);
             if (idx === -1) return prev;
+
             const updated = {
               ...prev[idx],
               ...msg,
-              is_me: msg.user_id === getCurrentUserId(),
+              is_me: String(msg.user_id) === String(getCurrentUserId()),
               created_at_ms:
                 msg.created_at_ms ??
                 (msg.created_at
@@ -169,6 +175,7 @@ export const ChatProvider = ({ children }) => {
         },
         onRemoved: (msg) => {
           if (!msg?.id) return;
+
           seenIdsRef.current.delete(msg.id);
           setMessages((prev) => prev.filter((m) => m.id !== msg.id));
         },
@@ -212,18 +219,27 @@ export const ChatProvider = ({ children }) => {
 
         // اكتب الرسالة في Firebase بمفتاح = id من الـAPI (idempotent)
         try {
-          await chatService.upsertMessage(String(chatId), {
+          const currentUserId = getCurrentUserId();
+          console.log("🔥 Sending message to Firebase:", {
+            newMessage,
+            currentUserId,
+            sender_id: newMessage.sender_id,
+            is_me: newMessage.sender_id === currentUserId,
+          });
+
+          const messageToSend = {
             id: newMessage.id,
             chat_id: String(chatId),
-            user_id: newMessage.sender_id,
+            user_id: currentUserId, // استخدم currentUserId بدلاً من sender_id
             message: newMessage.message,
             read: newMessage.read,
             created_at: newMessage.created_at,
-            is_me: newMessage.sender_id === getCurrentUserId(),
-          });
-        } catch (firebaseErr) {
-          console.error("Firebase write error:", firebaseErr);
-          // في حالة فشل الكتابة في Firebase، نضيفها محليًا كحل أخير
+            is_me: true, // الرسائل الجديدة دائماً من المستخدم الحالي
+          };
+
+          console.log("🔥 Message to send to Firebase:", messageToSend);
+
+          // أضف الرسالة محلياً أولاً لضمان ظهورها فوراً
           setMessages((prev) => {
             if (!newMessage.id || seenIdsRef.current.has(newMessage.id)) {
               return prev;
@@ -234,19 +250,24 @@ export const ChatProvider = ({ children }) => {
               {
                 id: newMessage.id,
                 chat_id: String(chatId),
-                user_id: newMessage.sender_id,
+                user_id: getCurrentUserId(),
                 message: newMessage.message,
                 read: !!newMessage.read,
                 created_at: newMessage.created_at,
-                created_at_ms:
-                  Date.parse(newMessage.created_at) || Date.now(),
-                is_me: newMessage.sender_id === getCurrentUserId(),
+                created_at_ms: Date.parse(newMessage.created_at) || Date.now(),
+                is_me: true, // الرسائل الجديدة دائماً من المستخدم الحالي
               },
-            ].sort(
-              (a, b) => (a.created_at_ms || 0) - (b.created_at_ms || 0)
-            );
+            ].sort((a, b) => (a.created_at_ms || 0) - (b.created_at_ms || 0));
             return next;
           });
+
+          // ثم أرسلها للـ Firebase
+          await chatService.upsertMessage(String(chatId), messageToSend);
+
+          console.log("🔥 Message sent to Firebase successfully");
+        } catch (firebaseErr) {
+          console.error("🔥 Firebase write error:", firebaseErr);
+          // الرسالة موجودة بالفعل محلياً، لا نحتاج لإضافتها مرة أخرى
         }
 
         // حدث آخر رسالة في قائمة الشاتس
@@ -331,18 +352,21 @@ export const ChatProvider = ({ children }) => {
   useEffect(() => {
     if (!currentChat?.chat_id) return;
 
+    console.log("Starting Firebase listener for chat:", currentChat.chat_id);
+
     // مجرد حماية: نظّف أي listener سابق لنفس الشات
     chatService.stopListeningToChat(String(currentChat.chat_id));
 
-    // مهم: ما نستدعيش listenToChat هنا مباشرة؛
-    // هو بيتفعل داخل fetchMessages(chatId) بعد seed.
-    // لو داخلت الشات من غير seed (حالة نادرة)، اعمل seed+subscribe:
-    if (messages.length === 0) {
-      fetchMessages(String(currentChat.chat_id));
-    }
+    // مهم: نستدعي fetchMessages دائماً لضمان تفعيل Firebase listener
+    // حتى لو كانت الرسائل موجودة بالفعل
+    fetchMessages(String(currentChat.chat_id));
 
     return () => {
       if (currentChat?.chat_id) {
+        console.log(
+          "Stopping Firebase listener for chat:",
+          currentChat.chat_id
+        );
         chatService.stopListeningToChat(String(currentChat.chat_id));
       }
     };
