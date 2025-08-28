@@ -10,23 +10,34 @@ const Chat = () => {
   const { chatId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { messages, currentChat, sendMessage, fetchMessages } = useChat();
+
+  // ✅ خد setCurrentChat علشان نزامن الـURL مع الـContext listener
+  const { messages, currentChat, sendMessage, fetchMessages, setCurrentChat } = useChat();
+
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Get other user info from location state or URL params
+  // ✅ otherUserId fallback من currentChat لو مش موجود في الـstate/URL
   const otherUserId =
     location.state?.otherUserId ||
-    new URLSearchParams(location.search).get("other_user_id");
-  const otherUserName = location.state?.otherUserName || "مستخدم جديد";
+    new URLSearchParams(location.search).get("other_user_id") ||
+    currentChat?.other_user_id;
 
+  const otherUserName = location.state?.otherUserName || currentChat?.other_user_name || "مستخدم جديد";
+
+  // sync & seed
   useEffect(() => {
     if (chatId && chatId !== "new") {
+      // ✅ خلى الـContext يعرف الشات الحالي (يساعد في تشغيل listener لو seed اتعمل قبل)
+      setCurrentChat((prev) =>
+        prev?.chat_id === String(chatId) ? prev : { chat_id: String(chatId) }
+      );
       fetchMessages(chatId);
     }
-  }, [chatId, fetchMessages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatId, fetchMessages, setCurrentChat]);
 
   useEffect(() => {
     scrollToBottom();
@@ -52,23 +63,39 @@ const Chat = () => {
     }
   };
 
-  const formatMessageTime = (timestamp) => {
-    if (!timestamp) return "";
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString("ar-EG", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  // ✅ اعرض الوقت بالأولوية: created_at_ms -> created_at -> timestamp
+  const formatMessageTime = (created_at_like) => {
+    if (!created_at_like) return "";
+    const ms =
+      typeof created_at_like === "number"
+        ? created_at_like
+        : Date.parse(created_at_like);
+    if (!ms || Number.isNaN(ms)) return "";
+    const date = new Date(ms);
+    return date.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
   };
 
-  const handleKeyPress = (e) => {
+  // ✅ استخدم onKeyDown بدل onKeyPress
+  const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage(e);
     }
   };
 
-  if (!otherUserId) {
+  // ✅ قارن chat_id كسلسلة علشان تتفادى type mismatch
+  const currentChatMessages = messages.filter((message) => {
+    if (chatId && chatId !== "new") {
+      return String(message.chat_id) === String(chatId);
+    }
+    if (chatId === "new") {
+      return !message.chat_id;
+    }
+    return true;
+  });
+
+  if (!otherUserId && chatId === "new") {
+    // في محادثة جديدة لازم نعرف otherUserId
     return (
       <div className={styles.errorContainer}>
         <h3>{t("chat.error") || "خطأ في تحميل المحادثة"}</h3>
@@ -83,15 +110,12 @@ const Chat = () => {
     <div className={styles.chatContainer}>
       {/* Header */}
       <div className={styles.header}>
-        <button
-          className={styles.backButton}
-          onClick={() => navigate("/chats")}
-        >
+        <button className={styles.backButton} onClick={() => navigate("/chats")}>
           <BiArrowBack />
         </button>
         <div className={styles.chatInfo}>
           <div className={styles.chatAvatar}>
-            <span>{otherUserName.charAt(0).toUpperCase()}</span>
+            <span>{otherUserName?.charAt(0)?.toUpperCase() || "?"}</span>
           </div>
           <h2>
             {chatId === "new"
@@ -103,7 +127,7 @@ const Chat = () => {
 
       {/* Messages */}
       <div className={styles.messagesContainer}>
-        {messages.length === 0 ? (
+        {currentChatMessages.length === 0 ? (
           <div className={styles.noMessages}>
             <p>
               {chatId === "new"
@@ -114,9 +138,13 @@ const Chat = () => {
           </div>
         ) : (
           <div className={styles.messagesList}>
-            {messages.map((message, index) => (
+            {currentChatMessages.map((message, index) => (
               <div
-                key={message.id || index}
+                key={
+                  message.id ??
+                  message.firebase_id ??
+                  `${index}-${message.created_at_ms || message.created_at || message.timestamp}`
+                }
                 className={`${styles.messageItem} ${
                   message.is_me ? styles.myMessage : styles.otherMessage
                 }`}
@@ -124,8 +152,14 @@ const Chat = () => {
                 <div className={styles.messageContent}>
                   <p>{message.message}</p>
                   <span className={styles.messageTime}>
-                    {formatMessageTime(message.created_at)}
+                    {formatMessageTime(
+                      message.created_at_ms || message.created_at || message.timestamp
+                    )}
                   </span>
+                  {/* Debug (اختياري) */}
+                  {/* <small style={{ fontSize: "10px", opacity: 0.6 }}>
+                    ID: {message.id} | is_me: {message.is_me ? "true" : "false"} | chat_id: {message.chat_id}
+                  </small> */}
                 </div>
               </div>
             ))}
@@ -141,7 +175,7 @@ const Chat = () => {
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           placeholder={
             chatId === "new"
               ? t("chat.welcomeMessage") || "مرحباً! كيف يمكنني مساعدتك؟"
