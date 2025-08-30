@@ -209,7 +209,7 @@ export default function OfferRequestService() {
             </div>
 
             {/* الكارت الثانية */}
-            <div className="col-lg-6">
+            {/* <div className="col-lg-6">
               <div className="service-card">
                 <div className="card-icon">
                   <img
@@ -295,7 +295,7 @@ export default function OfferRequestService() {
                   )}
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

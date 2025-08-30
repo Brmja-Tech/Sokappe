@@ -932,11 +932,14 @@
     "messageReceived": "Message received",
     "chatWith": "Chat with",
     "serviceOwner": "Service Owner",
+    "productOwner": "Product Owner",
     "welcomeMessage": "Hello! How can I help you?",
     "loading": "Loading...",
     "startingConversation": "Starting conversation...",
     "noMessages": "No messages yet",
     "noMessagesDescription": "Start the conversation now!",
-    "searchChats": "Search chats..."
+    "searchChats": "Search chats...",
+    "chats": "Chats",
+    "viewAll": "View all chats"
   }
 }

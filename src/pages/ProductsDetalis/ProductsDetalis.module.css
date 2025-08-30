@@ -430,6 +430,48 @@
   border-radius: 5px !important;
 }
 
+/* Chat Section Styles */
+.chatSection {
+  margin: 1rem 0;
+}
+
+.chatWithOwnerBtn {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #0a6e58 0%, #0d8a6f 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(10, 110, 88, 0.3);
+}
+
+.chatWithOwnerBtn:hover {
+  background: linear-gradient(135deg, #0d8a6f 0%, #0a6e58 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(10, 110, 88, 0.4);
+}
+
+.chatWithOwnerBtn:active {
+  transform: translateY(0);
+}
+
+.chatWithOwnerBtn i {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.chatWithOwnerBtn:hover i {
+  transform: scale(1.1);
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .contentGrid,
@@ -467,9 +509,15 @@
   .actionButtons {
     gap: 0.75rem;
   }
-  
+
   .actionBtn,
   .contactBtn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  .chatWithOwnerBtn {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
     min-height: 44px;
@@ -504,6 +552,12 @@
 
   .actionBtn,
   .contactBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    min-height: 40px;
+  }
+
+  .chatWithOwnerBtn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
     min-height: 40px;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styles from "./ProductsDetalis.module.css";
 import { useTranslation } from "react-i18next";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
+import { toast } from "react-toastify";
 
 // Icons
 import ProductsServices from "../../component/ProductsServices/ProductsServices";
@@ -17,6 +18,7 @@ import ProductsServices from "../../component/ProductsServices/ProductsServices"
 export default function ProductsDetalis() {
   const { t, i18n } = useTranslation("global");
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
 
   const [product, setProduct] = useState(null);
@@ -32,6 +34,19 @@ export default function ProductsDetalis() {
   // Handle add to wishlist
   const handleAddToWishlist = () => {
     addToWishlist(product);
+  };
+
+  // Handle chat with product owner
+  const handleChatWithOwner = (ownerId) => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
+    if (!userData || !userData.token) {
+      toast.error(t("sign.login") + " " + t("sign.haveAccount"));
+      return;
+    }
+
+    // Navigate to chat with owner
+    navigate(`/chats/new?other_user_id=${ownerId}`);
   };
 
   // Helper function to check if delivery/warranty is available
@@ -150,7 +165,7 @@ export default function ProductsDetalis() {
               {product.condition === "New" ? (
                 // For New Products: Only Cart and Wishlist buttons
                 <div className={styles.actionButtons}>
-                  <button 
+                  <button
                     className={`${styles.actionBtn} ${styles.cartBtn} ${
                       isInCart(product.id) ? styles.inCart : ""
                     }`}
@@ -162,11 +177,19 @@ export default function ProductsDetalis() {
                         : t("products.addToCart")
                     }
                   >
-                    <i className={`bi ${isInCart(product.id) ? "bi-check-circle-fill" : "bi-cart-plus"}`}></i>
-                    {isInCart(product.id) ? t("products.inCart") : t("products.addToCart")}
+                    <i
+                      className={`bi ${
+                        isInCart(product.id)
+                          ? "bi-check-circle-fill"
+                          : "bi-cart-plus"
+                      }`}
+                    ></i>
+                    {isInCart(product.id)
+                      ? t("products.inCart")
+                      : t("products.addToCart")}
                   </button>
 
-                  <button 
+                  <button
                     className={`${styles.actionBtn} ${styles.wishlistBtn} ${
                       isInWishlist(product.id) ? styles.inWishlist : ""
                     }`}
@@ -178,19 +201,20 @@ export default function ProductsDetalis() {
                         : t("products.addToWishlist")
                     }
                   >
-                    <i className={`bi ${isInWishlist(product.id) ? "bi-heart-fill" : "bi-heart"}`}></i>
-                    {isInWishlist(product.id) ? t("products.inWishlist") : t("products.addToWishlist")}
+                    <i
+                      className={`bi ${
+                        isInWishlist(product.id) ? "bi-heart-fill" : "bi-heart"
+                      }`}
+                    ></i>
+                    {isInWishlist(product.id)
+                      ? t("products.inWishlist")
+                      : t("products.addToWishlist")}
                   </button>
                 </div>
               ) : (
                 // For Used Products: Contact Seller + Cart + Wishlist buttons
                 <div className={styles.actionButtons}>
-                  <button className={styles.contactBtn}>
-                    <i className={`bi bi-envelope-fill ${styles.btnIcon}`}></i>
-                    {t("productDetails.contactSeller")}
-                  </button>
-
-                  <button 
+                  <button
                     className={`${styles.actionBtn} ${styles.cartBtn} ${
                       isInCart(product.id) ? styles.inCart : ""
                     }`}
@@ -202,11 +226,19 @@ export default function ProductsDetalis() {
                         : t("products.addToCart")
                     }
                   >
-                    <i className={`bi ${isInCart(product.id) ? "bi-check-circle-fill" : "bi-cart-plus"}`}></i>
-                    {isInCart(product.id) ? t("products.inCart") : t("products.addToCart")}
+                    <i
+                      className={`bi ${
+                        isInCart(product.id)
+                          ? "bi-check-circle-fill"
+                          : "bi-cart-plus"
+                      }`}
+                    ></i>
+                    {isInCart(product.id)
+                      ? t("products.inCart")
+                      : t("products.addToCart")}
                   </button>
 
-                  <button 
+                  <button
                     className={`${styles.actionBtn} ${styles.wishlistBtn} ${
                       isInWishlist(product.id) ? styles.inWishlist : ""
                     }`}
@@ -218,8 +250,14 @@ export default function ProductsDetalis() {
                         : t("products.addToWishlist")
                     }
                   >
-                    <i className={`bi ${isInWishlist(product.id) ? "bi-heart-fill" : "bi-heart"}`}></i>
-                    {isInWishlist(product.id) ? t("products.inWishlist") : t("products.addToWishlist")}
+                    <i
+                      className={`bi ${
+                        isInWishlist(product.id) ? "bi-heart-fill" : "bi-heart"
+                      }`}
+                    ></i>
+                    {isInWishlist(product.id)
+                      ? t("products.inWishlist")
+                      : t("products.addToWishlist")}
                   </button>
                 </div>
               )}
@@ -358,6 +396,20 @@ export default function ProductsDetalis() {
                 </div>
               </div>
             </Link>
+
+            {/* Chat with Product Owner Button - Only show for used products */}
+            {product.condition === "Used" && (
+              <div className={styles.chatSection}>
+                <button
+                  className={styles.chatWithOwnerBtn}
+                  onClick={() => handleChatWithOwner(product.owner.id)}
+                  title={t("chat.chatWith") + " " + t("chat.productOwner")}
+                >
+                  <i className="bi bi-chat-dots-fill"></i>
+                  {t("chat.chatWith")} {t("chat.productOwner")}
+                </button>
+              </div>
+            )}
 
             <div className={styles.locationCard}>
               <h3 className={styles.sectionHeader}>

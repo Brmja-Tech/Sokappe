@@ -91,7 +91,7 @@ const Chats = () => {
             <BiMessageRounded className={styles.noChatsIcon} />
             <h3>{t("chat.noChats") || "لا توجد محادثات"}</h3>
             <p>
-              {t("chat.noChatsDesc") ||
+              {t("chat.noChatsDescription") ||
                 "ابدأ محادثة جديدة مع مقدمي الخدمات"}
             </p>
           </div>
