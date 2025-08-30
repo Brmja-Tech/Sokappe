@@ -920,6 +920,9 @@
     "loading": "جاري التحميل...",
     "startingConversation": "جاري بدء المحادثة...",
     "noMessages": "لا توجد رسائل بعد",
-    "noMessagesDescription": "ابدأ المحادثة الآن!"
+    "noMessagesDescription": "ابدأ المحادثة الآن!",
+    "searchChats": "البحث في المحادثات...",
+    "chats": "المحادثات",
+    "viewAll": "عرض جميع المحادثات"
   }
 }

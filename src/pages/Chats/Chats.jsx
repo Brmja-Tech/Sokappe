@@ -13,18 +13,17 @@ const Chats = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    console.log("Chats component mounted, fetching chats...");
-    console.log("fetchChats function:", fetchChats);
-    console.log(
-      "Current token from localStorage:",
-      localStorage.getItem("token")
-    );
     fetchChats();
   }, [fetchChats]);
 
-  const filteredChats = chats.filter((chat) =>
-    chat.other_user_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // فلترة + ترتيب المحادثات حسب آخر تحديث
+  const filteredChats = chats
+    .filter((chat) =>
+      chat.other_user_name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
 
   const handleChatClick = (chat) => {
     navigate(`/chats/${chat.chat_id}`, {
@@ -64,9 +63,6 @@ const Chats = () => {
     );
   }
 
-  console.log("Current chats:", chats);
-  console.log("Filtered chats:", filteredChats);
-
   return (
     <div className={styles.chatsContainer}>
       {/* Header */}
@@ -95,7 +91,8 @@ const Chats = () => {
             <BiMessageRounded className={styles.noChatsIcon} />
             <h3>{t("chat.noChats") || "لا توجد محادثات"}</h3>
             <p>
-              {t("chat.noChatsDesc") || "ابدأ محادثة جديدة مع مقدمي الخدمات"}
+              {t("chat.noChatsDesc") ||
+                "ابدأ محادثة جديدة مع مقدمي الخدمات"}
             </p>
           </div>
         ) : (
@@ -106,11 +103,15 @@ const Chats = () => {
               onClick={() => handleChatClick(chat)}
             >
               <div className={styles.chatAvatar}>
-                <span>{chat.other_user_name.charAt(0).toUpperCase()}</span>
+                <span>
+                  {chat.other_user_name?.charAt(0).toUpperCase()}
+                </span>
               </div>
               <div className={styles.chatInfo}>
                 <div className={styles.chatHeader}>
-                  <h4 className={styles.chatName}>{chat.other_user_name}</h4>
+                  <h4 className={styles.chatName}>
+                    {chat.other_user_name}
+                  </h4>
                   <span className={styles.chatTime}>
                     {formatTime(chat.updated_at)}
                   </span>

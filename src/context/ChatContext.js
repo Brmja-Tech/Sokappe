@@ -32,8 +32,10 @@ export const ChatProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("userData") || "{}")
   );
 
-  // لتفادي التكرار
+  // منع التكرار في الرسائل
   const seenIdsRef = useRef(new Set());
+  // متابعة أي شات بالفعل عليه Listener لآخر مسج
+  const listeningToLastRef = useRef(new Set());
 
   const getCurrentUserId = useCallback(() => {
     return userData?.id || userData?.user_id;
@@ -42,6 +44,16 @@ export const ChatProvider = ({ children }) => {
   const calculateUnreadCount = useCallback((chatsList) => {
     setUnreadCount(0);
   }, []);
+
+  const normalizeChats = (list) =>
+    (list || []).map((c) => ({
+      ...c,
+      chat_id: String(c.chat_id ?? c.id),
+      other_user_name: c.other_user_name || c?.other_user?.name || "مستخدم",
+      updated_at:
+        c.updated_at || c.last_message_time || c.created_at || new Date(0).toISOString(),
+      last_message: c.last_message ?? "",
+    }));
 
   const fetchChats = useCallback(async () => {
     if (!token) {
@@ -57,9 +69,51 @@ export const ChatProvider = ({ children }) => {
           headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         }
       );
+
       if (response.data.status === 200) {
-        setChats(response.data.data || []);
-        calculateUnreadCount(response.data.data || []);
+        // 1) طبّع الداتا
+        const base = normalizeChats(response.data.data || []);
+
+        // 2) هات آخر مسج من Firebase لكل شات (Hydration بعد الريفريش)
+        const enhanced = await Promise.all(
+          base.map(async (c) => {
+            try {
+              const last = await chatService.getLastMessage(c.chat_id);
+              if (last) {
+                return {
+                  ...c,
+                  last_message: last.message ?? c.last_message ?? "",
+                  updated_at: last.created_at ?? c.updated_at,
+                };
+              }
+            } catch {}
+            return c;
+          })
+        );
+
+        setChats(enhanced);
+        calculateUnreadCount(enhanced);
+
+        // 3) شغّل Listener خفيف لآخر مسج لكل شات (Live)
+        enhanced.forEach((c) => {
+          const cid = String(c.chat_id);
+          if (!listeningToLastRef.current.has(cid)) {
+            listeningToLastRef.current.add(cid);
+            chatService.listenToLastMessage(cid, (last) => {
+              setChats((prev) =>
+                prev.map((row) =>
+                  String(row.chat_id) === cid
+                    ? {
+                        ...row,
+                        last_message: last?.message ?? row.last_message ?? "",
+                        updated_at: last?.created_at ?? row.updated_at,
+                      }
+                    : row
+                )
+              );
+            });
+          }
+        });
       }
     } catch (error) {
       console.error("Error fetching chats:", error);
@@ -101,7 +155,6 @@ export const ChatProvider = ({ children }) => {
             other_user_name: chatData.other_user_name,
           });
 
-          // تحديث الرسائل وحماية من التكرار
           setMessages(seeded);
           seenIdsRef.current = new Set(seeded.map((m) => String(m.id)));
         }
@@ -109,7 +162,7 @@ export const ChatProvider = ({ children }) => {
         console.error("Error fetching messages (seed):", error);
       }
 
-      // Firebase listener
+      // Firebase listener لرسائل الشات المفتوح
       chatService.listenToChat(String(chatId), {
         onAdded: (msg) => {
           if (!msg?.id) return;
@@ -125,7 +178,21 @@ export const ChatProvider = ({ children }) => {
               created_at_ms: msg.created_at_ms || Date.now(),
             }].sort((a, b) => (a.created_at_ms || 0) - (b.created_at_ms || 0))
           );
+
+          // حدّث كمان الـ Chats list فورًا
+          setChats((prev) =>
+            prev.map((c) =>
+              String(c.chat_id) === String(chatId)
+                ? {
+                    ...c,
+                    last_message: msg.message,
+                    updated_at: msg.created_at || new Date().toISOString(),
+                  }
+                : c
+            )
+          );
         },
+
         onChanged: (msg) => {
           if (!msg?.id) return;
           const msgId = String(msg.id);
@@ -146,6 +213,7 @@ export const ChatProvider = ({ children }) => {
             return next;
           });
         },
+
         onRemoved: (msg) => {
           if (!msg?.id) return;
           const msgId = String(msg.id);
@@ -211,11 +279,15 @@ export const ChatProvider = ({ children }) => {
           console.error("Firebase write error:", err);
         }
 
-        // تحديث قائمة الشاتس
+        // ✅ حدّث chats بالاعتماد على chat_id (أدق من other_user_id)
         setChats((prev) =>
           prev.map((c) =>
-            c.other_user_id === otherUserId
-              ? { ...c, last_message: newMessage.message, updated_at: newMessage.created_at }
+            String(c.chat_id) === String(chatId)
+              ? {
+                  ...c,
+                  last_message: newMessage.message,
+                  updated_at: newMessage.created_at,
+                }
               : c
           )
         );
@@ -270,6 +342,7 @@ export const ChatProvider = ({ children }) => {
 
   useEffect(() => {
     if (!currentChat?.chat_id) return;
+    // أوقف أي listener قديم لنفس الشات
     chatService.stopListeningToChat(String(currentChat.chat_id));
     fetchMessages(String(currentChat.chat_id));
     return () => {
@@ -294,7 +367,12 @@ export const ChatProvider = ({ children }) => {
   }, [currentChat?.chat_id, fetchMessages]);
 
   useEffect(() => {
-    return () => chatService.stopAllListeners();
+    // Cleanup شامل: يوقف كل Listeners (رسائل + آخر مسج)
+    return () => {
+      chatService.stopAllListeners();
+      listeningToLastRef.current.clear();
+      seenIdsRef.current.clear();
+    };
   }, []);
 
   const value = {

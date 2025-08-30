@@ -936,6 +936,7 @@
     "loading": "Loading...",
     "startingConversation": "Starting conversation...",
     "noMessages": "No messages yet",
-    "noMessagesDescription": "Start the conversation now!"
+    "noMessagesDescription": "Start the conversation now!",
+    "searchChats": "Search chats..."
   }
 }
