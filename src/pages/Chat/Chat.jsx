@@ -12,7 +12,8 @@ const Chat = () => {
   const location = useLocation();
 
   // ✅ خد setCurrentChat علشان نزامن الـURL مع الـContext listener
-  const { messages, currentChat, sendMessage, fetchMessages, setCurrentChat } = useChat();
+  const { messages, currentChat, sendMessage, fetchMessages, setCurrentChat } =
+    useChat();
 
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -25,7 +26,10 @@ const Chat = () => {
     new URLSearchParams(location.search).get("other_user_id") ||
     currentChat?.other_user_id;
 
-  const otherUserName = location.state?.otherUserName || currentChat?.other_user_name || "مستخدم جديد";
+  const otherUserName =
+    location.state?.otherUserName ||
+    currentChat?.other_user_name ||
+    "مستخدم جديد";
 
   // sync & seed
   useEffect(() => {
@@ -72,7 +76,10 @@ const Chat = () => {
         : Date.parse(created_at_like);
     if (!ms || Number.isNaN(ms)) return "";
     const date = new Date(ms);
-    return date.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString("ar-EG", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   // ✅ استخدم onKeyDown بدل onKeyPress
@@ -110,7 +117,10 @@ const Chat = () => {
     <div className={styles.chatContainer}>
       {/* Header */}
       <div className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate("/chats")}>
+        <button
+          className={styles.backButton}
+          onClick={() => navigate("/chats")}
+        >
           <BiArrowBack />
         </button>
         <div className={styles.chatInfo}>
@@ -143,7 +153,11 @@ const Chat = () => {
                 key={
                   message.id ??
                   message.firebase_id ??
-                  `${index}-${message.created_at_ms || message.created_at || message.timestamp}`
+                  `${index}-${
+                    message.created_at_ms ||
+                    message.created_at ||
+                    message.timestamp
+                  }`
                 }
                 className={`${styles.messageItem} ${
                   message.is_me ? styles.myMessage : styles.otherMessage
@@ -153,7 +167,9 @@ const Chat = () => {
                   <p>{message.message}</p>
                   <span className={styles.messageTime}>
                     {formatMessageTime(
-                      message.created_at_ms || message.created_at || message.timestamp
+                      message.created_at_ms ||
+                        message.created_at ||
+                        message.timestamp
                     )}
                   </span>
                   {/* Debug (اختياري) */}

@@ -13,9 +13,12 @@ const Chats = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    console.log('Chats component mounted, fetching chats...');
-    console.log('fetchChats function:', fetchChats);
-    console.log('Current token from localStorage:', localStorage.getItem('token'));
+    console.log("Chats component mounted, fetching chats...");
+    console.log("fetchChats function:", fetchChats);
+    console.log(
+      "Current token from localStorage:",
+      localStorage.getItem("token")
+    );
     fetchChats();
   }, [fetchChats]);
 
@@ -61,8 +64,8 @@ const Chats = () => {
     );
   }
 
-  console.log('Current chats:', chats);
-  console.log('Filtered chats:', filteredChats);
+  console.log("Current chats:", chats);
+  console.log("Filtered chats:", filteredChats);
 
   return (
     <div className={styles.chatsContainer}>

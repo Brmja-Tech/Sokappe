@@ -22,7 +22,7 @@ export const useChat = () => {
 
 export const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null); // {chat_id, other_user_id, other_user_name?}
+  const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -32,17 +32,14 @@ export const ChatProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("userData") || "{}")
   );
 
-  // بنستخدمه لمنع التكرارات لما توصل نفس الرسالة من API/Firebase
+  // لتفادي التكرار
   const seenIdsRef = useRef(new Set());
 
-  // Helper: current user id
   const getCurrentUserId = useCallback(() => {
     return userData?.id || userData?.user_id;
   }, [userData]);
 
-  // -------- Chats list (from API) --------
   const calculateUnreadCount = useCallback((chatsList) => {
-    // TODO: لو عندك فلاغ unread/last_seen من الـAPI احسبه هنا
     setUnreadCount(0);
   }, []);
 
@@ -52,19 +49,14 @@ export const ChatProvider = ({ children }) => {
       setChats([]);
       return;
     }
-
     try {
       setLoading(true);
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}/chats/user`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         }
       );
-
       if (response.data.status === 200) {
         setChats(response.data.data || []);
         calculateUnreadCount(response.data.data || []);
@@ -76,35 +68,32 @@ export const ChatProvider = ({ children }) => {
     }
   }, [token, calculateUnreadCount]);
 
-  // -------- Messages (seed from API + live from Firebase) --------
+  // -------- Messages --------
   const fetchMessages = useCallback(
     async (chatId) => {
       if (!token || !chatId) return;
 
-      // 1) Seed من API (مرة واحدة لكل دخول للشات)
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_BASE_URL}/chats/${chatId}/messages`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
+            headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
           }
         );
 
         if (response.data.status === 200) {
-          const chatData = response.data.data; // { chat_id, other_user_id, other_user_name, messages: [...] }
-
-          // رسائل الـAPI قد تحتوي is_me. هنطبع user_id بناءً عليه لتوحيد الشكل مع Firebase
-          const seeded = (chatData.messages || []).map((m) => ({
-            ...m,
-            chat_id: String(chatId),
-            // لو الـAPI بعتهالك is_me فاحسب user_id بناء عليها
-            user_id: m.is_me ? getCurrentUserId() : chatData.other_user_id,
-            created_at_ms: Date.parse(m.created_at) || Date.now(),
-            is_me: m.is_me ?? String(m.user_id) === String(getCurrentUserId()),
-          }));
+          const chatData = response.data.data;
+          const seeded = (chatData.messages || []).map((m) => {
+            const id = String(m.id);
+            return {
+              ...m,
+              id,
+              chat_id: String(chatId),
+              user_id: m.is_me ? getCurrentUserId() : chatData.other_user_id,
+              created_at_ms: Date.parse(m.created_at) || Date.now(),
+              is_me: m.is_me ?? String(m.user_id) === String(getCurrentUserId()),
+            };
+          });
 
           setCurrentChat({
             chat_id: String(chatId),
@@ -112,61 +101,45 @@ export const ChatProvider = ({ children }) => {
             other_user_name: chatData.other_user_name,
           });
 
-          // حفظ الرسائل الأولية
+          // تحديث الرسائل وحماية من التكرار
           setMessages(seeded);
-          // علّم الرسائل التي شوفتها عشان ما تتكررش لما تيجي من Firebase
-          seenIdsRef.current = new Set(
-            seeded.map((m) => m.id).filter((id) => id != null)
-          );
+          seenIdsRef.current = new Set(seeded.map((m) => String(m.id)));
         }
       } catch (error) {
         console.error("Error fetching messages (seed):", error);
       }
 
-      // 2) الاشتراك من Firebase (onChildAdded/Changed/Removed)
+      // Firebase listener
       chatService.listenToChat(String(chatId), {
         onAdded: (msg) => {
-          // نتوقع msg فيه: {id, chat_id, user_id, message, read, created_at, created_at_ms}
           if (!msg?.id) return;
+          const msgId = String(msg.id);
+          if (seenIdsRef.current.has(msgId)) return;
+          seenIdsRef.current.add(msgId);
 
-          console.log("🔥 Firebase onAdded callback:", msg);
-
-          // منع التكرار
-          if (seenIdsRef.current.has(msg.id)) return;
-          seenIdsRef.current.add(msg.id);
-
-          setMessages((prev) => {
-            const next = [
-              ...prev,
-              {
-                ...msg,
-                chat_id: String(chatId),
-                is_me: String(msg.user_id) === String(getCurrentUserId()),
-                created_at_ms:
-                  msg.created_at_ms ||
-                  (msg.created_at ? Date.parse(msg.created_at) : Date.now()),
-              },
-            ].sort((a, b) => (a.created_at_ms || 0) - (b.created_at_ms || 0));
-
-            return next;
-          });
+          setMessages((prev) =>
+            [...prev, {
+              ...msg,
+              chat_id: String(chatId),
+              is_me: String(msg.user_id) === String(getCurrentUserId()),
+              created_at_ms: msg.created_at_ms || Date.now(),
+            }].sort((a, b) => (a.created_at_ms || 0) - (b.created_at_ms || 0))
+          );
         },
         onChanged: (msg) => {
           if (!msg?.id) return;
+          const msgId = String(msg.id);
 
           setMessages((prev) => {
-            const idx = prev.findIndex((x) => x.id === msg.id);
+            const idx = prev.findIndex((x) => String(x.id) === msgId);
             if (idx === -1) return prev;
-
             const updated = {
               ...prev[idx],
               ...msg,
               is_me: String(msg.user_id) === String(getCurrentUserId()),
               created_at_ms:
                 msg.created_at_ms ??
-                (msg.created_at
-                  ? Date.parse(msg.created_at)
-                  : prev[idx].created_at_ms),
+                (msg.created_at ? Date.parse(msg.created_at) : prev[idx].created_at_ms),
             };
             const next = [...prev];
             next[idx] = updated;
@@ -175,115 +148,78 @@ export const ChatProvider = ({ children }) => {
         },
         onRemoved: (msg) => {
           if (!msg?.id) return;
-
-          seenIdsRef.current.delete(msg.id);
-          setMessages((prev) => prev.filter((m) => m.id !== msg.id));
+          const msgId = String(msg.id);
+          seenIdsRef.current.delete(msgId);
+          setMessages((prev) => prev.filter((m) => String(m.id) !== msgId));
         },
       });
     },
     [token, getCurrentUserId]
   );
 
-  // -------- Send message (API → write to Firebase) --------
+  // -------- Send message --------
   const sendMessage = useCallback(
     async (otherUserId, message) => {
       if (!token || !otherUserId || !message?.trim()) return;
-
       const text = message.trim();
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/chats/send`,
         { other_user_id: otherUserId, message: text },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         }
       );
 
       if (response.data.status === 201) {
-        const newMessage = response.data.data; // { id, chat_id, sender_id, message, read, created_at, ... }
+        const newMessage = response.data.data;
         const chatId =
           newMessage.chat_id ||
           currentChat?.chat_id ||
-          // fallback من URL لو لسه /chats/new
           (window.location.pathname.includes("/chats/")
             ? window.location.pathname.split("/").pop()
             : null);
 
-        if (!chatId) {
-          console.error("No chat_id found for new message");
-          throw new Error("No chat_id found for new message");
-        }
+        if (!chatId) throw new Error("No chat_id found for new message");
 
-        // اكتب الرسالة في Firebase بمفتاح = id من الـAPI (idempotent)
+        const msgId = String(newMessage.id);
+        const currentUserId = getCurrentUserId();
+
+        const messageToSend = {
+          id: msgId,
+          chat_id: String(chatId),
+          user_id: String(currentUserId),
+          message: newMessage.message,
+          read: !!newMessage.read,
+          created_at: newMessage.created_at,
+          created_at_ms: Date.parse(newMessage.created_at) || Date.now(),
+        };
+
+        // أضف محليًا فقط لو مش مكرر
+        setMessages((prev) => {
+          if (seenIdsRef.current.has(msgId)) return prev;
+          seenIdsRef.current.add(msgId);
+          return [...prev, { ...messageToSend, is_me: true }].sort(
+            (a, b) => (a.created_at_ms || 0) - (b.created_at_ms || 0)
+          );
+        });
+
+        // Firebase
         try {
-          const currentUserId = getCurrentUserId();
-          console.log("🔥 Sending message to Firebase:", {
-            newMessage,
-            currentUserId,
-            sender_id: newMessage.sender_id,
-            is_me: newMessage.sender_id === currentUserId,
-          });
-
-          const messageToSend = {
-            id: newMessage.id,
-            chat_id: String(chatId),
-            user_id: currentUserId, // استخدم currentUserId بدلاً من sender_id
-            message: newMessage.message,
-            read: newMessage.read,
-            created_at: newMessage.created_at,
-            is_me: true, // الرسائل الجديدة دائماً من المستخدم الحالي
-          };
-
-          console.log("🔥 Message to send to Firebase:", messageToSend);
-
-          // أضف الرسالة محلياً أولاً لضمان ظهورها فوراً
-          setMessages((prev) => {
-            if (!newMessage.id || seenIdsRef.current.has(newMessage.id)) {
-              return prev;
-            }
-            seenIdsRef.current.add(newMessage.id);
-            const next = [
-              ...prev,
-              {
-                id: newMessage.id,
-                chat_id: String(chatId),
-                user_id: getCurrentUserId(),
-                message: newMessage.message,
-                read: !!newMessage.read,
-                created_at: newMessage.created_at,
-                created_at_ms: Date.parse(newMessage.created_at) || Date.now(),
-                is_me: true, // الرسائل الجديدة دائماً من المستخدم الحالي
-              },
-            ].sort((a, b) => (a.created_at_ms || 0) - (b.created_at_ms || 0));
-            return next;
-          });
-
-          // ثم أرسلها للـ Firebase
           await chatService.upsertMessage(String(chatId), messageToSend);
-
-          console.log("🔥 Message sent to Firebase successfully");
-        } catch (firebaseErr) {
-          console.error("🔥 Firebase write error:", firebaseErr);
-          // الرسالة موجودة بالفعل محلياً، لا نحتاج لإضافتها مرة أخرى
+        } catch (err) {
+          console.error("Firebase write error:", err);
         }
 
-        // حدث آخر رسالة في قائمة الشاتس
+        // تحديث قائمة الشاتس
         setChats((prev) =>
           prev.map((c) =>
             c.other_user_id === otherUserId
-              ? {
-                  ...c,
-                  last_message: newMessage.message,
-                  updated_at: newMessage.created_at,
-                }
+              ? { ...c, last_message: newMessage.message, updated_at: newMessage.created_at }
               : c
           )
         );
 
-        // لو كنت فاتح /chats/new، حول للمسار الحقيقي
         if (window.location.pathname.includes("/chats/new")) {
           window.history.replaceState(null, "", `/chats/${chatId}`);
         }
@@ -294,14 +230,7 @@ export const ChatProvider = ({ children }) => {
     [token, currentChat, getCurrentUserId]
   );
 
-  // -------- Mark as read (اختياري/placeholder) --------
-  const markChatAsRead = useCallback(async (chatId) => {
-    // لو عندك API للقراءة نده هنا وبعدين عدل رسائل Firebase (read=true) بنفس الـids
-  }, []);
-
-  // -------- Effects & lifecycle --------
-
-  // listen & sync localStorage token/userData
+  // -------- Effects --------
   useEffect(() => {
     const handleStorageChange = () => {
       const newToken = localStorage.getItem("token");
@@ -309,18 +238,12 @@ export const ChatProvider = ({ children }) => {
       setToken(newToken);
       setUserData(newUserData);
     };
-
     window.addEventListener("storage", handleStorageChange);
-
-    // فحص دوري لتغير التوكن داخل نفس التاب
     const interval = setInterval(() => {
       const currentToken = localStorage.getItem("token");
-      if (currentToken !== token) {
-        setToken(currentToken);
-      }
+      if (currentToken !== token) setToken(currentToken);
     }, 1000);
 
-    // عند أول تحميل لو مفيش توكن
     if (!localStorage.getItem("token")) {
       setLoading(false);
       setChats([]);
@@ -328,18 +251,15 @@ export const ChatProvider = ({ children }) => {
       setCurrentChat(null);
       setUnreadCount(0);
     }
-
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       clearInterval(interval);
     };
   }, [token]);
 
-  // fetch chats on mount / token change
   useEffect(() => {
-    if (token) {
-      fetchChats();
-    } else {
+    if (token) fetchChats();
+    else {
       setLoading(false);
       setChats([]);
       setMessages([]);
@@ -348,70 +268,33 @@ export const ChatProvider = ({ children }) => {
     }
   }, [token, fetchChats]);
 
-  // start Firebase listener when currentChat changes
   useEffect(() => {
     if (!currentChat?.chat_id) return;
-
-    console.log("Starting Firebase listener for chat:", currentChat.chat_id);
-
-    // مجرد حماية: نظّف أي listener سابق لنفس الشات
     chatService.stopListeningToChat(String(currentChat.chat_id));
-
-    // مهم: نستدعي fetchMessages دائماً لضمان تفعيل Firebase listener
-    // حتى لو كانت الرسائل موجودة بالفعل
     fetchMessages(String(currentChat.chat_id));
-
     return () => {
-      if (currentChat?.chat_id) {
-        console.log(
-          "Stopping Firebase listener for chat:",
-          currentChat.chat_id
-        );
-        chatService.stopListeningToChat(String(currentChat.chat_id));
-      }
+      if (currentChat?.chat_id) chatService.stopListeningToChat(String(currentChat.chat_id));
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChat?.chat_id]);
+  }, [currentChat?.chat_id, fetchMessages]);
 
-  // keep currentChat in sync with URL changes
   useEffect(() => {
     const syncFromUrl = () => {
       if (window.location.pathname.includes("/chats/")) {
         const parts = window.location.pathname.split("/");
         const urlChatId = parts[parts.length - 1];
-        if (
-          urlChatId &&
-          urlChatId !== "new" &&
-          urlChatId !== currentChat?.chat_id
-        ) {
-          setCurrentChat((prev) => ({
-            ...(prev || {}),
-            chat_id: String(urlChatId),
-          }));
-          // seed + subscribe للـchatId من الـURL
+        if (urlChatId && urlChatId !== "new" && urlChatId !== currentChat?.chat_id) {
+          setCurrentChat((prev) => ({ ...(prev || {}), chat_id: String(urlChatId) }));
           fetchMessages(String(urlChatId));
         }
       }
     };
-
-    // أول مرة
     syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  }, [currentChat?.chat_id, fetchMessages]);
 
-    // راقب تغيّر الـURL
-    const popHandler = () => syncFromUrl();
-    window.addEventListener("popstate", popHandler);
-
-    return () => {
-      window.removeEventListener("popstate", popHandler);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChat?.chat_id]);
-
-  // cleanup all Firebase listeners on unmount
   useEffect(() => {
-    return () => {
-      chatService.stopAllListeners();
-    };
+    return () => chatService.stopAllListeners();
   }, []);
 
   const value = {
@@ -424,8 +307,7 @@ export const ChatProvider = ({ children }) => {
     fetchMessages,
     sendMessage,
     setCurrentChat,
-    markChatAsRead,
-    setChats, // في حال احتجته موضعياً
+    setChats,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
