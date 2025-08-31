@@ -21,7 +21,12 @@ export default function AddService() {
   const [centerGovernorates, setCenterGovernorates] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0,
+  });
   const [editingProduct, setEditingProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [viewingProduct, setViewingProduct] = useState(null);
@@ -570,7 +575,14 @@ export default function AddService() {
         }
       );
       setProducts(response.data.data.data || []);
-      setTotalPages(response.data.data.meta?.last_page || 1);
+      setPagination(
+        response.data.data.pagination || {
+          current_page: 1,
+          last_page: 1,
+          per_page: 10,
+          total: 0,
+        }
+      );
     } catch (error) {
       console.error("Error fetching services:", error);
     }
@@ -590,7 +602,14 @@ export default function AddService() {
         }
       );
       setProducts(response.data.data.data || []);
-      setTotalPages(response.data.data.meta?.last_page || 1);
+      setPagination(
+        response.data.data.pagination || {
+          current_page: 1,
+          last_page: 1,
+          per_page: 10,
+          total: 0,
+        }
+      );
     } catch (error) {
       console.error("Error fetching services by category:", error);
     }
@@ -1652,22 +1671,22 @@ export default function AddService() {
         ))}
       </div>
 
-      {totalPages > 1 && (
+      {pagination.last_page > 1 && (
         <div className={styles.pagination}>
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
+            disabled={pagination.current_page === 1}
           >
             {t("previous")}
           </button>
           <span>
-            {currentPage} {t("pageOf")} {totalPages}
+            {pagination.current_page} {t("pageOf")} {pagination.last_page}
           </span>
           <button
             onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              setCurrentPage((prev) => Math.min(prev + 1, pagination.last_page))
             }
-            disabled={currentPage === totalPages}
+            disabled={pagination.current_page === pagination.last_page}
           >
             {t("next")}
           </button>

@@ -472,7 +472,8 @@
     "remove": "Remove",
     "loginRequired": "Please login to view request details",
     "clickToViewDetails": "Click to view request details",
-    "clickInstructions": "Click on any notification to view detailed request information"
+    "clickInstructions": "Click on any notification to view detailed request information",
+    "new": "New"
   },
   "requestDetails": {
     "title": "Request Details",

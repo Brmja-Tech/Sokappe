@@ -437,24 +437,104 @@
 /* Pagination styles */
 .pagination {
   margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
 .pagination .page-link {
-  color: #007bff;
-  border: 1px solid #dee2e6;
+  color: #0a6e58;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  margin: 0 0.25rem;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background-color: white;
+  min-width: 80px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination .page-link:hover {
+  background-color: #0a6e58;
+  border-color: #0a6e58;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(10, 110, 88, 0.3);
 }
 
 .pagination .page-item.active .page-link {
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: #0a6e58;
+  border-color: #0a6e58;
   color: white;
+  box-shadow: 0 4px 15px rgba(10, 110, 88, 0.3);
 }
 
 .pagination .page-item.disabled .page-link {
-  color: #6c757d;
-  pointer-events: none;
-  background-color: #fff;
-  border-color: #dee2e6;
+  color: #adb5bd;
+  border-color: #e9ecef;
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Enhanced pagination styling */
+.pagination .page-item {
+  margin: 0 2px;
+}
+
+.pagination .page-link:focus {
+  outline: 2px solid #0a6e58;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(10, 110, 88, 0.1);
+}
+
+/* RTL support for pagination */
+[dir="rtl"] .pagination {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .pagination .page-link {
+  margin: 0 0.25rem;
+}
+
+/* Dark theme support for pagination */
+[data-theme="dark"] .pagination .page-link {
+  background-color: #2d2d2d;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .pagination .page-link:hover {
+  background-color: #0a6e58;
+  border-color: #0a6e58;
+  color: white;
+}
+
+[data-theme="dark"] .pagination .page-link:disabled {
+  background-color: #404040;
+  border-color: #555555;
+  color: #adb5bd;
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+  .pagination {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pagination .page-link {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 60px;
+  }
+
+  .pagination .page-item {
+    margin: 0;
+  }
 }
 
 /* --- Store Image Upload --- */

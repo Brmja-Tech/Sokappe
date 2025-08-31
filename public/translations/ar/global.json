@@ -497,7 +497,8 @@
     "remove": "إزالة",
     "loginRequired": "يرجى تسجيل الدخول لعرض تفاصيل الطلب",
     "clickToViewDetails": "انقر لعرض تفاصيل الطلب",
-    "clickInstructions": "انقر على أي إشعار لعرض معلومات الطلب التفصيلية"
+    "clickInstructions": "انقر على أي إشعار لعرض معلومات الطلب التفصيلية",
+    "new": "جديد"
   },
   "requestDetails": {
     "title": "تفاصيل الطلب",

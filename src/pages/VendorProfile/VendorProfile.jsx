@@ -72,7 +72,12 @@ export default function VendorProfile() {
   const [services, setServices] = useState([]);
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0,
+  });
 
   // Service Requests state
   const [requests, setRequests] = useState([]);
@@ -128,6 +133,17 @@ export default function VendorProfile() {
       }
     }
   }, [activeTab, profileData.account_type]);
+
+  // Refetch services/products when page changes
+  useEffect(() => {
+    if (activeTab === "services" && profileData.account_type) {
+      if (profileData.account_type === "service") {
+        fetchServices();
+      } else {
+        fetchProducts();
+      }
+    }
+  }, [currentPage, activeTab, profileData.account_type]);
 
   // Fetch requests when tab changes
   useEffect(() => {
@@ -330,7 +346,14 @@ export default function VendorProfile() {
 
       if (response.data.status === 200) {
         setServices(response.data.data.data || []);
-        setTotalPages(response.data.data.pagination?.last_page || 1);
+        setPagination(
+          response.data.data.pagination || {
+            current_page: 1,
+            last_page: 1,
+            per_page: 10,
+            total: 0,
+          }
+        );
       }
     } catch (error) {
       console.error("Error fetching services:", error);
@@ -363,7 +386,14 @@ export default function VendorProfile() {
 
       if (response.data.status === 200) {
         setProducts(response.data.data.data || []);
-        setTotalPages(response.data.data.pagination?.last_page || 1);
+        setPagination(
+          response.data.data.pagination || {
+            current_page: 1,
+            last_page: 1,
+            per_page: 10,
+            total: 0,
+          }
+        );
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -441,6 +471,10 @@ export default function VendorProfile() {
   // Handle page change
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    setPagination((prev) => ({
+      ...prev,
+      current_page: newPage,
+    }));
   };
 
   // Handle requests page change
@@ -1475,60 +1509,90 @@ export default function VendorProfile() {
                       )}
 
                       {/* Pagination */}
-                      {totalPages > 1 && (
+                      {pagination.last_page > 1 && (
                         <div className="d-flex justify-content-center mt-4">
-                          <nav>
-                            <ul className="pagination">
-                              <li
-                                className={`page-item ${
-                                  currentPage === 1 ? "disabled" : ""
-                                }`}
+                          {servicesLoading || productsLoading ? (
+                            <div className="text-center">
+                              <div
+                                className="spinner-border text-primary"
+                                role="status"
                               >
-                                <button
-                                  className="page-link"
-                                  onClick={() =>
-                                    handlePageChange(currentPage - 1)
-                                  }
-                                  disabled={currentPage === 1}
-                                >
-                                  {t("previous")}
-                                </button>
-                              </li>
-                              {Array.from(
-                                { length: totalPages },
-                                (_, i) => i + 1
-                              ).map((page) => (
+                                <span className="visually-hidden">
+                                  {t("settings.loading")}
+                                </span>
+                              </div>
+                              <p className="mt-2 text-muted">
+                                {t("settings.loading")}
+                              </p>
+                            </div>
+                          ) : (
+                            <nav>
+                              <ul className="pagination">
                                 <li
-                                  key={page}
                                   className={`page-item ${
-                                    currentPage === page ? "active" : ""
+                                    pagination.current_page === 1
+                                      ? "disabled"
+                                      : ""
                                   }`}
                                 >
                                   <button
                                     className="page-link"
-                                    onClick={() => handlePageChange(page)}
+                                    onClick={() =>
+                                      handlePageChange(
+                                        pagination.current_page - 1
+                                      )
+                                    }
+                                    disabled={pagination.current_page === 1}
                                   >
-                                    {page}
+                                    {t("previous")}
                                   </button>
                                 </li>
-                              ))}
-                              <li
-                                className={`page-item ${
-                                  currentPage === totalPages ? "disabled" : ""
-                                }`}
-                              >
-                                <button
-                                  className="page-link"
-                                  onClick={() =>
-                                    handlePageChange(currentPage + 1)
-                                  }
-                                  disabled={currentPage === totalPages}
+                                {Array.from(
+                                  { length: pagination.last_page },
+                                  (_, i) => i + 1
+                                ).map((page) => (
+                                  <li
+                                    key={page}
+                                    className={`page-item ${
+                                      pagination.current_page === page
+                                        ? "active"
+                                        : ""
+                                    }`}
+                                  >
+                                    <button
+                                      className="page-link"
+                                      onClick={() => handlePageChange(page)}
+                                    >
+                                      {page}
+                                    </button>
+                                  </li>
+                                ))}
+                                <li
+                                  className={`page-item ${
+                                    pagination.current_page ===
+                                    pagination.last_page
+                                      ? "disabled"
+                                      : ""
+                                  }`}
                                 >
-                                  {t("next")}
-                                </button>
-                              </li>
-                            </ul>
-                          </nav>
+                                  <button
+                                    className="page-link"
+                                    onClick={() =>
+                                      handlePageChange(
+                                        pagination.current_page + 1
+                                      )
+                                    }
+                                    disabled={
+                                      pagination.current_page ===
+                                      pagination.last_page
+                                    }
+                                  >
+                                    {t("next")}
+                                  </button>
+                                </li>
+                              </ul>
+                            </nav>
+                          )}
                         </div>
                       )}
                     </>

@@ -1153,6 +1153,54 @@
   color: #6c757d;
 }
 
+/* Enhanced Pagination Styling */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  align-items: center;
+}
+
+.pagination button {
+  color: #0a6e58;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  margin: 0 0.25rem;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background-color: white;
+  min-width: 80px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #0a6e58;
+  border-color: #0a6e58;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(10, 110, 88, 0.3);
+}
+
+.pagination button:disabled {
+  color: #adb5bd;
+  border-color: #e9ecef;
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination span {
+  font-weight: 600;
+  color: #6c757d;
+  margin: 0 1rem;
+  padding: 0.5rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -1322,6 +1370,16 @@
     width: 30px;
     height: 30px;
     font-size: 12px;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pagination button {
+    padding: 8px 16px;
+    font-size: 14px;
   }
 
   .edit-form .form-group {
@@ -2060,4 +2118,49 @@
 .form-group input[name="discount_expires_at"]:focus {
   border-color: #e83e8c;
   box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.1);
+}
+
+/* RTL support for pagination */
+[dir="rtl"] .pagination {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .pagination button {
+  margin: 0 0.25rem;
+}
+
+/* Dark theme support for pagination */
+[data-theme="dark"] .pagination button {
+  background-color: #2d2d2d;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .pagination button:hover:not(:disabled) {
+  background-color: #0a6e58;
+  border-color: #0a6e58;
+  color: white;
+}
+
+[data-theme="dark"] .pagination button:disabled {
+  background-color: #404040;
+  border-color: #555555;
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .pagination span {
+  background-color: #404040;
+  border-color: #555555;
+  color: #b0b0b0;
+}
+
+/* Smooth animations for pagination */
+.pagination button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+.pagination button:focus {
+  outline: 2px solid #0a6e58;
+  outline-offset: 2px;
 }

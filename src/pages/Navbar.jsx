@@ -289,20 +289,140 @@ const Navbar = () => {
 
             {/* Collapsible Notifications */}
             {isAuthenticated && (
-              <li className="d-xl-none">
-                <Link className="add" to="/notifications">
-                  <div className={styles.mobileCounter}>
-                    <i className="bi bi-bell"></i>{" "}
-                    {t("notifications.notifications")}
-                    {unreadCount > 0 && (
-                      <span
-                        className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
-                      >
-                        {unreadCount}
-                      </span>
+              <li className="nav-item dropdown d-xl-none">
+                <button
+                  className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
+                  data-bs-toggle="dropdown"
+                  data-bs-auto-close="outside"
+                  aria-expanded="false"
+                  aria-label="Notifications"
+                  style={{
+                    color: `${
+                      theme === "dark" ? "var(--basic-color)" : "#000"
+                    }`,
+                  }}
+                >
+                  <i className="bi bi-bell"></i>
+                  {unreadCount > 0 && (
+                    <span
+                      className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
+                    >
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+                <ul
+                  className={`dropdown-menu ${styles.notificationsDropdown}`}
+                  style={{
+                    backgroundColor: `${
+                      theme === "dark"
+                        ? "var(--dark-color)"
+                        : "var(--basic-color)"
+                    }`,
+                  }}
+                  data-bs-popper="static"
+                >
+                  <div className={styles.dropdownHeader}>
+                    <h6>
+                      <i className="bi bi-bell me-2"></i>
+                      {t("notifications.notifications")}
+                      {unreadCount > 0 && (
+                        <span className={styles.unreadBadge}>
+                          {unreadCount} {t("notifications.new")}
+                        </span>
+                      )}
+                    </h6>
+                  </div>
+
+                  <div className={styles.notificationsList}>
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 3).map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`${styles.notificationItem} ${
+                            !notification.read_at ? styles.unread : ""
+                          }`}
+                          onClick={() => markAsRead(notification.id)}
+                          title={
+                            notification.service_request_id
+                              ? t("notifications.clickToViewDetails")
+                              : ""
+                          }
+                        >
+                          <div className={styles.notificationContent}>
+                            <div className={styles.notificationHeader}>
+                              <div className={styles.notificationService}>
+                                <i className="bi bi-gear-fill me-2"></i>
+                                <strong>
+                                  {notification.service_name ||
+                                    t("notifications.service")}
+                                </strong>
+                              </div>
+                              <div className={styles.notificationTime}>
+                                {formatNotificationTime(
+                                  notification.created_at
+                                )}
+                              </div>
+                            </div>
+
+                            <div className={styles.notificationBody}>
+                              <div className={styles.notificationStatus}>
+                                <span
+                                  className={`${styles.statusBadge} ${
+                                    notification.status === "accepted" ||
+                                    notification.status === "accept"
+                                      ? styles.statusSuccess
+                                      : notification.status === "rejected" ||
+                                        notification.status === "reject"
+                                      ? styles.statusDanger
+                                      : notification.status === "completed"
+                                      ? styles.statusPrimary
+                                      : styles.statusSecondary
+                                  }`}
+                                >
+                                  {notification.status === "accepted" ||
+                                  notification.status === "accept"
+                                    ? t("notifications.accepted")
+                                    : notification.status === "rejected" ||
+                                      notification.status === "reject"
+                                    ? t("notifications.rejected")
+                                    : notification.status === "completed"
+                                    ? t("notifications.completed")
+                                    : notification.status || "info"}
+                                </span>
+                              </div>
+
+                              {notification.reason && (
+                                <div className={styles.notificationReason}>
+                                  <small className="text-muted">
+                                    {notification.reason}
+                                  </small>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {!notification.read_at && (
+                            <div className={styles.unreadIndicator}>
+                              <i className="bi bi-circle-fill"></i>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className={styles.emptyNotifications}>
+                        <i className="bi bi-bell-slash"></i>
+                        <p>{t("notifications.noNotifications")}</p>
+                      </div>
                     )}
                   </div>
-                </Link>
+
+                  <div className={styles.dropdownFooter}>
+                    <Link to="/notifications" className={styles.viewAllBtn}>
+                      {t("notifications.viewAll")}
+                    </Link>
+                  </div>
+                </ul>
               </li>
             )}
 
@@ -477,6 +597,7 @@ const Navbar = () => {
                 <button
                   className={`${styles.cartWishlistIcon} dropdown-toggle border-0 bg-transparent`}
                   data-bs-toggle="dropdown"
+                  data-bs-auto-close="outside"
                   aria-expanded="false"
                   title={t("notifications.notifications")}
                 >
@@ -489,6 +610,110 @@ const Navbar = () => {
                     </span>
                   )}
                 </button>
+                <div
+                  className={`dropdown-menu ${styles.notificationsDropdown}`}
+                >
+                  <div className={styles.dropdownHeader}>
+                    <h6>
+                      <i className="bi bi-bell me-2"></i>
+                      {t("notifications.notifications")}
+                      {unreadCount > 0 && (
+                        <span className={styles.unreadBadge}>
+                          {unreadCount} {t("notifications.new")}
+                        </span>
+                      )}
+                    </h6>
+                  </div>
+
+                  <div className={styles.notificationsList}>
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 5).map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`${styles.notificationItem} ${
+                            !notification.read_at ? styles.unread : ""
+                          }`}
+                          onClick={() => markAsRead(notification.id)}
+                          title={
+                            notification.service_request_id
+                              ? t("notifications.clickToViewDetails")
+                              : ""
+                          }
+                        >
+                          <div className={styles.notificationContent}>
+                            <div className={styles.notificationHeader}>
+                              <div className={styles.notificationService}>
+                                <i className="bi bi-gear-fill me-2"></i>
+                                <strong>
+                                  {notification.service_name ||
+                                    t("notifications.service")}
+                                </strong>
+                              </div>
+                              <div className={styles.notificationTime}>
+                                {formatNotificationTime(
+                                  notification.created_at
+                                )}
+                              </div>
+                            </div>
+
+                            <div className={styles.notificationBody}>
+                              <div className={styles.notificationStatus}>
+                                <span
+                                  className={`${styles.statusBadge} ${
+                                    notification.status === "accepted" ||
+                                    notification.status === "accept"
+                                      ? styles.statusSuccess
+                                      : notification.status === "rejected" ||
+                                        notification.status === "reject"
+                                      ? styles.statusDanger
+                                      : notification.status === "completed"
+                                      ? styles.statusPrimary
+                                      : styles.statusSecondary
+                                  }`}
+                                >
+                                  {notification.status === "accepted" ||
+                                  notification.status === "accept"
+                                    ? t("notifications.accepted")
+                                    : notification.status === "rejected" ||
+                                      notification.status === "reject"
+                                    ? t("notifications.rejected")
+                                    : notification.status === "completed"
+                                    ? t("notifications.completed")
+                                    : notification.status || "info"}
+                                </span>
+                              </div>
+
+                              {notification.reason && (
+                                <div className={styles.notificationReason}>
+                                  <small className="text-muted">
+                                    {notification.reason}
+                                  </small>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {!notification.read_at && (
+                            <div className={styles.unreadIndicator}>
+                              <i className="bi bi-circle-fill"></i>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className={styles.emptyNotifications}>
+                        <i className="bi bi-bell-slash"></i>
+                        <p>{t("notifications.noNotifications")}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.dropdownFooter}>
+                    <Link to="/notifications" className={styles.viewAllBtn}>
+                      {t("notifications.viewAll")}
+                    </Link>
+                  </div>
+                </div>
               </li>
             </>
           )}

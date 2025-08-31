@@ -339,6 +339,7 @@
   align-items: flex-start;
   margin: 0 0.5rem;
   border-radius: 12px;
+  min-height: 80px;
 }
 
 .notificationItem:hover {
@@ -372,19 +373,58 @@
   flex: 1;
 }
 
-.notificationTitle {
-  font-weight: 600;
-  color: #1a252f;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+.notificationHeader {
   display: flex;
-  align-items: center;
-  line-height: 1.3;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
 }
 
-.notificationTitle i {
+.notificationService {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #1a252f;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.notificationService i {
   color: #0a6e58;
   font-size: 0.8rem;
+}
+
+.notificationTime {
+  font-size: 0.75rem;
+  color: #6c757d;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+
+.notificationBody {
+  margin-top: 0.5rem;
+}
+
+.notificationReason {
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(10, 110, 88, 0.05);
+  border-radius: 6px;
+  border-left: 3px solid #0a6e58;
+}
+
+.unreadIndicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #0a6e58;
+  font-size: 0.6rem;
+}
+
+[dir="rtl"] .unreadIndicator {
+  right: auto;
+  left: 1rem;
 }
 
 .notificationStatus {
@@ -413,6 +453,11 @@
 .statusSecondary {
   background: #e2e3e5;
   color: #383d41;
+}
+
+.statusPrimary {
+  background: #cce7ff;
+  color: #004085;
 }
 
 .notificationTime {
