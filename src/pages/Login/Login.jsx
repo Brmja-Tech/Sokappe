@@ -35,7 +35,6 @@ const Login = () => {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
     const tempToken = `temp_fcm_${timestamp}_${randomString}`;
-    console.log("🔄 توليد FCM token مؤقت:", tempToken);
     return tempToken;
   };
 
@@ -55,70 +54,33 @@ const Login = () => {
     }
   };
 
-  // دالة مساعدة لاختبار FCM token
-  const testFCMToken = async () => {
-    console.log("🧪 بدء اختبار FCM Token...");
-    const browserType = getBrowserInfo();
-    console.log("🌐 نوع المتصفح:", browserType);
-
-    try {
-      const result = await initPushAndGetToken();
-      console.log("📊 نتيجة اختبار FCM:", result);
-
-      if (result.token) {
-        toast.success("✅ تم الحصول على FCM token بنجاح!");
-        localStorage.setItem("fcm_token", result.token);
-      } else {
-        if (browserType === "brave") {
-          toast.warning("🦁 متصفح Brave - قد لا يدعم FCM بشكل كامل");
-        } else {
-          toast.error(`❌ فشل في الحصول على FCM token: ${result.reason}`);
-        }
-      }
-    } catch (error) {
-      console.error("❌ خطأ في اختبار FCM:", error);
-      toast.error("❌ خطأ في اختبار FCM token");
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       // Get FCM token dynamically with better error handling
-      console.log("🔍 بدء الحصول على FCM token...");
       const browserType = getBrowserInfo();
-      console.log("🌐 نوع المتصفح:", browserType);
-
       const fcmResult = await initPushAndGetToken();
-      console.log("📊 نتيجة FCM:", fcmResult);
 
       let fcmToken = "no_token_available";
 
       if (fcmResult.token) {
         fcmToken = fcmResult.token;
-        console.log("✅ تم الحصول على FCM token بنجاح");
       } else {
-        console.warn("⚠️ فشل في الحصول على FCM token:", fcmResult.reason);
-
         if (browserType === "brave") {
-          console.log("🦁 متصفح Brave - استخدام token مؤقت");
+          // متصفح Brave - استخدام token مؤقت
         }
 
         // محاولة الحصول على token من localStorage إذا كان موجود
         const storedToken = localStorage.getItem("fcm_token");
         if (storedToken) {
           fcmToken = storedToken;
-          console.log("🔄 استخدام FCM token محفوظ من localStorage");
         } else {
           // توليد token مؤقت إذا لم يكن هناك token محفوظ
           fcmToken = generateTemporaryFCMToken();
-          console.log("🔄 توليد FCM token مؤقت");
         }
       }
-
-      console.log("📱 FCM Token النهائي:", fcmToken);
 
       const formDataToSend = new FormData();
       formDataToSend.append("email", formData.email);
@@ -271,25 +233,6 @@ const Login = () => {
           <Link to="/resetpassword" className="forgot-password">
             {t("sign.forgotPassword")}
           </Link>
-
-          {/* زر اختبار FCM token */}
-          <button
-            type="button"
-            className="test-fcm-button"
-            onClick={testFCMToken}
-            style={{
-              background: "#f0f0f0",
-              color: "#333",
-              border: "1px solid #ddd",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              marginBottom: "10px",
-              cursor: "pointer",
-              fontSize: "12px",
-            }}
-          >
-            🧪 اختبار FCM Token
-          </button>
 
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? t("sign.loggingIn") || "Logging in..." : t("sign.login")}
