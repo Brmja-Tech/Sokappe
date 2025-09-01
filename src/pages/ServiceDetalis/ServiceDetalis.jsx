@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./ServiceDetalis.css";
+import styles from "./ServiceDetalis.module.css";
 import { useTranslation } from "react-i18next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -250,15 +250,15 @@ export default function ServiceDetalis() {
         // Show appropriate message based on status change
         if (serverStatus === "accept" || serverStatus === "accepted") {
           if (previousStatus !== "accepted") {
-            toast.success(t("servicePage.requestAccepted"));
+            // toast.success(t("servicePage.requestAccepted"));
           }
         } else if (serverStatus === "reject" || serverStatus === "rejected") {
           if (previousStatus !== "rejected") {
-            toast.error(t("servicePage.requestRejected"));
+            // toast.error(t("servicePage.requestRejected"));
           }
         } else if (serverStatus === "completed") {
           if (previousStatus !== "completed") {
-            toast.success(t("servicePage.requestCompleted"));
+            // toast.success(t("servicePage.requestCompleted"));
           }
         }
       }
@@ -319,27 +319,27 @@ export default function ServiceDetalis() {
 
   return (
     <>
-      <section className="mainContainer">
-        <h1 className="title">{service.name}</h1>
+      <section className={styles.mainContainer}>
+        <h1 className={styles.title}>{service.name}</h1>
 
-        <div className="contentGrid">
-          <div className="gallerySection">
-            <div className="swiperContainer">
+        <div className={styles.contentGrid}>
+          <div className={styles.gallerySection}>
+            <div className={styles.swiperContainer}>
               <Swiper
                 modules={[Navigation, Pagination]}
                 spaceBetween={20}
                 slidesPerView={1}
                 navigation
                 pagination={{ clickable: true }}
-                className="mainSwiper"
+                className={styles.mainSwiper}
               >
                 {allImages.map((img, index) => (
                   <SwiperSlide key={index}>
-                    <div className="imageFrame">
+                    <div className={styles.imageFrame}>
                       <img
                         src={img}
                         alt={`${service.name} - عرض ${index + 1}`}
-                        className="mainImg"
+                        className={styles.mainImg}
                         onError={(e) =>
                           (e.target.src = "/placeholder-product.png")
                         }
@@ -351,21 +351,21 @@ export default function ServiceDetalis() {
             </div>
           </div>
 
-          <div className="sidePanel">
-            <div className="infoCard">
-              <div className="priceBox">
+          <div className={styles.sidePanel}>
+            <div className={styles.infoCard}>
+              <div className={styles.priceBox}>
                 {service.discount_price &&
                 service.discount_price !== service.price ? (
                   <div>
-                    <span className="oldPrice">
+                    <span className={styles.oldPrice}>
                       {service.price} {t("servicePage.currency")}
                     </span>
-                    <span className="currentPrice">
+                    <span className={styles.currentPrice}>
                       {service.discount_price} {t("servicePage.currency")}
                     </span>
                   </div>
                 ) : (
-                  <span className="currentPrice">
+                  <span className={styles.currentPrice}>
                     {service.price} {t("servicePage.currency")}
                   </span>
                 )}
@@ -374,22 +374,22 @@ export default function ServiceDetalis() {
               {/* Service Request Buttons */}
               {!requestStatus ? (
                 <button
-                  className="requestBtn"
+                  className={styles.requestBtn}
                   onClick={sendServiceRequest}
                   disabled={requestLoading}
                 >
-                  <i className={`bi bi-send-fill btnIcon`}></i>
+                  <i className={`bi bi-send-fill ${styles.btnIcon}`}></i>
                   {requestLoading
                     ? t("servicePage.sending")
                     : t("servicePage.sendRequest")}
                 </button>
               ) : requestStatus === "pending" ? (
                 <button
-                  className="cancelRequestBtn"
+                  className={styles.cancelRequestBtn}
                   onClick={cancelServiceRequest}
                   disabled={cancelLoading}
                 >
-                  <i className={`bi bi-x-circle-fill btnIcon`}></i>
+                  <i className={`bi bi-x-circle-fill ${styles.btnIcon}`}></i>
                   {cancelLoading
                     ? t("servicePage.cancelling")
                     : t("servicePage.cancelRequest")}
@@ -398,27 +398,29 @@ export default function ServiceDetalis() {
 
               {/* Display current request status */}
               {requestStatus && (
-                <div className={`requestStatus ${requestStatus}`}>
+                <div
+                  className={`${styles.requestStatus} ${styles[requestStatus]}`}
+                >
                   {requestStatus === "pending" && (
-                    <div className="statusPending">
+                    <div className={styles.statusPending}>
                       <i className="bi bi-clock-fill me-2"></i>
                       <span>{t("servicePage.requestSent")}</span>
                     </div>
                   )}
                   {requestStatus === "accepted" && (
-                    <div className="statusAccepted">
+                    <div className={styles.statusAccepted}>
                       <i className="bi bi-check-circle-fill me-2"></i>
                       <span>{t("servicePage.requestAccepted")}</span>
                     </div>
                   )}
                   {requestStatus === "rejected" && (
-                    <div className="statusRejected">
+                    <div className={styles.statusRejected}>
                       <i className="bi bi-x-circle-fill me-2"></i>
                       <span>{t("servicePage.requestRejected")}</span>
                     </div>
                   )}
                   {requestStatus === "completed" && (
-                    <div className="statusCompleted">
+                    <div className={styles.statusCompleted}>
                       <i className="bi bi-check2-all me-2"></i>
                       <span>{t("servicePage.requestCompleted")}</span>
                     </div>
@@ -427,7 +429,7 @@ export default function ServiceDetalis() {
                   {/* Refresh Status Button - Only show for pending requests */}
                   {requestStatus === "pending" && (
                     <button
-                      className="refreshStatusBtn"
+                      className={styles.refreshStatusBtn}
                       onClick={() => checkRequestStatusFromServer(requestId)}
                       title={t("servicePage.refreshStatus")}
                     >
@@ -437,22 +439,28 @@ export default function ServiceDetalis() {
                 </div>
               )}
 
-              <div className="safetyTips">
-                <h3 className="tipsHeading">
-                  <i className={`bi bi-lightbulb tipsIcon`}></i>
+              <div className={styles.safetyTips}>
+                <h3 className={styles.tipsHeading}>
+                  <i className={`bi bi-lightbulb ${styles.tipsIcon}`}></i>
                   {t("servicePage.generalTips")}
                 </h3>
-                <ul className="tipsList">
-                  <li className="tipItem">
-                    <i className={`bi bi-check-circle-fill tipBullet`}></i>
+                <ul className={styles.tipsList}>
+                  <li className={styles.tipItem}>
+                    <i
+                      className={`bi bi-check-circle-fill ${styles.tipBullet}`}
+                    ></i>
                     {t("servicePage.tips.1")}
                   </li>
-                  <li className="tipItem">
-                    <i className={`bi bi-check-circle-fill tipBullet`}></i>
+                  <li className={styles.tipItem}>
+                    <i
+                      className={`bi bi-check-circle-fill ${styles.tipBullet}`}
+                    ></i>
                     {t("servicePage.tips.2")}
                   </li>
-                  <li className="tipItem">
-                    <i className={`bi bi-check-circle-fill tipBullet`}></i>
+                  <li className={styles.tipItem}>
+                    <i
+                      className={`bi bi-check-circle-fill ${styles.tipBullet}`}
+                    ></i>
                     {t("servicePage.tips.3")}
                   </li>
                 </ul>
@@ -461,52 +469,56 @@ export default function ServiceDetalis() {
           </div>
         </div>
 
-        <div className="detailsGrid">
-          <div className="specsSection">
-            <div className="specsCard">
-              <h2 className="sectionHeader">
-                <i className={`bi bi-info-circle-fill sectionIcon`}></i>
+        <div className={styles.detailsGrid}>
+          <div className={styles.specsSection}>
+            <div className={styles.specsCard}>
+              <h2 className={styles.sectionHeader}>
+                <i
+                  className={`bi bi-info-circle-fill ${styles.sectionIcon}`}
+                ></i>
                 {t("servicePage.information")}
               </h2>
-              <div className="specsTable">
-                <div className="specRow">
-                  <span className="specLabel">
+              <div className={styles.specsTable}>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
                     {t("servicePage.serviceCountry")}:
                   </span>
-                  <span className="specValue">{service.country}</span>
+                  <span className={styles.specValue}>{service.country}</span>
                 </div>
-                <div className="specRow">
-                  <span className="specLabel">
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
                     {t("servicePage.serviceGovernorate")}:
                   </span>
-                  <span className="specValue">{service.governorate}</span>
+                  <span className={styles.specValue}>
+                    {service.governorate}
+                  </span>
                 </div>
-                <div className="specRow">
-                  <span className="specLabel">
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
                     {t("servicePage.serviceCenterGov")}:
                   </span>
-                  <span className="specValue">{service.centerGov}</span>
+                  <span className={styles.specValue}>{service.centerGov}</span>
                 </div>
-                <div className="specRow">
-                  <span className="specLabel">
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
                     {t("servicePage.serviceAddress")}:
                   </span>
-                  <span className="specValue">{service.address}</span>
+                  <span className={styles.specValue}>{service.address}</span>
                 </div>
-                <div className="specRow">
-                  <span className="specLabel">
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
                     {t("servicePage.serviceDelivery")}:
                   </span>
-                  <span className="specValue">
+                  <span className={styles.specValue}>
                     {service.delivery_days} {t("servicePage.days")}
                   </span>
                 </div>
                 {service.discount_expires_at && (
-                  <div className="specRow">
-                    <span className="specLabel">
+                  <div className={styles.specRow}>
+                    <span className={styles.specLabel}>
                       {t("servicePage.serviceDiscountExpires")}:
                     </span>
-                    <span className="specValue text-danger">
+                    <span className="text-danger">
                       {new Date(
                         service.discount_expires_at
                       ).toLocaleDateString()}
@@ -516,12 +528,12 @@ export default function ServiceDetalis() {
               </div>
             </div>
 
-            <div className="descCard">
-              <h2 className="sectionHeader">
-                <i className={`bi bi-file-text-fill sectionIcon`}></i>
+            <div className={styles.descCard}>
+              <h2 className={styles.sectionHeader}>
+                <i className={`bi bi-file-text-fill ${styles.sectionIcon}`}></i>
                 {t("servicePage.description")}
               </h2>
-              <div className="descContent">
+              <div className={styles.descContent}>
                 {service.description.split("\n").map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
                 ))}
@@ -529,27 +541,31 @@ export default function ServiceDetalis() {
             </div>
           </div>
 
-          <div className="sellerSection">
+          <div className={styles.sellerSection}>
             <Link
               to={`/serviceownerprofile/${service.id}`}
-              className="sellerLink"
+              className={styles.sellerLink}
             >
-              <div className="sellerCard">
-                <h3 className="sectionHeader">
-                  <i className={`bi bi-person-fill sectionIcon`}></i>
+              <div className={styles.sellerCard}>
+                <h3 className={styles.sectionHeader}>
+                  <i className={`bi bi-person-fill ${styles.sectionIcon}`}></i>
                   {t("servicePage.seller")}
                 </h3>
-                <div className="sellerProfile">
+                <div className={styles.sellerProfile}>
                   <img
                     src={service.owner.avatar || "/avatar.webp"}
                     alt={`${service.owner.username}`}
-                    className="sellerAvatar"
+                    className={styles.sellerAvatar}
                   />
-                  <div className="sellerInfo">
-                    <h4 className="sellerName">{service.owner.username}</h4>
-                    <div className="sellerMeta">
-                      <span className="sellerLocation">
-                        <i className={`bi bi-geo-alt-fill locationIcon`}></i>
+                  <div className={styles.sellerInfo}>
+                    <h4 className={styles.sellerName}>
+                      {service.owner.username}
+                    </h4>
+                    <div className={styles.sellerMeta}>
+                      <span className={styles.sellerLocation}>
+                        <i
+                          className={`bi bi-geo-alt-fill ${styles.locationIcon}`}
+                        ></i>
                         {service.owner.address}
                       </span>
                     </div>
@@ -559,9 +575,9 @@ export default function ServiceDetalis() {
             </Link>
 
             {/* Chat with Service Owner Button */}
-            <div className="chatSection">
+            <div className={styles.chatSection}>
               <button
-                className="chatWithOwnerBtn"
+                className={styles.chatWithOwnerBtn}
                 onClick={() => handleChatWithOwner(service.owner.id)}
                 title={t("chat.chatWith") + " " + t("chat.serviceOwner")}
               >
@@ -570,13 +586,13 @@ export default function ServiceDetalis() {
               </button>
             </div>
 
-            <div className="locationCard">
-              <h3 className="sectionHeader">
-                <i className={`bi bi-map-fill sectionIcon`}></i>
+            <div className={styles.locationCard}>
+              <h3 className={styles.sectionHeader}>
+                <i className={`bi bi-map-fill ${styles.sectionIcon}`}></i>
                 {t("servicePage.location")}
               </h3>
-              <div className="addressBox">
-                <i className={`bi bi-geo-alt-fill addressIcon`}></i>
+              <div className={styles.addressBox}>
+                <i className={`bi bi-geo-alt-fill ${styles.addressIcon}`}></i>
                 <span>{service.address}</span>
               </div>
             </div>

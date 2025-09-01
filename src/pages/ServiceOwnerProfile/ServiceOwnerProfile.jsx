@@ -12,10 +12,13 @@ import {
 } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+import { useTranslation } from "react-i18next";
+
 import "swiper/css";
 import "./ServiceOwnerProfile.css";
 
 export default function ServiceOwnerProfile() {
+  const { t, i18n } = useTranslation("global");
   const [activeTab, setActiveTab] = useState("owner");
   const [ownerData, setOwnerData] = useState(null);
   const [services, setServices] = useState([]);
@@ -36,7 +39,7 @@ export default function ServiceOwnerProfile() {
         {
           headers: {
             Accept: "application/json",
-            "Accept-Language": "ar",
+            "Accept-Language": i18n.language,
           },
         }
       );
@@ -117,7 +120,7 @@ export default function ServiceOwnerProfile() {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
-        <p>جاري التحميل...</p>
+        <p>{t("common.loading")}</p>
       </div>
     );
   }
@@ -125,18 +128,14 @@ export default function ServiceOwnerProfile() {
   if (!ownerData) {
     return (
       <div className="error-container">
-        <p>لم يتم العثور على البيانات</p>
+        <p>{t("common.noDataFound")}</p>
       </div>
     );
   }
 
   return (
     <>
-      <PageHeadProfile
-        name={ownerData.username}
-        rate={4.8}
-        img="/avatar.webp"
-      />
+      <PageHeadProfile name={ownerData.username} img="/avatar.webp" />
 
       <section className="profile-tabs-section">
         <div className="container">
@@ -149,7 +148,7 @@ export default function ServiceOwnerProfile() {
               onClick={() => setActiveTab("owner")}
             >
               <FaUser className="tab-icon" />
-              معلومات المالك
+              {t("profile.ownerInfo")}
             </button>
             <button
               className={`profile-tab-btn ${
@@ -158,7 +157,7 @@ export default function ServiceOwnerProfile() {
               onClick={() => setActiveTab("services")}
             >
               <FaBuilding className="tab-icon" />
-              الخدمات ({totalServices})
+              {t("profile.services")} ({totalServices})
             </button>
           </div>
 
@@ -182,8 +181,8 @@ export default function ServiceOwnerProfile() {
                           <h3 className="owner-name">{ownerData.username}</h3>
                           <p className="owner-type">
                             {ownerData.type === "individual_vendor"
-                              ? "بائع فردي"
-                              : "شركة"}
+                              ? t("profile.individualVendor")
+                              : t("profile.company")}
                           </p>
                           <p className="owner-bio">
                             {ownerData.country} - {ownerData.governorate} -{" "}
@@ -208,9 +207,11 @@ export default function ServiceOwnerProfile() {
                   <div className="col-lg-4">
                     <div className="profile-stats-section">
                       <div className="profile-stat-card">
-                        <h5 className="border-bottom mb-3">إحصائيات</h5>
+                        <h5 className="border-bottom mb-3">
+                          {t("profile.statistics")}
+                        </h5>
                         <div className="profile-stat-header d-flex justify-content-between align-items-center mb-3">
-                          <h6 className="m-0">التقييمات</h6>
+                          <h6 className="m-0">{t("profile.ratings")}</h6>
                           <div className="profile-rating-display">
                             <FaStar className="profile-star filled" />
                             <FaStar className="profile-star filled" />
@@ -221,7 +222,7 @@ export default function ServiceOwnerProfile() {
                           </div>
                         </div>
                         <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h6 className="m-0">الخدمات</h6>
+                          <h6 className="m-0">{t("profile.services")}</h6>
                           <div className="profile-stat-number">
                             {totalServices}
                           </div>
@@ -230,7 +231,7 @@ export default function ServiceOwnerProfile() {
                       <div className="profile-stat-card">
                         <button className="profile-contact-btn">
                           <FaPhone className="profile-phone-icon" />
-                          تحدث مع صاحب الخدمة
+                          {t("profile.contactServiceOwner")}
                         </button>
                       </div>
                     </div>
@@ -303,21 +304,24 @@ export default function ServiceOwnerProfile() {
                             <div className="service-features">
                               {service.delivery_days && (
                                 <span className="feature-badge delivery">
-                                  توصيل خلال {service.delivery_days} أيام
+                                  {t("service.deliveryWithin")}{" "}
+                                  {service.delivery_days} {t("service.days")}
                                 </span>
                               )}
                               {service.discount_price && (
                                 <span className="feature-badge discount">
-                                  خصم{" "}
+                                  {t("service.discount")}{" "}
                                   {parseFloat(service.price) -
                                     parseFloat(service.discount_price)}{" "}
-                                  جنيه
+                                  {t("service.currency")}
                                 </span>
                               )}
                             </div>
 
                             <div className="service-price">
-                              <span className="price-label">السعر:</span>
+                              <span className="price-label">
+                                {t("service.price")}:
+                              </span>
                               <span className="price-value">
                                 {service.discount_price ? (
                                   <>
@@ -342,7 +346,9 @@ export default function ServiceOwnerProfile() {
                     {totalPages > 1 && (
                       <div className="pagination-container">
                         <div className="pagination-info">
-                          عرض {services.length} من {totalServices} خدمة
+                          {t("common.showing")} {services.length}{" "}
+                          {t("common.of")} {totalServices}{" "}
+                          {t("profile.service")}
                         </div>
                         <div className="pagination-buttons">
                           {renderPagination()}
@@ -354,9 +360,11 @@ export default function ServiceOwnerProfile() {
                   <div className="col-lg-4">
                     <div className="profile-stats-section">
                       <div className="profile-stat-card">
-                        <h5 className="border-bottom mb-3">إحصائيات</h5>
+                        <h5 className="border-bottom mb-3">
+                          {t("profile.statistics")}
+                        </h5>
                         <div className="profile-stat-header d-flex justify-content-between align-items-center mb-3">
-                          <h6 className="m-0">التقييمات</h6>
+                          <h6 className="m-0">{t("profile.ratings")}</h6>
                           <div className="profile-rating-display">
                             <FaStar className="profile-star filled" />
                             <FaStar className="profile-star filled" />
@@ -367,7 +375,7 @@ export default function ServiceOwnerProfile() {
                           </div>
                         </div>
                         <div className="profile-stat-header d-flex justify-content-between align-items-center">
-                          <h6 className="m-0">الخدمات</h6>
+                          <h6 className="m-0">{t("profile.services")}</h6>
                           <div className="profile-stat-number">
                             {totalServices}
                           </div>
@@ -376,7 +384,7 @@ export default function ServiceOwnerProfile() {
                       <div className="profile-stat-card">
                         <button className="profile-contact-btn">
                           <FaPhone className="profile-phone-icon" />
-                          تحدث مع صاحب الخدمة
+                          {t("profile.contactServiceOwner")}
                         </button>
                       </div>
                     </div>

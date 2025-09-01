@@ -475,6 +475,19 @@
     "clickInstructions": "Click on any notification to view detailed request information",
     "new": "New"
   },
+  "common": {
+    "loading": "Loading...",
+    "noDataFound": "No data found",
+    "showing": "Showing",
+    "of": "of"
+  },
+  "service": {
+    "deliveryWithin": "Delivery within",
+    "days": "days",
+    "discount": "Discount",
+    "currency": "EGP",
+    "price": "Price"
+  },
   "requestDetails": {
     "title": "Request Details",
     "loading": "Loading request details...",
@@ -782,7 +795,15 @@
     "theme": "Theme",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
-    "autoMode": "Auto"
+    "autoMode": "Auto",
+    "ownerInfo": "Owner Information",
+    "services": "Services",
+    "individualVendor": "Individual Vendor",
+    "company": "Company",
+    "statistics": "Statistics",
+    "ratings": "Ratings",
+    "contactServiceOwner": "Contact Service Owner",
+    "service": "service"
   },
   "settings": {
     "title": "Settings",
@@ -881,7 +902,7 @@
     "commercialRecord": "Commercial Record"
   },
   "physical": "Product seller",
-  "service": "Service provider",
+  "serviceProvider": "Service provider",
   "additionalImages": "Additional Images",
   "map": "Map",
   "discountPrice": "Discount Price",

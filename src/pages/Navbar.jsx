@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { FiUser, FiSearch } from "react-icons/fi";
+import { FiUser, FiSearch, FiX } from "react-icons/fi";
 import { FiChevronDown } from "react-icons/fi";
 import { useRef } from "react";
 import axios from "axios";
@@ -26,6 +26,10 @@ const Navbar = () => {
   );
   const [userData, setUserData] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const sidebarRef = useRef(null);
+  const overlayRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.lang = i18n.language;
@@ -41,6 +45,39 @@ const Navbar = () => {
   useEffect(() => {
     checkAuthStatus();
   }, [i18n.language]);
+
+  // Handle sidebar close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        overlayRef.current &&
+        !overlayRef.current.contains(event.target)
+      ) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape" && isSidebarOpen) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    if (isSidebarOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "unset";
+    };
+  }, [isSidebarOpen]);
 
   const checkAuthStatus = () => {
     const token = localStorage.getItem("token");
@@ -137,182 +174,325 @@ const Navbar = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
+  const toggleCategories = () => {
+    setIsCategoriesOpen(!isCategoriesOpen);
+  };
+
   return (
-    <div
-      className={`navbar navbar-expand-xl ${
-        isMobileScrolled ? "fixed-top" : ""
-      }`}
-    >
-      <div className="container d-flex justify-content-between align-items-center">
-        <Link className="navbar-brand main-color fw-bold" to="/">
-          <img src={logo} style={{ width: "75px" }} alt="logo" />
-        </Link>
+    <>
+      <div
+        className={`navbar navbar-expand-xl ${
+          isMobileScrolled ? "fixed-top" : ""
+        }`}
+      >
+        <div className="container d-flex justify-content-between align-items-center">
+          <Link className="navbar-brand main-color fw-bold" to="/">
+            <img src={logo} style={{ width: "75px" }} alt="logo" />
+          </Link>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          style={{ borderColor: theme === "dark" ? "#777" : "#ddd" }}
-        >
-          <span>
-            <i
-              className="bi bi-list"
-              style={{
-                color: theme === "dark" ? "var(--basic-color)" : "#000",
-              }}
-            ></i>
-          </span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav align-items-center list-unstyled mx-auto mb-0 d-flex gap-1 p-0">
-            <li className="nav-item">
-              <Link to="/" className="nav-link">
-                {t("navbar.home")}
-              </Link>
-            </li>
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle d-flex align-items-center gap-1"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                {t("navbar.categories")}
-                <FiChevronDown />
-              </a>
-              <div
-                className="dropdown-menu custom-dropdown"
+          <button
+            className={`${styles.sidebarToggle} navbar-toggler`}
+            type="button"
+            onClick={toggleSidebar}
+            aria-label="Toggle navigation"
+            style={{ borderColor: theme === "dark" ? "#777" : "#ddd" }}
+          >
+            <span>
+              <i
+                className="bi bi-list"
                 style={{
-                  backgroundColor: `${
-                    theme === "dark"
-                      ? "var(--dark-color)"
-                      : "var(--basic-color)"
-                  }`,
+                  color: theme === "dark" ? "var(--basic-color)" : "#000",
                 }}
-                aria-labelledby="navbarDropdown"
-                data-bs-popper="static"
-              >
-                <Link
-                  className="dropdown-item"
-                  to="/requestcategories"
-                  style={{
-                    fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                  }}
-                >
-                  {t("navbar.newMarket")}
-                </Link>
-                <Link
-                  className="dropdown-item"
-                  to="/requestcategories"
-                  style={{
-                    fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                  }}
-                >
-                  {t("navbar.usedMarket")}
-                </Link>
-                <Link
-                  className="dropdown-item"
-                  to="/requestcategories"
-                  style={{
-                    fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                  }}
-                >
-                  {t("navbar.openMarket")}
-                </Link>
-                <Link
-                  className="dropdown-item"
-                  to="/requestservice"
-                  style={{
-                    fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                  }}
-                >
-                  {t("navbar.servicesMarket")}
-                </Link>
-              </div>
-            </li>
-            <li className="nav-item">
-              <Link to="/aboutus" className="nav-link">
-                {t("navbar.aboutUs")}
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/contactus" className="nav-link">
-                {t("navbar.contactUs")}
-              </Link>
-            </li>
+              ></i>
+            </span>
+          </button>
 
-            {/* Collapsible Action Items */}
-            <li className="d-xl-none">
-              <Link className="add" to="/offer-request-service">
-                <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
-              </Link>
-            </li>
-
-            {/* Collapsible Cart */}
-            <li className="d-xl-none">
-              <Link className="add" to="/cart">
-                <div className={styles.mobileCounter}>
-                  <i className="bi bi-cart3"></i> {t("navbar.cart")}
-                  {cartCount > 0 && (
-                    <span
-                      className={`${styles.cartWishlistCounter} ${styles.cartCounter}`}
-                    >
-                      {cartCount}
-                    </span>
-                  )}
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul className="navbar-nav align-items-center list-unstyled mx-auto mb-0 d-flex gap-1 p-0">
+              <li className="nav-item">
+                <Link to="/" className="nav-link">
+                  {t("navbar.home")}
+                </Link>
+              </li>
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle d-flex align-items-center gap-1"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  {t("navbar.categories")}
+                  <FiChevronDown />
+                </a>
+                <div
+                  className="dropdown-menu custom-dropdown"
+                  style={{
+                    backgroundColor: `${
+                      theme === "dark"
+                        ? "var(--dark-color)"
+                        : "var(--basic-color)"
+                    }`,
+                  }}
+                  aria-labelledby="navbarDropdown"
+                  data-bs-popper="static"
+                >
+                  <Link
+                    className="dropdown-item"
+                    to="/requestcategories"
+                    style={{
+                      fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                    }}
+                  >
+                    {t("navbar.newMarket")}
+                  </Link>
+                  <Link
+                    className="dropdown-item"
+                    to="/requestcategories"
+                    style={{
+                      fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                    }}
+                  >
+                    {t("navbar.usedMarket")}
+                  </Link>
+                  <Link
+                    className="dropdown-item"
+                    to="/requestcategories"
+                    style={{
+                      fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                    }}
+                  >
+                    {t("navbar.openMarket")}
+                  </Link>
+                  <Link
+                    className="dropdown-item"
+                    to="/requestservice"
+                    style={{
+                      fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                    }}
+                  >
+                    {t("navbar.servicesMarket")}
+                  </Link>
                 </div>
-              </Link>
-            </li>
+              </li>
+              <li className="nav-item">
+                <Link to="/aboutus" className="nav-link">
+                  {t("navbar.aboutUs")}
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/contactus" className="nav-link">
+                  {t("navbar.contactUs")}
+                </Link>
+              </li>
 
-            {/* Collapsible Wishlist */}
-            <li className="d-xl-none">
-              <Link className="add" to="/wishlist">
-                <div className={styles.mobileCounter}>
-                  <i className="bi bi-heart"></i> {t("navbar.wishlist")}
-                  {wishlistItems.length > 0 && (
-                    <span
-                      className={`${styles.cartWishlistCounter} ${styles.wishlistCounter}`}
-                    >
-                      {wishlistItems.length}
-                    </span>
-                  )}
-                </div>
-              </Link>
-            </li>
+              {/* Collapsible Action Items */}
+              <li className="d-xl-none">
+                <Link
+                  className={`add ${styles.toggleOfferRequest}`}
+                  to="/offer-request-service"
+                >
+                  <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
+                </Link>
+              </li>
 
-            {/* Collapsible Notifications */}
-            {isAuthenticated && (
+              {/* Collapsible Cart */}
+              <li className="d-xl-none">
+                <Link className="add" to="/cart">
+                  <div className={styles.mobileCounter}>
+                    <i className="bi bi-cart3"></i> {t("navbar.cart")}
+                    {cartCount > 0 && (
+                      <span
+                        className={`${styles.cartWishlistCounter} ${styles.cartCounter}`}
+                      >
+                        {cartCount}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+
+              {/* Collapsible Wishlist */}
+              <li className="d-xl-none">
+                <Link className="add" to="/wishlist">
+                  <div className={styles.mobileCounter}>
+                    <i className="bi bi-heart"></i> {t("navbar.wishlist")}
+                    {wishlistItems.length > 0 && (
+                      <span
+                        className={`${styles.cartWishlistCounter} ${styles.wishlistCounter}`}
+                      >
+                        {wishlistItems.length}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+
+              {/* Collapsible Notifications */}
+              {isAuthenticated && (
+                <li className="nav-item dropdown d-xl-none">
+                  <button
+                    className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside"
+                    aria-expanded="false"
+                    aria-label="Notifications"
+                    style={{
+                      color: `${
+                        theme === "dark" ? "var(--basic-color)" : "#000"
+                      }`,
+                    }}
+                  >
+                    <i className="bi bi-bell"></i>
+                    {unreadCount > 0 && (
+                      <span
+                        className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
+                      >
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  <ul
+                    className={`dropdown-menu ${styles.notificationsDropdown}`}
+                    style={{
+                      backgroundColor: `${
+                        theme === "dark"
+                          ? "var(--dark-color)"
+                          : "var(--basic-color)"
+                      }`,
+                    }}
+                    data-bs-popper="static"
+                  >
+                    <div className={styles.dropdownHeader}>
+                      <h6>
+                        <i className="bi bi-bell me-2"></i>
+                        {t("notifications.notifications")}
+                        {unreadCount > 0 && (
+                          <span className={styles.unreadBadge}>
+                            {unreadCount} {t("notifications.new")}
+                          </span>
+                        )}
+                      </h6>
+                    </div>
+
+                    <div className={styles.notificationsList}>
+                      {notifications.length > 0 ? (
+                        notifications.slice(0, 3).map((notification) => (
+                          <div
+                            key={notification.id}
+                            className={`${styles.notificationItem} ${
+                              !notification.read_at ? styles.unread : ""
+                            }`}
+                            onClick={() => markAsRead(notification.id)}
+                            title={
+                              notification.service_request_id
+                                ? t("notifications.clickToViewDetails")
+                                : ""
+                            }
+                          >
+                            <div className={styles.notificationContent}>
+                              <div className={styles.notificationHeader}>
+                                <div className={styles.notificationService}>
+                                  <i className="bi bi-gear-fill me-2"></i>
+                                  <strong>
+                                    {notification.service_name ||
+                                      t("notifications.service")}
+                                  </strong>
+                                </div>
+                                <div className={styles.notificationTime}>
+                                  {formatNotificationTime(
+                                    notification.created_at
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className={styles.notificationBody}>
+                                <div className={styles.notificationStatus}>
+                                  <span
+                                    className={`${styles.statusBadge} ${
+                                      notification.status === "accepted" ||
+                                      notification.status === "accept"
+                                        ? styles.statusSuccess
+                                        : notification.status === "rejected" ||
+                                          notification.status === "reject"
+                                        ? styles.statusDanger
+                                        : notification.status === "completed"
+                                        ? styles.statusPrimary
+                                        : styles.statusSecondary
+                                    }`}
+                                  >
+                                    {notification.status === "accepted" ||
+                                    notification.status === "accept"
+                                      ? t("notifications.accepted")
+                                      : notification.status === "rejected" ||
+                                        notification.status === "reject"
+                                      ? t("notifications.rejected")
+                                      : notification.status === "completed"
+                                      ? t("notifications.completed")
+                                      : notification.status || "info"}
+                                  </span>
+                                </div>
+
+                                {notification.reason && (
+                                  <div className={styles.notificationReason}>
+                                    <small className="text-muted">
+                                      {notification.reason}
+                                    </small>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {!notification.read_at && (
+                              <div className={styles.unreadIndicator}>
+                                <i className="bi bi-circle-fill"></i>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className={styles.emptyNotifications}>
+                          <i className="bi bi-bell-slash"></i>
+                          <p>{t("notifications.noNotifications")}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={styles.dropdownFooter}>
+                      <Link to="/notifications" className={styles.viewAllBtn}>
+                        {t("notifications.viewAll")}
+                      </Link>
+                    </div>
+                  </ul>
+                </li>
+              )}
+
+              {/* Collapsible Profile Dropdown */}
               <li className="nav-item dropdown d-xl-none">
                 <button
                   className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
                   data-bs-toggle="dropdown"
-                  data-bs-auto-close="outside"
                   aria-expanded="false"
-                  aria-label="Notifications"
+                  aria-label="Profile"
                   style={{
                     color: `${
                       theme === "dark" ? "var(--basic-color)" : "#000"
                     }`,
                   }}
                 >
-                  <i className="bi bi-bell"></i>
-                  {unreadCount > 0 && (
-                    <span
-                      className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
-                    >
-                      {unreadCount}
-                    </span>
-                  )}
+                  <FiUser />
                 </button>
                 <ul
-                  className={`dropdown-menu ${styles.notificationsDropdown}`}
+                  className="dropdown-menu custom-dropdown"
                   style={{
                     backgroundColor: `${
                       theme === "dark"
@@ -322,112 +502,288 @@ const Navbar = () => {
                   }}
                   data-bs-popper="static"
                 >
-                  <div className={styles.dropdownHeader}>
-                    <h6>
-                      <i className="bi bi-bell me-2"></i>
-                      {t("notifications.notifications")}
-                      {unreadCount > 0 && (
-                        <span className={styles.unreadBadge}>
-                          {unreadCount} {t("notifications.new")}
-                        </span>
-                      )}
-                    </h6>
-                  </div>
-
-                  <div className={styles.notificationsList}>
-                    {notifications.length > 0 ? (
-                      notifications.slice(0, 3).map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`${styles.notificationItem} ${
-                            !notification.read_at ? styles.unread : ""
-                          }`}
-                          onClick={() => markAsRead(notification.id)}
-                          title={
-                            notification.service_request_id
-                              ? t("notifications.clickToViewDetails")
-                              : ""
-                          }
+                  {isAuthenticated ? (
+                    <>
+                      <li>
+                        <Link
+                          to={getProfileRoute()}
+                          className="dropdown-item"
+                          style={{
+                            fontSize: `${
+                              i18n.language === "ar" ? "12px" : "14px"
+                            }`,
+                          }}
                         >
-                          <div className={styles.notificationContent}>
-                            <div className={styles.notificationHeader}>
-                              <div className={styles.notificationService}>
-                                <i className="bi bi-gear-fill me-2"></i>
-                                <strong>
-                                  {notification.service_name ||
-                                    t("notifications.service")}
-                                </strong>
+                          {t("topnav.profile")}
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          onClick={handleLogout}
+                          className="dropdown-item"
+                          style={{
+                            fontSize: `${
+                              i18n.language === "ar" ? "12px" : "14px"
+                            }`,
+                          }}
+                        >
+                          {t("topnav.logout")}
+                        </button>
+                      </li>
+                    </>
+                  ) : (
+                    <li>
+                      <Link
+                        to="/login"
+                        className="dropdown-item"
+                        style={{
+                          fontSize: `${
+                            i18n.language === "ar" ? "12px" : "14px"
+                          }`,
+                        }}
+                      >
+                        {t("sign.login")}
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+              </li>
+
+              {/* Collapsible Language Switcher */}
+              <li className="nav-item dropdown d-xl-none">
+                <button
+                  className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  aria-label="Language"
+                >
+                  {i18n.language === "ar" ? "العربية" : "English"}
+                  <FiChevronDown />
+                </button>
+                <ul
+                  className="dropdown-menu custom-dropdown"
+                  style={{
+                    backgroundColor: `${
+                      theme === "dark"
+                        ? "var(--dark-color)"
+                        : "var(--basic-color)"
+                    }`,
+                  }}
+                  data-bs-popper="static"
+                >
+                  <li>
+                    <button
+                      onClick={() => changeLanguage("en")}
+                      className="dropdown-item"
+                      style={{
+                        fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                      }}
+                    >
+                      {i18n.language === "en" ? "English" : "الإنجليزية"}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => changeLanguage("ar")}
+                      className="dropdown-item"
+                      style={{
+                        fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
+                      }}
+                    >
+                      {i18n.language === "ar" ? "العربية" : "Arabic"}
+                    </button>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          {/* Desktop Only - Action Items */}
+          <ul className="actions list-unstyled p-0 d-none d-xl-flex align-items-center gap-3 m-0">
+            <li>
+              <Link className="add" to="/offer-request-service">
+                <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
+              </Link>
+            </li>
+            <li>|</li>
+
+            {/* Cart Icon */}
+            <li>
+              <Link
+                to="/cart"
+                className={styles.cartWishlistIcon}
+                title={t("navbar.cart")}
+              >
+                <i className="bi bi-cart3"></i>
+                {cartCount > 0 && (
+                  <span
+                    className={`${styles.cartWishlistCounter} ${styles.cartCounter}`}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </li>
+
+            {/* Wishlist Icon */}
+            <li>
+              <Link
+                to="/wishlist"
+                className={styles.cartWishlistIcon}
+                title={t("navbar.wishlist")}
+              >
+                <i className="bi bi-heart"></i>
+                {wishlistItems.length > 0 && (
+                  <span
+                    className={`${styles.cartWishlistCounter} ${styles.wishlistCounter}`}
+                  >
+                    {wishlistItems.length}
+                  </span>
+                )}
+              </Link>
+            </li>
+
+            {/* Notifications Icon */}
+            {isAuthenticated && (
+              <>
+                <li>|</li>
+                <li className="nav-item dropdown">
+                  <button
+                    className={`${styles.cartWishlistIcon} dropdown-toggle border-0 bg-transparent`}
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside"
+                    aria-expanded="false"
+                    title={t("notifications.notifications")}
+                  >
+                    <i className="bi bi-bell"></i>
+                    {unreadCount > 0 && (
+                      <span
+                        className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
+                      >
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  <div
+                    className={`dropdown-menu ${styles.notificationsDropdown}`}
+                  >
+                    <div className={styles.dropdownHeader}>
+                      <h6>
+                        <i className="bi bi-bell me-2"></i>
+                        {t("notifications.notifications")}
+                        {unreadCount > 0 && (
+                          <span className={styles.unreadBadge}>
+                            {unreadCount} {t("notifications.new")}
+                          </span>
+                        )}
+                      </h6>
+                    </div>
+
+                    <div className={styles.notificationsList}>
+                      {notifications.length > 0 ? (
+                        notifications.slice(0, 5).map((notification) => (
+                          <div
+                            key={notification.id}
+                            className={`${styles.notificationItem} ${
+                              !notification.read_at ? styles.unread : ""
+                            }`}
+                            onClick={() => markAsRead(notification.id)}
+                            title={
+                              notification.service_request_id
+                                ? t("notifications.clickToViewDetails")
+                                : ""
+                            }
+                          >
+                            <div className={styles.notificationContent}>
+                              <div className={styles.notificationHeader}>
+                                <div className={styles.notificationService}>
+                                  <i className="bi bi-gear-fill me-2"></i>
+                                  <strong>
+                                    {notification.service_name ||
+                                      t("notifications.service")}
+                                  </strong>
+                                </div>
+                                <div className={styles.notificationTime}>
+                                  {formatNotificationTime(
+                                    notification.created_at
+                                  )}
+                                </div>
                               </div>
-                              <div className={styles.notificationTime}>
-                                {formatNotificationTime(
-                                  notification.created_at
+
+                              <div className={styles.notificationBody}>
+                                <div className={styles.notificationStatus}>
+                                  <span
+                                    className={`${styles.statusBadge} ${
+                                      notification.status === "accepted" ||
+                                      notification.status === "accept"
+                                        ? styles.statusSuccess
+                                        : notification.status === "rejected" ||
+                                          notification.status === "reject"
+                                        ? styles.statusDanger
+                                        : notification.status === "completed"
+                                        ? styles.statusPrimary
+                                        : styles.statusSecondary
+                                    }`}
+                                  >
+                                    {notification.status === "accepted" ||
+                                    notification.status === "accept"
+                                      ? t("notifications.accepted")
+                                      : notification.status === "rejected" ||
+                                        notification.status === "reject"
+                                      ? t("notifications.rejected")
+                                      : notification.status === "completed"
+                                      ? t("notifications.completed")
+                                      : notification.status || "info"}
+                                  </span>
+                                </div>
+
+                                {notification.reason && (
+                                  <div className={styles.notificationReason}>
+                                    <small className="text-muted">
+                                      {notification.reason}
+                                    </small>
+                                  </div>
                                 )}
                               </div>
                             </div>
 
-                            <div className={styles.notificationBody}>
-                              <div className={styles.notificationStatus}>
-                                <span
-                                  className={`${styles.statusBadge} ${
-                                    notification.status === "accepted" ||
-                                    notification.status === "accept"
-                                      ? styles.statusSuccess
-                                      : notification.status === "rejected" ||
-                                        notification.status === "reject"
-                                      ? styles.statusDanger
-                                      : notification.status === "completed"
-                                      ? styles.statusPrimary
-                                      : styles.statusSecondary
-                                  }`}
-                                >
-                                  {notification.status === "accepted" ||
-                                  notification.status === "accept"
-                                    ? t("notifications.accepted")
-                                    : notification.status === "rejected" ||
-                                      notification.status === "reject"
-                                    ? t("notifications.rejected")
-                                    : notification.status === "completed"
-                                    ? t("notifications.completed")
-                                    : notification.status || "info"}
-                                </span>
+                            {!notification.read_at && (
+                              <div className={styles.unreadIndicator}>
+                                <i className="bi bi-circle-fill"></i>
                               </div>
-
-                              {notification.reason && (
-                                <div className={styles.notificationReason}>
-                                  <small className="text-muted">
-                                    {notification.reason}
-                                  </small>
-                                </div>
-                              )}
-                            </div>
+                            )}
                           </div>
-
-                          {!notification.read_at && (
-                            <div className={styles.unreadIndicator}>
-                              <i className="bi bi-circle-fill"></i>
-                            </div>
-                          )}
+                        ))
+                      ) : (
+                        <div className={styles.emptyNotifications}>
+                          <i className="bi bi-bell-slash"></i>
+                          <p>{t("notifications.noNotifications")}</p>
                         </div>
-                      ))
-                    ) : (
-                      <div className={styles.emptyNotifications}>
-                        <i className="bi bi-bell-slash"></i>
-                        <p>{t("notifications.noNotifications")}</p>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
 
-                  <div className={styles.dropdownFooter}>
-                    <Link to="/notifications" className={styles.viewAllBtn}>
-                      {t("notifications.viewAll")}
-                    </Link>
+                    <div className={styles.dropdownFooter}>
+                      <Link to="/notifications" className={styles.viewAllBtn}>
+                        {t("notifications.viewAll")}
+                      </Link>
+                    </div>
                   </div>
-                </ul>
-              </li>
+                </li>
+              </>
             )}
 
-            {/* Collapsible Profile Dropdown */}
-            <li className="nav-item dropdown d-xl-none">
+            {/* Chat Icon */}
+            {isAuthenticated && (
+              <>
+                <li>|</li>
+                <li>
+                  <ChatIcon />
+                </li>
+              </>
+            )}
+
+            {/* Desktop Only - Profile Dropdown */}
+            <li className="nav-item dropdown">
               <button
                 className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
                 data-bs-toggle="dropdown"
@@ -440,7 +796,7 @@ const Navbar = () => {
                 <FiUser />
               </button>
               <ul
-                className="dropdown-menu custom-dropdown"
+                className="dropdown-menu dropdown-menu-end custom-dropdown"
                 style={{
                   backgroundColor: `${
                     theme === "dark"
@@ -495,8 +851,8 @@ const Navbar = () => {
               </ul>
             </li>
 
-            {/* Collapsible Language Switcher */}
-            <li className="nav-item dropdown d-xl-none">
+            {/* Desktop Only - Language Switcher */}
+            <li className="nav-item dropdown">
               <button
                 className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
                 data-bs-toggle="dropdown"
@@ -507,7 +863,7 @@ const Navbar = () => {
                 <FiChevronDown />
               </button>
               <ul
-                className="dropdown-menu custom-dropdown"
+                className="dropdown-menu dropdown-menu-end custom-dropdown"
                 style={{
                   backgroundColor: `${
                     theme === "dark"
@@ -543,301 +899,275 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
+      </div>
 
-        {/* Desktop Only - Action Items */}
-        <ul className="actions list-unstyled p-0 d-none d-xl-flex align-items-center gap-3 m-0">
-          <li>
-            <Link className="add" to="/offer-request-service">
-              <i className="bi bi-handshake"></i> {t("navbar.offerRequest")}
-            </Link>
-          </li>
-          <li>|</li>
+      {/* Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div
+          ref={overlayRef}
+          className={styles.sidebarOverlay}
+          onClick={closeSidebar}
+        />
+      )}
 
-          {/* Cart Icon */}
-          <li>
-            <Link
-              to="/cart"
-              className={styles.cartWishlistIcon}
-              title={t("navbar.cart")}
-            >
-              <i className="bi bi-cart3"></i>
-              {cartCount > 0 && (
-                <span
-                  className={`${styles.cartWishlistCounter} ${styles.cartCounter}`}
+      {/* Sidebar */}
+      <div
+        ref={sidebarRef}
+        className={`${styles.sidebar} ${
+          isSidebarOpen ? styles.sidebarOpen : ""
+        }`}
+      >
+        <div className={styles.sidebarHeader}>
+          <Link className={styles.sidebarLogo} to="/" onClick={closeSidebar}>
+            <img src={logo} alt="logo" />
+          </Link>
+          <button
+            className={styles.sidebarClose}
+            onClick={closeSidebar}
+            aria-label="Close sidebar"
+          >
+            <FiX />
+          </button>
+        </div>
+
+        <div className={styles.sidebarContent}>
+          <nav className={styles.sidebarNav}>
+            <ul className={styles.sidebarMenu}>
+              <li className={styles.sidebarMenuItem}>
+                <Link
+                  to="/"
+                  className={styles.sidebarLink}
+                  onClick={closeSidebar}
                 >
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          </li>
+                  <i className="bi bi-house"></i>
+                  {t("navbar.home")}
+                </Link>
+              </li>
 
-          {/* Wishlist Icon */}
-          <li>
-            <Link
-              to="/wishlist"
-              className={styles.cartWishlistIcon}
-              title={t("navbar.wishlist")}
-            >
-              <i className="bi bi-heart"></i>
-              {wishlistItems.length > 0 && (
-                <span
-                  className={`${styles.cartWishlistCounter} ${styles.wishlistCounter}`}
-                >
-                  {wishlistItems.length}
-                </span>
-              )}
-            </Link>
-          </li>
-
-          {/* Notifications Icon */}
-          {isAuthenticated && (
-            <>
-              <li>|</li>
-              <li className="nav-item dropdown">
-                <button
-                  className={`${styles.cartWishlistIcon} dropdown-toggle border-0 bg-transparent`}
-                  data-bs-toggle="dropdown"
-                  data-bs-auto-close="outside"
-                  aria-expanded="false"
-                  title={t("notifications.notifications")}
-                >
-                  <i className="bi bi-bell"></i>
-                  {unreadCount > 0 && (
-                    <span
-                      className={`${styles.cartWishlistCounter} ${styles.notificationCounter}`}
-                    >
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-                <div
-                  className={`dropdown-menu ${styles.notificationsDropdown}`}
-                >
-                  <div className={styles.dropdownHeader}>
-                    <h6>
-                      <i className="bi bi-bell me-2"></i>
-                      {t("notifications.notifications")}
-                      {unreadCount > 0 && (
-                        <span className={styles.unreadBadge}>
-                          {unreadCount} {t("notifications.new")}
-                        </span>
-                      )}
-                    </h6>
-                  </div>
-
-                  <div className={styles.notificationsList}>
-                    {notifications.length > 0 ? (
-                      notifications.slice(0, 5).map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`${styles.notificationItem} ${
-                            !notification.read_at ? styles.unread : ""
-                          }`}
-                          onClick={() => markAsRead(notification.id)}
-                          title={
-                            notification.service_request_id
-                              ? t("notifications.clickToViewDetails")
-                              : ""
-                          }
-                        >
-                          <div className={styles.notificationContent}>
-                            <div className={styles.notificationHeader}>
-                              <div className={styles.notificationService}>
-                                <i className="bi bi-gear-fill me-2"></i>
-                                <strong>
-                                  {notification.service_name ||
-                                    t("notifications.service")}
-                                </strong>
-                              </div>
-                              <div className={styles.notificationTime}>
-                                {formatNotificationTime(
-                                  notification.created_at
-                                )}
-                              </div>
-                            </div>
-
-                            <div className={styles.notificationBody}>
-                              <div className={styles.notificationStatus}>
-                                <span
-                                  className={`${styles.statusBadge} ${
-                                    notification.status === "accepted" ||
-                                    notification.status === "accept"
-                                      ? styles.statusSuccess
-                                      : notification.status === "rejected" ||
-                                        notification.status === "reject"
-                                      ? styles.statusDanger
-                                      : notification.status === "completed"
-                                      ? styles.statusPrimary
-                                      : styles.statusSecondary
-                                  }`}
-                                >
-                                  {notification.status === "accepted" ||
-                                  notification.status === "accept"
-                                    ? t("notifications.accepted")
-                                    : notification.status === "rejected" ||
-                                      notification.status === "reject"
-                                    ? t("notifications.rejected")
-                                    : notification.status === "completed"
-                                    ? t("notifications.completed")
-                                    : notification.status || "info"}
-                                </span>
-                              </div>
-
-                              {notification.reason && (
-                                <div className={styles.notificationReason}>
-                                  <small className="text-muted">
-                                    {notification.reason}
-                                  </small>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          {!notification.read_at && (
-                            <div className={styles.unreadIndicator}>
-                              <i className="bi bi-circle-fill"></i>
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div className={styles.emptyNotifications}>
-                        <i className="bi bi-bell-slash"></i>
-                        <p>{t("notifications.noNotifications")}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className={styles.dropdownFooter}>
-                    <Link to="/notifications" className={styles.viewAllBtn}>
-                      {t("notifications.viewAll")}
-                    </Link>
-                  </div>
+              <li className={styles.sidebarMenuItem}>
+                <div className={styles.sidebarDropdown}>
+                  <button
+                    className={styles.sidebarDropdownToggle}
+                    onClick={toggleCategories}
+                  >
+                    <i className="bi bi-grid"></i>
+                    {t("navbar.categories")}
+                    <FiChevronDown
+                      className={`${styles.dropdownArrow} ${
+                        isCategoriesOpen ? styles.rotated : ""
+                      }`}
+                    />
+                  </button>
+                  <ul
+                    className={`${styles.sidebarDropdownMenu} ${
+                      isCategoriesOpen ? styles.dropdownOpen : ""
+                    }`}
+                  >
+                    <li>
+                      <Link
+                        to="/requestcategories"
+                        onClick={closeSidebar}
+                        className={styles.sidebarDropdownLink}
+                      >
+                        {t("navbar.newMarket")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/requestcategories"
+                        onClick={closeSidebar}
+                        className={styles.sidebarDropdownLink}
+                      >
+                        {t("navbar.usedMarket")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/requestcategories"
+                        onClick={closeSidebar}
+                        className={styles.sidebarDropdownLink}
+                      >
+                        {t("navbar.openMarket")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/requestservice"
+                        onClick={closeSidebar}
+                        className={styles.sidebarDropdownLink}
+                      >
+                        {t("navbar.servicesMarket")}
+                      </Link>
+                    </li>
+                  </ul>
                 </div>
               </li>
-            </>
-          )}
 
-          {/* Chat Icon */}
-          {isAuthenticated && (
-            <>
-              <li>|</li>
-              <li>
-                <ChatIcon />
+              <li className={styles.sidebarMenuItem}>
+                <Link
+                  to="/aboutus"
+                  className={styles.sidebarLink}
+                  onClick={closeSidebar}
+                >
+                  <i className="bi bi-info-circle"></i>
+                  {t("navbar.aboutUs")}
+                </Link>
               </li>
-            </>
-          )}
 
-          {/* Desktop Only - Profile Dropdown */}
-          <li className="nav-item dropdown">
-            <button
-              className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              aria-label="Profile"
-              style={{
-                color: `${theme === "dark" ? "var(--basic-color)" : "#000"}`,
-              }}
-            >
-              <FiUser />
-            </button>
-            <ul
-              className="dropdown-menu dropdown-menu-end custom-dropdown"
-              style={{
-                backgroundColor: `${
-                  theme === "dark" ? "var(--dark-color)" : "var(--basic-color)"
-                }`,
-              }}
-              data-bs-popper="static"
-            >
-              {isAuthenticated ? (
-                <>
-                  <li>
-                    <Link
-                      to={getProfileRoute()}
-                      className="dropdown-item"
-                      style={{
-                        fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                      }}
-                    >
-                      {t("topnav.profile")}
-                    </Link>
-                  </li>
-                  <li>
-                    <button
-                      onClick={handleLogout}
-                      className="dropdown-item"
-                      style={{
-                        fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                      }}
-                    >
-                      {t("topnav.logout")}
-                    </button>
-                  </li>
-                </>
-              ) : (
-                <li>
+              <li className={styles.sidebarMenuItem}>
+                <Link
+                  to="/contactus"
+                  className={styles.sidebarLink}
+                  onClick={closeSidebar}
+                >
+                  <i className="bi bi-envelope"></i>
+                  {t("navbar.contactUs")}
+                </Link>
+              </li>
+
+              <li className={styles.sidebarMenuItem}>
+                <Link
+                  to="/offer-request-service"
+                  className={`${styles.sidebarLink} ${styles.toggleOfferRequest}`}
+                  onClick={closeSidebar}
+                >
+                  <i className="bi bi-handshake"></i>
+                  {t("navbar.offerRequest")}
+                </Link>
+              </li>
+
+              <li className={styles.sidebarMenuItem}>
+                <Link
+                  to="/cart"
+                  className={styles.sidebarLink}
+                  onClick={closeSidebar}
+                >
+                  <div className={styles.sidebarLinkContent}>
+                    <div>
+                      <i className="bi bi-cart3"></i>
+                      {t("navbar.cart")}
+                    </div>
+                    {cartCount > 0 && (
+                      <span className={styles.sidebarCounter}>{cartCount}</span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+
+              <li className={styles.sidebarMenuItem}>
+                <Link
+                  to="/wishlist"
+                  className={styles.sidebarLink}
+                  onClick={closeSidebar}
+                >
+                  <div className={styles.sidebarLinkContent}>
+                    <div>
+                      <i className="bi bi-heart"></i>
+                      {t("navbar.wishlist")}
+                    </div>
+                    {wishlistItems.length > 0 && (
+                      <span className={styles.sidebarCounter}>
+                        {wishlistItems.length}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+
+              {isAuthenticated && (
+                <li className={styles.sidebarMenuItem}>
                   <Link
-                    to="/login"
-                    className="dropdown-item"
-                    style={{
-                      fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                    }}
+                    to="/notifications"
+                    className={styles.sidebarLink}
+                    onClick={closeSidebar}
                   >
-                    {t("sign.login")}
+                    <div className={styles.sidebarLinkContent}>
+                      <div>
+                        <i className="bi bi-bell"></i>
+                        {t("notifications.notifications")}
+                      </div>
+                      {unreadCount > 0 && (
+                        <span className={styles.sidebarCounter}>
+                          {unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                </li>
+              )}
+
+              {isAuthenticated && (
+                <li className={styles.sidebarMenuItem}>
+                  <Link
+                    to="/chats"
+                    className={styles.sidebarLink}
+                    onClick={closeSidebar}
+                  >
+                    <i className="bi bi-chat-dots"></i>
+                    {t("chat.chats")}
                   </Link>
                 </li>
               )}
             </ul>
-          </li>
+          </nav>
 
-          {/* Desktop Only - Language Switcher */}
-          <li className="nav-item dropdown">
-            <button
-              className="nav-link dropdown-toggle bg-transparent border-0 d-flex align-items-center gap-1"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              aria-label="Language"
-            >
-              {i18n.language === "ar" ? "العربية" : "English"}
-              <FiChevronDown />
-            </button>
-            <ul
-              className="dropdown-menu dropdown-menu-end custom-dropdown"
-              style={{
-                backgroundColor: `${
-                  theme === "dark" ? "var(--dark-color)" : "var(--basic-color)"
-                }`,
-              }}
-              data-bs-popper="static"
-            >
-              <li>
-                <button
-                  onClick={() => changeLanguage("en")}
-                  className="dropdown-item"
-                  style={{
-                    fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                  }}
+          <div className={styles.sidebarFooter}>
+            <div className={styles.sidebarUserSection}>
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to={getProfileRoute()}
+                    className={styles.sidebarUserLink}
+                    onClick={closeSidebar}
+                  >
+                    <i className="bi bi-person"></i>
+                    {t("topnav.profile")}
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      closeSidebar();
+                    }}
+                    className={styles.sidebarLogoutBtn}
+                  >
+                    <i className="bi bi-box-arrow-right"></i>
+                    {t("topnav.logout")}
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className={styles.sidebarUserLink}
+                  onClick={closeSidebar}
                 >
-                  {i18n.language === "en" ? "English" : "الإنجليزية"}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => changeLanguage("ar")}
-                  className="dropdown-item"
-                  style={{
-                    fontSize: `${i18n.language === "ar" ? "12px" : "14px"}`,
-                  }}
-                >
-                  {i18n.language === "ar" ? "العربية" : "Arabic"}
-                </button>
-              </li>
-            </ul>
-          </li>
-        </ul>
+                  <i className="bi bi-box-arrow-in-right"></i>
+                  {t("sign.login")}
+                </Link>
+              )}
+            </div>
+
+            <div className={styles.sidebarLanguageSection}>
+              <button
+                onClick={() => changeLanguage("en")}
+                className={`${styles.sidebarLanguageBtn} ${
+                  i18n.language === "en" ? styles.active : ""
+                }`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => changeLanguage("ar")}
+                className={`${styles.sidebarLanguageBtn} ${
+                  i18n.language === "ar" ? styles.active : ""
+                }`}
+              >
+                العربية
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

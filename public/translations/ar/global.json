@@ -27,7 +27,15 @@
     "theme": "المظهر",
     "darkMode": "الوضع المظلم",
     "lightMode": "الوضع الفاتح",
-    "autoMode": "تلقائي"
+    "autoMode": "تلقائي",
+    "ownerInfo": "معلومات المالك",
+    "services": "الخدمات",
+    "individualVendor": "بائع فردي",
+    "company": "شركة",
+    "statistics": "إحصائيات",
+    "ratings": "التقييمات",
+    "contactServiceOwner": "تحدث مع صاحب الخدمة",
+    "service": "خدمة"
   },
   "navbar": {
     "home": "الرئيسية",
@@ -500,6 +508,19 @@
     "clickInstructions": "انقر على أي إشعار لعرض معلومات الطلب التفصيلية",
     "new": "جديد"
   },
+  "common": {
+    "loading": "جاري التحميل...",
+    "noDataFound": "لم يتم العثور على البيانات",
+    "showing": "عرض",
+    "of": "من"
+  },
+  "service": {
+    "deliveryWithin": "توصيل خلال",
+    "days": "أيام",
+    "discount": "خصم",
+    "currency": "جنيه",
+    "price": "السعر"
+  },
   "requestDetails": {
     "title": "تفاصيل الطلب",
     "loading": "جاري تحميل تفاصيل الطلب...",
@@ -865,7 +886,7 @@
     "commercialRecord": "السجل التجاري"
   },
   "physical": "بائع منتجات ",
-  "service": "مقدم خدمة",
+  "serviceProvider": "مقدم خدمة",
   "additionalImages": "صور إضافية",
   "map": "الخريطة",
   "discountPrice": "سعر الخصم",
