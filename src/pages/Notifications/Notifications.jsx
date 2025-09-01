@@ -31,6 +31,15 @@ const Notifications = () => {
     setFilteredNotifications(getNotificationsByStatus(activeFilter));
   }, [notifications, activeFilter]);
 
+  // Auto-refresh notifications every 30 seconds
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     fetchNotifications();
+  //   }, 30000);
+
+  //   return () => clearInterval(interval);
+  // }, [fetchNotifications]);
+
   const handleNotificationClick = async (notification) => {
     if (!notification.read_at) {
       markAsRead(notification.id);

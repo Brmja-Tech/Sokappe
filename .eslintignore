@@ -1,0 +1,10 @@
+# Ignore Service Worker files
+public/firebase-messaging-sw.js
+**/firebase-messaging-sw.js
+
+# Ignore build files
+build/
+dist/
+
+# Ignore node modules
+node_modules/

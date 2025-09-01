@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "./Login.css";
 import logo from "../../assests/imgs/logo.svg";
+import { initPushAndGetToken } from "../../config/firebase-messaging";
 
 const Login = () => {
   const { t, i18n } = useTranslation("global");
@@ -29,15 +30,100 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  // دالة لتوليد FCM token مؤقت
+  const generateTemporaryFCMToken = () => {
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const tempToken = `temp_fcm_${timestamp}_${randomString}`;
+    console.log("🔄 توليد FCM token مؤقت:", tempToken);
+    return tempToken;
+  };
+
+  // دالة للتحقق من نوع المتصفح
+  const getBrowserInfo = () => {
+    const userAgent = navigator.userAgent;
+    if (userAgent.includes("Chrome") && !userAgent.includes("Brave")) {
+      return "chrome";
+    } else if (userAgent.includes("Brave")) {
+      return "brave";
+    } else if (userAgent.includes("Firefox")) {
+      return "firefox";
+    } else if (userAgent.includes("Safari")) {
+      return "safari";
+    } else {
+      return "other";
+    }
+  };
+
+  // دالة مساعدة لاختبار FCM token
+  const testFCMToken = async () => {
+    console.log("🧪 بدء اختبار FCM Token...");
+    const browserType = getBrowserInfo();
+    console.log("🌐 نوع المتصفح:", browserType);
+
+    try {
+      const result = await initPushAndGetToken();
+      console.log("📊 نتيجة اختبار FCM:", result);
+
+      if (result.token) {
+        toast.success("✅ تم الحصول على FCM token بنجاح!");
+        localStorage.setItem("fcm_token", result.token);
+      } else {
+        if (browserType === "brave") {
+          toast.warning("🦁 متصفح Brave - قد لا يدعم FCM بشكل كامل");
+        } else {
+          toast.error(`❌ فشل في الحصول على FCM token: ${result.reason}`);
+        }
+      }
+    } catch (error) {
+      console.error("❌ خطأ في اختبار FCM:", error);
+      toast.error("❌ خطأ في اختبار FCM token");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Get FCM token dynamically with better error handling
+      console.log("🔍 بدء الحصول على FCM token...");
+      const browserType = getBrowserInfo();
+      console.log("🌐 نوع المتصفح:", browserType);
+
+      const fcmResult = await initPushAndGetToken();
+      console.log("📊 نتيجة FCM:", fcmResult);
+
+      let fcmToken = "no_token_available";
+
+      if (fcmResult.token) {
+        fcmToken = fcmResult.token;
+        console.log("✅ تم الحصول على FCM token بنجاح");
+      } else {
+        console.warn("⚠️ فشل في الحصول على FCM token:", fcmResult.reason);
+
+        if (browserType === "brave") {
+          console.log("🦁 متصفح Brave - استخدام token مؤقت");
+        }
+
+        // محاولة الحصول على token من localStorage إذا كان موجود
+        const storedToken = localStorage.getItem("fcm_token");
+        if (storedToken) {
+          fcmToken = storedToken;
+          console.log("🔄 استخدام FCM token محفوظ من localStorage");
+        } else {
+          // توليد token مؤقت إذا لم يكن هناك token محفوظ
+          fcmToken = generateTemporaryFCMToken();
+          console.log("🔄 توليد FCM token مؤقت");
+        }
+      }
+
+      console.log("📱 FCM Token النهائي:", fcmToken);
+
       const formDataToSend = new FormData();
       formDataToSend.append("email", formData.email);
       formDataToSend.append("password", formData.password);
-      formDataToSend.append("fcm_token", "34434");
+      formDataToSend.append("fcm_token", fcmToken);
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/login`,
@@ -56,10 +142,15 @@ const Login = () => {
         localStorage.setItem("userType", response.data.data.type);
         localStorage.setItem("userData", JSON.stringify(response.data.data));
 
+        // حفظ FCM token إذا تم الحصول عليه بنجاح
+        if (fcmResult.token) {
+          localStorage.setItem("fcm_token", fcmResult.token);
+        }
+
         toast.success(response.data.message || "Login successful!");
 
         // Redirect to home page
-        navigate("/");
+        window.location.href = "/";
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed!");
@@ -180,6 +271,25 @@ const Login = () => {
           <Link to="/resetpassword" className="forgot-password">
             {t("sign.forgotPassword")}
           </Link>
+
+          {/* زر اختبار FCM token */}
+          <button
+            type="button"
+            className="test-fcm-button"
+            onClick={testFCMToken}
+            style={{
+              background: "#f0f0f0",
+              color: "#333",
+              border: "1px solid #ddd",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              marginBottom: "10px",
+              cursor: "pointer",
+              fontSize: "12px",
+            }}
+          >
+            🧪 اختبار FCM Token
+          </button>
 
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? t("sign.loggingIn") || "Logging in..." : t("sign.login")}
