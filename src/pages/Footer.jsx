@@ -1,24 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { FaLinkedin, FaBehance, FaFacebook, FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaYoutube, FaInstagram, FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import logo from "../assests/imgs/logo.svg";
+
 const Footer = () => {
   const { t } = useTranslation("global");
-   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+  const [companyInfo, setCompanyInfo] = useState({
+    company_name: "BrmajTech",
+    address: "Cairo, Egypt",
+    email: "info@brmajtech.com",
+    phone: "+201012345678",
+    whatsapp_number: "+201234567890",
+    facebook: "https://facebook.com/brmajtech",
+    instagram: "https://instagram.com/brmajtech",
+    twitter: "https://twitter.com/brmajtech",
+    tiktok: "https://tiktok.com/@brmajtech",
+    youtube: "https://youtube.com/brmajtech",
+  });
+
   useEffect(() => {
-  const updateTheme = () => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-  };
+    const fetchCompanyInfo = async () => {
+      try {
+        const response = await fetch("/company-info");
+        const result = await response.json();
 
-  window.addEventListener("storage", updateTheme);
+        if (result.status === 200) {
+          setCompanyInfo(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching company info:", error);
+      }
+    };
 
-  return () => {
-    window.removeEventListener("storage", updateTheme);
-  };
-}, []);
+    fetchCompanyInfo();
+  }, []);
   return (
     <div className="footer pt-5 pb-2">
       <div className="container">
@@ -26,7 +43,7 @@ const Footer = () => {
           <div className="col-xl-3 col-lg-3 col-md-6">
             <div className="logo">
               <Link className="text-white">
-              <img src={logo} style={{width: "100px"}} alt="logo" />
+                <img src={logo} style={{ width: "100px" }} alt="logo" />
               </Link>
             </div>
             <p className="line-height">{t("footer.aboutPlatform")}</p>
@@ -36,7 +53,7 @@ const Footer = () => {
               </div>
               <div className="mx-2 d-block">
                 <span className="d-block">{t("footer.support")}</span>
-                <small className="d-block text-sm">info@gmail.com</small>
+                <small className="d-block text-sm">{companyInfo.email}</small>
               </div>
             </div>
             <div className="flex_contact d-flex my-2">
@@ -45,7 +62,7 @@ const Footer = () => {
               </div>
               <div className="mx-2 d-block">
                 <span className="d-block">{t("footer.contact")}</span>
-                <small className="d-block text-sm">755. 002. 3005. 905</small>
+                <small className="d-block text-sm">{companyInfo.phone}</small>
               </div>
             </div>
           </div>
@@ -78,6 +95,9 @@ const Footer = () => {
                 <li className="mb-2">
                   <Link to="/privacy">{t("footer.privacy")}</Link>
                 </li>
+                <li className="mb-2">
+                  <Link to="/faq">{t("footer.faq")}</Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -85,36 +105,66 @@ const Footer = () => {
             <div className="links">
               <b className="d-block">{t("footer.socialMedia")}</b>
               <ul className="list-unstyled p-0">
-                <li className="mb-2">
-                  <Link>
-                    <FaXTwitter className="me-2 mx-2" />
-                    {t("footer.social.twitter")}
-                  </Link>
-                </li>
-                <li className="mb-2">
-                  <Link>
-                    <FaLinkedin className="me-2 mx-2" />
-                    {t("footer.social.linkedin")}
-                  </Link>
-                </li>
-                <li className="mb-2">
-                  <Link>
-                    <FaBehance className="me-2 mx-2" />
-                    {t("footer.social.behance")}
-                  </Link>
-                </li>
-                <li className="mb-2">
-                  <Link>
-                    <FaFacebook className="me-2 mx-2" />
-                    {t("footer.social.facebook")}
-                  </Link>
-                </li>
-                <li className="mb-2">
-                  <Link>
-                    <FaYoutube className="me-2 mx-2" />
-                    {t("footer.social.youtube")}
-                  </Link>
-                </li>
+                {companyInfo.twitter && (
+                  <li className="mb-2">
+                    <Link
+                      to={companyInfo.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaXTwitter className="me-2 mx-2" />
+                      {t("footer.social.twitter")}
+                    </Link>
+                  </li>
+                )}
+                {companyInfo.facebook && (
+                  <li className="mb-2">
+                    <Link
+                      to={companyInfo.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaFacebook className="me-2 mx-2" />
+                      {t("footer.social.facebook")}
+                    </Link>
+                  </li>
+                )}
+                {companyInfo.instagram && (
+                  <li className="mb-2">
+                    <Link
+                      to={companyInfo.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaInstagram className="me-2 mx-2" />
+                      {t("footer.social.instagram")}
+                    </Link>
+                  </li>
+                )}
+                {companyInfo.youtube && (
+                  <li className="mb-2">
+                    <Link
+                      to={companyInfo.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaYoutube className="me-2 mx-2" />
+                      {t("footer.social.youtube")}
+                    </Link>
+                  </li>
+                )}
+                {companyInfo.tiktok && (
+                  <li className="mb-2">
+                    <Link
+                      to={companyInfo.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaTiktok className="me-2 mx-2" />
+                      {t("footer.social.tiktok")}
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           </div>

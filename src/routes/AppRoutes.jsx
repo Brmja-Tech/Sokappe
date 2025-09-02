@@ -40,6 +40,7 @@ import Chat from "../pages/Chat/Chat";
 import AllSearchProducts from "../pages/AllSearchProducts/AllSearchProducts";
 import Privacy from "../pages/Privacy/Privacy";
 import Terms from "../pages/Terms/Terms";
+import FAQ from "../pages/FAQ/FAQ";
 
 export default function Applayout() {
   const location = useLocation();
@@ -107,6 +108,7 @@ export default function Applayout() {
         <Route path="/search" element={<AllSearchProducts />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/faq" element={<FAQ />} />
 
         <Route
           path="/request-details/:requestId"

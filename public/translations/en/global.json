@@ -438,15 +438,17 @@
     "contactUs": "Contact Us",
     "terms": "Terms & Conditions",
     "privacy": "Privacy Policy",
+    "faq": "FAQ",
     "contact": "Contact Us",
     "support": "Get Support",
     "copyright": "All rights reserved",
     "social": {
       "twitter": "Twitter",
       "linkedin": "LinkedIn",
-      "behance": "Behance",
       "facebook": "Facebook",
-      "youtube": "Youtube"
+      "youtube": "Youtube",
+      "instagram": "Instagram",
+      "tiktok": "Tiktok"
     },
     "poweredBy": "Brmja.tech",
     "quickLinks": "Quick Links",
@@ -987,5 +989,15 @@
     "chats": "Chats",
     "viewAll": "View all chats"
   },
-  "service": "Service Provider"
+  "service": "Service Provider",
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions about our platform and services",
+    "loading": "Loading FAQs...",
+    "contactTitle": "Still have questions?",
+    "contactText": "Can't find what you're looking for? Our support team is here to help you.",
+    "contactSupport": "Contact Support",
+    "sendEmail": "Send Email",
+    "noFaqs": "No FAQs available at the moment."
+  }
 }
