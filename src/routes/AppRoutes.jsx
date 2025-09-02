@@ -37,6 +37,9 @@ import RequestCategories from "../pages/RequestCategories/RequestCategories";
 import ServiceOwnerProfile from "../pages/ServiceOwnerProfile/ServiceOwnerProfile";
 import Chats from "../pages/Chats/Chats";
 import Chat from "../pages/Chat/Chat";
+import AllSearchProducts from "../pages/AllSearchProducts/AllSearchProducts";
+import Privacy from "../pages/Privacy/Privacy";
+import Terms from "../pages/Terms/Terms";
 
 export default function Applayout() {
   const location = useLocation();
@@ -101,6 +104,9 @@ export default function Applayout() {
         <Route path="/chats" element={<Chats />} />
         <Route path="/chats/new" element={<Chat />} />
         <Route path="/chats/:chatId" element={<Chat />} />
+        <Route path="/search" element={<AllSearchProducts />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
 
         <Route
           path="/request-details/:requestId"

@@ -1,0 +1,495 @@
+/* Search Page Container */
+.searchPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+}
+
+/* Search Header */
+.searchHeader {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.pageTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--main-color);
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.searchForm {
+  display: flex;
+  gap: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.searchInput {
+  position: relative;
+  flex: 1;
+}
+
+.searchInput svg {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  font-size: 1.2rem;
+}
+
+.searchInput input {
+  width: 100%;
+  padding: 15px 15px 15px 50px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.searchInput input:focus {
+  outline: none;
+  border-color: var(--main-color);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.searchBtn {
+  background: var(--main-color);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.searchBtn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+/* Results Section */
+.resultsSection {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+/* Service Card */
+.serviceCard {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.serviceCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.cardImage {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.serviceCard:hover .cardImage img {
+  transform: scale(1.05);
+}
+
+.discountBadge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.discountBadge svg {
+  font-size: 0.9rem;
+}
+
+/* Card Content */
+.cardContent {
+  padding: 25px;
+}
+
+.serviceName {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.serviceDescription {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.serviceDetails {
+  margin-bottom: 20px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.detailItem svg {
+  color: var(--main-color);
+  font-size: 1rem;
+}
+
+/* Price Section */
+.priceSection {
+  margin-bottom: 20px;
+}
+
+.priceInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.regularPrice {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--main-color);
+}
+
+.originalPrice {
+  font-size: 1rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.discountPrice {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+.discountExpiry {
+  font-size: 0.8rem;
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+/* View Details Button */
+.viewDetailsBtn {
+  width: 100%;
+  background: linear-gradient(45deg, var(--main-color), #45a049);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.viewDetailsBtn:hover {
+  background: linear-gradient(45deg, #45a049, var(--main-color));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+}
+
+.pageBtn {
+  background: white;
+  border: 2px solid #e0e0e0;
+  color: #666;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.pageBtn:hover {
+  border-color: var(--main-color);
+  color: var(--main-color);
+  transform: translateY(-2px);
+}
+
+.activePage {
+  background: var(--main-color);
+  border-color: var(--main-color);
+  color: white;
+}
+
+/* Loading and Error States */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 20px;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--main-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 15px;
+  margin: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.errorContainer h3 {
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+.retryBtn {
+  background: var(--main-color);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+
+.retryBtn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+/* No Results */
+.noResults {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.noResults h3 {
+  color: #666;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.noResults p {
+  color: #999;
+  font-size: 1rem;
+}
+
+/* RTL Support */
+[dir="rtl"] .searchInput svg {
+  left: auto;
+  right: 15px;
+}
+
+[dir="rtl"] .searchInput input {
+  padding: 15px 50px 15px 15px;
+}
+
+[dir="rtl"] .discountBadge {
+  right: auto;
+  left: 15px;
+}
+
+[dir="rtl"] .detailItem {
+  flex-direction: row-reverse;
+}
+
+/* Dark Theme Support */
+[data-theme="dark"] .searchPage {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+[data-theme="dark"] .searchHeader,
+[data-theme="dark"] .serviceCard,
+[data-theme="dark"] .errorContainer,
+[data-theme="dark"] .noResults {
+  background: #2d2d2d;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .pageTitle {
+  color: #4caf50;
+}
+
+[data-theme="dark"] .searchInput input {
+  background: #3d3d3d;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .searchInput input:focus {
+  background: #4d4d4d;
+  border-color: #4caf50;
+}
+
+[data-theme="dark"] .serviceName {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .serviceDescription {
+  color: #bbb;
+}
+
+[data-theme="dark"] .detailItem {
+  color: #bbb;
+}
+
+[data-theme="dark"] .pageBtn {
+  background: #3d3d3d;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .pageBtn:hover {
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .searchPage {
+    padding: 15px;
+  }
+
+  .searchHeader {
+    padding: 20px;
+  }
+
+  .pageTitle {
+    font-size: 2rem;
+  }
+
+  .searchForm {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .searchBtn {
+    width: 100%;
+  }
+
+  .resultsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .cardContent {
+    padding: 20px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .pageBtn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+
+  .cardImage {
+    height: 200px;
+  }
+
+  .cardContent {
+    padding: 15px;
+  }
+
+  .serviceName {
+    font-size: 1.2rem;
+  }
+
+  .regularPrice,
+  .discountPrice {
+    font-size: 1.1rem;
+  }
+}

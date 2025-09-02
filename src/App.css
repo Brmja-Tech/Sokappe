@@ -511,7 +511,7 @@ a {
 }
 
 .navbar .dropdown-item {
-  display: block !important;
+  display: flex !important;
   width: 100% !important;
   padding: 0.25rem 0.75rem !important;
   clear: both !important;

@@ -108,6 +108,26 @@ export default function AddProduct() {
     fetchMyProducts();
   }, []);
 
+  // Handle ESC key to close modals
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape") {
+        if (showImageModal) {
+          setShowImageModal(false);
+        } else if (showViewModal) {
+          setShowViewModal(false);
+        } else if (showEditModal) {
+          setShowEditModal(false);
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleEscapeKey);
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [showImageModal, showViewModal, showEditModal]);
+
   useEffect(() => {
     if (formData.country_id) {
       fetchGovernorates(formData.country_id);
@@ -262,7 +282,8 @@ export default function AddProduct() {
       } else if (error.response?.status === 404) {
         errorMessage = "Categories endpoint not found.";
       } else if (error.response?.status >= 500) {
-        errorMessage = t("settings.serverError") + ". " + t("settings.pleaseTryAgainLater");
+        errorMessage =
+          t("settings.serverError") + ". " + t("settings.pleaseTryAgainLater");
       }
 
       setCategoriesError(errorMessage);
@@ -1436,7 +1457,6 @@ export default function AddProduct() {
         </div>
 
         <div className="form-row">
-         
           <div className="form-group">
             <label>{t("governorate")}</label>
             <select
@@ -1478,8 +1498,6 @@ export default function AddProduct() {
             </select>
           </div>
         </div>
-
-        
 
         <div className="form-row">
           <div className="form-group">
@@ -1793,7 +1811,7 @@ export default function AddProduct() {
       }
     } catch (error) {
       console.error("Error fetching edit main categories:", error);
-              setEditCategoriesError(t("settings.failedToLoadCategories"));
+      setEditCategoriesError(t("settings.failedToLoadCategories"));
     } finally {
       setEditCategoriesLoading(false);
     }
@@ -1859,7 +1877,11 @@ export default function AddProduct() {
       setEditCategoryLevels((prev) =>
         prev.map((l) =>
           l.level === level
-            ? { ...l, loading: false, error: t("settings.failedToLoadCategories") }
+            ? {
+                ...l,
+                loading: false,
+                error: t("settings.failedToLoadCategories"),
+              }
             : l
         )
       );
@@ -2103,7 +2125,7 @@ export default function AddProduct() {
                           {t("resetCategories")}
                         </button>
                       </div>
-                      <div className="form-group">
+                      {/* <div className="form-group">
                         <button
                           type="button"
                           onClick={resetEditLocationFields}
@@ -2111,7 +2133,7 @@ export default function AddProduct() {
                         >
                           {t("resetLocation")}
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 ) : (
@@ -2506,7 +2528,6 @@ export default function AddProduct() {
                 </div>
 
                 <div className="form-row">
-                  
                   <div className="form-group">
                     <label>{t("governorate")}</label>
                     <select
@@ -2556,7 +2577,6 @@ export default function AddProduct() {
                     </select>
                   </div>
                 </div>
-
 
                 <div className="form-row">
                   <div className="form-group">
@@ -2790,54 +2810,71 @@ export default function AddProduct() {
 
       {/* View Product Modal */}
       {showViewModal && viewingProduct && (
-        <div className="modal-overlay">
-          <div className="modal view-modal">
-            <div className="modal-header">
-              <h3>{t("productDetails.productDetails")}</h3>    
+        <div className="modal-overlay view-modal-overlay">
+          <div className="view-modal">
+            <div className="view-modal-header">
+              <h3>{t("productDetails.productDetails")}</h3>
               <button
                 onClick={() => setShowViewModal(false)}
-                className="close-btn"
+                className="view-close-btn"
               >
                 <FiX />
               </button>
             </div>
-            <div className="view-product-content">
+            <div className="view-modal-content">
               {viewLoading ? (
-                <div className="loading-spinner">
-                  <div className="spinner"></div>
+                <div className="view-loading-spinner">
+                  <div className="view-spinner"></div>
                   <p>{t("loading")}</p>
                 </div>
               ) : (
-                <>
-                  <div className="product-images">
-                    <div className="main-image">
+                <div className="view-product-layout">
+                  {/* Product Images Section */}
+                  <div className="view-product-images">
+                    <div className="view-main-image-container">
                       <img
                         src={viewingProduct.main_image}
-                        alt="Main"
-                        onClick={() =>
-                          handleImageClick(viewingProduct.main_image)
-                        }
-                        className="clickable-image"
+                        alt="Main Product"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleImageClick(viewingProduct.main_image);
+                        }}
+                        className="view-main-image"
                       />
-                      <div className="image-overlay">
-                        <span>{t("clickToEnlarge")}</span>
+                      <div className="view-image-overlay">
+                        <span className="view-overlay-text">
+                          {t("clickToEnlarge")}
+                        </span>
                       </div>
                     </div>
+
                     {viewingProduct.other_images &&
                       viewingProduct.other_images.length > 0 && (
-                        <div className="other-images">
-                          <h5>{t("additionalImages")}</h5>
-                          <div className="images-grid">
+                        <div className="view-additional-images">
+                          <h5 className="view-images-title">
+                            {t("additionalImages")}
+                          </h5>
+                          <div className="view-images-grid">
                             {viewingProduct.other_images.map((image, index) => (
-                              <div key={index} className="other-image">
+                              <div
+                                key={index}
+                                className="view-thumbnail-container"
+                              >
                                 <img
                                   src={image}
                                   alt={`Additional ${index + 1}`}
-                                  onClick={() => handleImageClick(image)}
-                                  className="clickable-image"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleImageClick(image);
+                                  }}
+                                  className="view-thumbnail"
                                 />
-                                <div className="image-overlay">
-                                  <span>{t("clickToEnlarge")}</span>
+                                <div className="view-thumbnail-overlay">
+                                  <span className="view-overlay-text">
+                                    {t("clickToEnlarge")}
+                                  </span>
                                 </div>
                               </div>
                             ))}
@@ -2846,152 +2883,200 @@ export default function AddProduct() {
                       )}
                   </div>
 
-                  <div className="product-details">
-                    <div className="detail-section">
-                      <h4>{t("basicInformation")}</h4>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("productNameArabic")}:
-                        </span>
-                        <span className="detail-value">
-                          {viewingProduct.name?.ar || viewingProduct.name}
-                        </span>
+                  {/* Product Details Section */}
+                  <div className="view-product-info">
+                    {/* Basic Information Card */}
+                    <div className="view-info-card">
+                      <div className="view-card-header">
+                        <h4 className="view-card-title">
+                          {t("basicInformation")}
+                        </h4>
                       </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("productNameEnglish")}:
-                        </span>
-                        <span className="detail-value">
-                          {viewingProduct.name?.en || viewingProduct.name}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("category")}:</span>
-                        <span className="detail-value">
-                          {viewingProduct.category?.name ||
-                            viewingProduct.category ||
-                            t("noCategory")}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("price")}:</span>
-                        <span className="detail-value price">
-                          {viewingProduct.price} EGP
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("condition")}:</span>
-                        <span className="detail-value">
-                          {getLocalizedCondition(viewingProduct.condition)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="detail-section">
-                      <h4>{t("description")}</h4>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("descriptionArabic")}:
-                        </span>
-                        <span className="detail-value">
-                          {viewingProduct.description?.ar ||
-                            viewingProduct.description}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("descriptionEnglish")}:
-                        </span>
-                        <span className="detail-value">
-                          {viewingProduct.description?.en ||
-                            viewingProduct.description}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="detail-section">
-                      <h4>{t("locationInformation")}</h4>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("country")}:</span>
-                        <span className="detail-value">
-                          {viewingProduct.country?.name ||
-                            viewingProduct.country ||
-                            t("noCountry")}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("governorate")}:
-                        </span>
-                        <span className="detail-value">
-                          {viewingProduct.governorate?.name ||
-                            viewingProduct.governorate ||
-                            t("noGovernorate")}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("centerGovernorate")}:
-                        </span>
-                        <span className="detail-value">
-                          {viewingProduct.center_gov?.name ||
-                            viewingProduct.center_gov ||
-                            t("noCenterGovernorate")}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">{t("address")}:</span>
-                        <span className="detail-value">
-                          {viewingProduct.address?.ar || viewingProduct.address}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="detail-section">
-                      <h4>{t("additionalInformation")}</h4>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("hasDelivery")}:
-                        </span>
-                        <span
-                          className={`detail-value ${
-                            isAvailable(viewingProduct.has_delivery) ? "1" : "0"
-                          }`}
-                        >
-                          {getLocalizedText(
-                            isAvailable(viewingProduct.has_delivery),
-                            "delivery"
-                          )}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="detail-label">
-                          {t("hasWarranty")}:
-                        </span>
-                        <span
-                          className={`detail-value ${
-                            isAvailable(viewingProduct.has_warranty) ? "1" : "0"
-                          }`}
-                        >
-                          {getLocalizedText(
-                            isAvailable(viewingProduct.has_warranty),
-                            "warranty"
-                          )}
-                        </span>
-                      </div>
-                      {viewingProduct.warranty_period && (
-                        <div className="detail-row">
-                          <span className="detail-label">
-                            {t("warrantyPeriod")}:
+                      <div className="view-card-content">
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("productNameArabic")}:
                           </span>
-                          <span className="detail-value">
-                            {viewingProduct.warranty_period}
+                          <span className="view-info-value">
+                            {viewingProduct.name?.ar ||
+                              viewingProduct.name ||
+                              t("noData")}
                           </span>
                         </div>
-                      )}
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("productNameEnglish")}:
+                          </span>
+                          <span className="view-info-value">
+                            {viewingProduct.name?.en ||
+                              viewingProduct.name ||
+                              t("noData")}
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("category")}:
+                          </span>
+                          <span className="view-info-value">
+                            {viewingProduct.category?.name ||
+                              viewingProduct.category ||
+                              t("noCategory")}
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">{t("price")}:</span>
+                          <span className="view-info-value view-price">
+                            {viewingProduct.price} EGP
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("condition")}:
+                          </span>
+                          <span className="view-info-value">
+                            {getLocalizedCondition(viewingProduct.condition)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Description Card */}
+                    <div className="view-info-card">
+                      <div className="view-card-header">
+                        <h4 className="view-card-title">{t("description")}</h4>
+                      </div>
+                      <div className="view-card-content">
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("descriptionArabic")}:
+                          </span>
+                          <span className="view-info-value view-description">
+                            {viewingProduct.description?.ar ||
+                              viewingProduct.description ||
+                              t("noData")}
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("descriptionEnglish")}:
+                          </span>
+                          <span className="view-info-value view-description">
+                            {viewingProduct.description?.en ||
+                              viewingProduct.description ||
+                              t("noData")}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Location Information Card */}
+                    <div className="view-info-card">
+                      <div className="view-card-header">
+                        <h4 className="view-card-title">
+                          {t("locationInformation")}
+                        </h4>
+                      </div>
+                      <div className="view-card-content">
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("country")}:
+                          </span>
+                          <span className="view-info-value">
+                            {viewingProduct.country?.name ||
+                              viewingProduct.country ||
+                              t("noCountry")}
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("governorate")}:
+                          </span>
+                          <span className="view-info-value">
+                            {viewingProduct.governorate?.name ||
+                              viewingProduct.governorate ||
+                              t("noGovernorate")}
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("centerGovernorate")}:
+                          </span>
+                          <span className="view-info-value">
+                            {viewingProduct.center_gov?.name ||
+                              viewingProduct.center_gov ||
+                              t("noCenterGovernorate")}
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("address")}:
+                          </span>
+                          <span className="view-info-value view-address">
+                            {viewingProduct.address?.ar ||
+                              viewingProduct.address ||
+                              t("noData")}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Additional Information Card */}
+                    <div className="view-info-card">
+                      <div className="view-card-header">
+                        <h4 className="view-card-title">
+                          {t("additionalInformation")}
+                        </h4>
+                      </div>
+                      <div className="view-card-content">
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("hasDelivery")}:
+                          </span>
+                          <span
+                            className={`view-info-value view-status ${
+                              isAvailable(viewingProduct.has_delivery)
+                                ? "available"
+                                : "unavailable"
+                            }`}
+                          >
+                            {getLocalizedText(
+                              isAvailable(viewingProduct.has_delivery),
+                              "delivery"
+                            )}
+                          </span>
+                        </div>
+                        <div className="view-info-item">
+                          <span className="view-info-label">
+                            {t("hasWarranty")}:
+                          </span>
+                          <span
+                            className={`view-info-value view-status ${
+                              isAvailable(viewingProduct.has_warranty)
+                                ? "available"
+                                : "unavailable"
+                            }`}
+                          >
+                            {getLocalizedText(
+                              isAvailable(viewingProduct.has_warranty),
+                              "warranty"
+                            )}
+                          </span>
+                        </div>
+                        {viewingProduct.warranty_period && (
+                          <div className="view-info-item">
+                            <span className="view-info-label">
+                              {t("warrantyPeriod")}:
+                            </span>
+                            <span className="view-info-value">
+                              {viewingProduct.warranty_period}{" "}
+                              {t("months") || "شهر"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -3000,7 +3085,14 @@ export default function AddProduct() {
 
       {/* Image Modal */}
       {showImageModal && selectedImage && (
-        <div className="modal-overlay image-modal-overlay">
+        <div
+          className="modal-overlay image-modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowImageModal(false);
+            }
+          }}
+        >
           <div className="image-modal">
             <div className="image-modal-header">
               <button
@@ -3011,7 +3103,11 @@ export default function AddProduct() {
               </button>
             </div>
             <div className="image-modal-content">
-              <img src={selectedImage} alt="Full size" />
+              <img
+                src={selectedImage}
+                alt="Full size"
+                onClick={(e) => e.stopPropagation()}
+              />
             </div>
           </div>
         </div>

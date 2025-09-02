@@ -2697,7 +2697,7 @@ export default function AddService() {
                 </div>
 
                 {/* Reset Location Fields Button */}
-                {editFormData.use_profile_address === "1" && (
+                {/* {editFormData.use_profile_address === "1" && (
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <button
@@ -2716,7 +2716,7 @@ export default function AddService() {
                       </button>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
 
               <div className={styles.modalActions}>

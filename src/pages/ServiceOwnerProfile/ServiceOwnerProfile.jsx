@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import PageHeadProfile from "../../component/PageHeadProfile/PageHeadProfile";
 import {
   FaStar,
@@ -247,98 +247,105 @@ export default function ServiceOwnerProfile() {
                   <div className="col-lg-8">
                     <div className="profile-services-grid">
                       {services.map((service) => (
-                        <div key={service.id} className="profile-service-card">
-                          <div className="service-images-swiper">
-                            <Swiper
-                              modules={[Autoplay]}
-                              spaceBetween={0}
-                              slidesPerView={1}
-                              loop={true}
-                              autoplay={{
-                                delay: 3000,
-                                disableOnInteraction: false,
-                              }}
-                              className="service-images-swiper"
-                            >
-                              <SwiperSlide>
-                                <img
-                                  src={service.main_image}
-                                  alt={service.name}
-                                  className="service-main-image"
-                                />
-                              </SwiperSlide>
-                              {service.other_images &&
-                                service.other_images.map((image, index) => (
-                                  <SwiperSlide key={index}>
-                                    <img
-                                      src={image}
-                                      alt={`${service.name} ${index + 2}`}
-                                      className="service-main-image"
-                                    />
-                                  </SwiperSlide>
-                                ))}
-                            </Swiper>
-                          </div>
-
-                          <div className="service-content">
-                            <h5 className="service-title">{service.name}</h5>
-                            <p className="service-description">
-                              {service.description}
-                            </p>
-
-                            <div className="service-details">
-                              <div className="service-location">
-                                <FaMapMarkerAlt className="location-icon" />
-                                <span>
-                                  {service.governorate}, {service.centerGov}
-                                </span>
-                              </div>
-
-                              <div className="service-address">
-                                <span className="address-text">
-                                  {service.address}
-                                </span>
-                              </div>
+                        <Link
+                          key={service.id}
+                          to={`/servicedetails/${service.id}`}
+                          className="profile-service-card-link"
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                          <div className="profile-service-card">
+                            <div className="service-images-swiper">
+                              <Swiper
+                                modules={[Autoplay]}
+                                spaceBetween={0}
+                                slidesPerView={1}
+                                loop={true}
+                                autoplay={{
+                                  delay: 3000,
+                                  disableOnInteraction: false,
+                                }}
+                                className="service-images-swiper"
+                              >
+                                <SwiperSlide>
+                                  <img
+                                    src={service.main_image}
+                                    alt={service.name}
+                                    className="service-main-image"
+                                  />
+                                </SwiperSlide>
+                                {service.other_images &&
+                                  service.other_images.map((image, index) => (
+                                    <SwiperSlide key={index}>
+                                      <img
+                                        src={image}
+                                        alt={`${service.name} ${index + 2}`}
+                                        className="service-main-image"
+                                      />
+                                    </SwiperSlide>
+                                  ))}
+                              </Swiper>
                             </div>
 
-                            <div className="service-features">
-                              {service.delivery_days && (
-                                <span className="feature-badge delivery">
-                                  {t("service.deliveryWithin")}{" "}
-                                  {service.delivery_days} {t("service.days")}
-                                </span>
-                              )}
-                              {service.discount_price && (
-                                <span className="feature-badge discount">
-                                  {t("service.discount")}{" "}
-                                  {parseFloat(service.price) -
-                                    parseFloat(service.discount_price)}{" "}
-                                  {t("service.currency")}
-                                </span>
-                              )}
-                            </div>
+                            <div className="service-content">
+                              <h5 className="service-title">{service.name}</h5>
+                              <p className="service-description">
+                                {service.description}
+                              </p>
 
-                            <div className="service-price">
-                              <span className="price-label">
-                                {t("service.price")}:
-                              </span>
-                              <span className="price-value">
-                                {service.discount_price ? (
-                                  <>
-                                    <span className="original-price">
-                                      {service.price}
-                                    </span>
-                                    <span className="discount-price">
-                                      {service.discount_price}
-                                    </span>
-                                  </>
-                                ) : (
-                                  service.price
+                              <div className="service-details">
+                                <div className="service-location">
+                                  <FaMapMarkerAlt className="location-icon" />
+                                  <span>
+                                    {service.governorate}, {service.centerGov}
+                                  </span>
+                                </div>
+
+                                <div className="service-address">
+                                  <span className="address-text">
+                                    {service.address}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="service-features">
+                                {service.delivery_days && (
+                                  <span className="feature-badge delivery">
+                                    {t("service.deliveryWithin")}{" "}
+                                    {service.delivery_days} {t("service.days")}
+                                  </span>
                                 )}
-                              </span>
+                                {service.discount_price && (
+                                  <span className="feature-badge discount">
+                                    {t("service.discount")}{" "}
+                                    {parseFloat(service.price) -
+                                      parseFloat(service.discount_price)}{" "}
+                                    {t("service.currency")}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="service-price">
+                                <span className="price-label">
+                                  {t("service.price")}:
+                                </span>
+                                <span className="price-value">
+                                  {service.discount_price ? (
+                                    <>
+                                      <span className="original-price">
+                                        {service.price}
+                                      </span>
+                                      <span className="discount-price">
+                                        {service.discount_price}
+                                      </span>
+                                    </>
+                                  ) : (
+                                    service.price
+                                  )}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
 

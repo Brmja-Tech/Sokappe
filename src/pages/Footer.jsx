@@ -73,10 +73,10 @@ const Footer = () => {
               <b className="d-block">{t("footer.myAccount")}</b>
               <ul className="list-unstyled p-0">
                 <li className="mb-2">
-                  <Link>{t("footer.terms")}</Link>
+                  <Link to="/terms">{t("footer.terms")}</Link>
                 </li>
                 <li className="mb-2">
-                  <Link>{t("footer.privacy")}</Link>
+                  <Link to="/privacy">{t("footer.privacy")}</Link>
                 </li>
               </ul>
             </div>

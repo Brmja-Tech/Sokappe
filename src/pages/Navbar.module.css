@@ -656,6 +656,103 @@
   left: -8px;
 }
 
+/* RTL Support for Dropdown Menu */
+[dir="rtl"] .dropdown-menu {
+  text-align: right;
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+[dir="rtl"] .dropdown-item {
+  text-align: right;
+}
+
+[dir="rtl"] .custom-dropdown {
+  text-align: right;
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+[dir="rtl"] .custom-dropdown .dropdown-item {
+  text-align: right;
+}
+
+[dir="rtl"] .dropdown-menu-end {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Force RTL positioning for all dropdowns */
+[dir="rtl"] .navbar-nav .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Specific RTL support for navbar dropdowns */
+[dir="rtl"] .navbar .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+[dir="rtl"] .navbar .dropdown-menu.show {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Override Bootstrap dropdown positioning for RTL */
+[dir="rtl"] .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+[dir="rtl"] .dropdown-menu[data-bs-popper] {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Specific targeting for navbar dropdowns */
+[dir="rtl"] .navbar-nav .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Target the specific dropdown by ID */
+[dir="rtl"] #navbarDropdown + .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Override Bootstrap Popper.js positioning */
+[dir="rtl"] .dropdown-menu[style*="position"] {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Force positioning for all dropdown states */
+[dir="rtl"] .dropdown-menu:not(.show) {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
+/* Additional specificity for Bootstrap dropdowns */
+[dir="rtl"] .navbar .nav-item .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform: translateX(0) !important;
+}
+
 /* Dark Theme Support */
 [data-theme="dark"] .cartWishlistIcon {
   color: var(--main-color);
@@ -1072,7 +1169,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 1rem 1.5rem;
   background: none;
   border: none;

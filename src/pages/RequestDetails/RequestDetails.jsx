@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import "./RequestDetails.css";
+import styles from "./RequestDetails.module.css";
 
 const RequestDetails = () => {
   const { requestId } = useParams();
@@ -107,20 +107,11 @@ const RequestDetails = () => {
       );
 
       if (response.data?.status === 200) {
-        // Show success message
-        const successMessage =
-          action === "accept"
-            ? t("requestDetails.actions.acceptSuccess")
-            : t("requestDetails.actions.rejectSuccess");
-
         // Update request status locally
         setRequestData((prev) => ({
           ...prev,
           status: action === "accept" ? "accepted" : "rejected",
         }));
-
-        // Show success message (you can replace this with a toast notification)
-        alert(successMessage);
       } else {
         setError(t("requestDetails.actions.actionError"));
       }
@@ -229,7 +220,7 @@ const RequestDetails = () => {
   if (error) {
     return (
       <div className="container py-5">
-        <div className="request-details-page">
+        <div className={styles.requestDetailsPage}>
           <div className="alert alert-danger text-center">
             <i className="bi bi-exclamation-triangle me-2"></i>
             {error}
@@ -248,7 +239,7 @@ const RequestDetails = () => {
   if (!requestData) {
     return (
       <div className="container py-5">
-        <div className="request-details-page">
+        <div className={styles.requestDetailsPage}>
           <div className="alert alert-warning text-center">
             <i className="bi bi-info-circle me-2"></i>
             {t("requestDetails.noData")}
@@ -260,88 +251,102 @@ const RequestDetails = () => {
 
   return (
     <div className="container py-5">
-      <div className="request-details-page">
+      <div className={styles.requestDetailsPage}>
         {/* Header */}
-        <div className="request-header">
+        <div className={styles.requestHeader}>
           <button
-            className="btn btn-outline-secondary btn-sm back-btn"
+            className={`btn btn-outline-secondary btn-sm ${styles.backBtn}`}
             onClick={() => navigate(-1)}
           >
             <i className="bi bi-arrow-left me-2"></i>
             {t("requestDetails.goBack")}
           </button>
 
-          <h1 className="request-title">
+          <h1 className={styles.requestTitle}>
             <i className="bi bi-file-text me-3"></i>
             {t("requestDetails.title")}
           </h1>
 
           <span
-            className={`status-badge status-${getStatusColor(
-              requestData.status
-            )}`}
+            className={`${styles.statusBadge} ${
+              styles[
+                `status${
+                  getStatusColor(requestData.status).charAt(0).toUpperCase() +
+                  getStatusColor(requestData.status).slice(1)
+                }`
+              ]
+            }`}
           >
             {getStatusText(requestData.status)}
           </span>
         </div>
 
         {/* Request Details Card */}
-        <div className="request-card">
-          <div className="card-header">
-            <h2 className="card-title">
+        <div className={styles.requestCard}>
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitle}>
               <i className="bi bi-info-circle me-2"></i>
               {t("requestDetails.requestInfo")}
             </h2>
           </div>
 
-          <div className="card-body">
-            <div className="details-grid">
-              <div className="detail-item">
-                <label className="detail-label">
+          <div className={styles.cardBody}>
+            <div className={styles.detailsGrid}>
+              <div className={styles.detailItem}>
+                <label className={styles.detailLabel}>
                   {t("requestDetails.requestId")}:
                 </label>
-                <span className="detail-value">#{requestData.id}</span>
+                <span className={styles.detailValue}>#{requestData.id}</span>
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">
+              <div className={styles.detailItem}>
+                <label className={styles.detailLabel}>
                   {t("requestDetails.status.label")}:
                 </label>
                 <span
-                  className={`detail-value status-badge status-${getStatusColor(
-                    requestData.status
-                  )}`}
+                  className={`${styles.detailValue} ${styles.statusBadge} ${
+                    styles[
+                      `status${
+                        getStatusColor(requestData.status)
+                          .charAt(0)
+                          .toUpperCase() +
+                        getStatusColor(requestData.status).slice(1)
+                      }`
+                    ]
+                  }`}
                 >
                   {getStatusText(requestData.status)}
                 </span>
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">
+              <div className={styles.detailItem}>
+                <label className={styles.detailLabel}>
                   {t("requestDetails.startedAt")}:
                 </label>
-                <span className="detail-value">
+                <span className={styles.detailValue}>
                   {formatDate(requestData.started_at)}
                 </span>
               </div>
 
               {requestData.price && (
-                <div className="detail-item">
-                  <label className="detail-label">
+                <div className={styles.detailItem}>
+                  <label className={styles.detailLabel}>
                     {t("requestDetails.price")}:
                   </label>
-                  <span className="detail-value price-value">
+                  <span
+                    className={`${styles.detailValue} ${styles.priceValue}`}
+                  >
                     {requestData.price} {t("requestDetails.currency")}
                   </span>
                 </div>
               )}
 
               {requestData.notes && (
-                <div className="detail-item full-width">
-                  <label className="detail-label">
+                <div className={`${styles.detailItem} ${styles.fullWidth}`}>
+                  <label className={styles.detailLabel}>
                     {t("requestDetails.notes")}:
                   </label>
-                  <div className="detail-value notes-value">
+                  <div className={`${styles.detailValue} ${styles.notesValue}`}>
                     {requestData.notes}
                   </div>
                 </div>
@@ -353,37 +358,39 @@ const RequestDetails = () => {
         {/* Service Details Card */}
         {requestData.service && (
           <div
-            className="request-card clickable-service-card"
+            className={`${styles.requestCard} ${styles.clickableServiceCard}`}
             onClick={() =>
               navigate(`/servicedetails/${requestData.service.id}`)
             }
             style={{ cursor: "pointer" }}
             title={t("requestDetails.clickToViewService")}
           >
-            <div className="card-header">
-              <h2 className="card-title">
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitle}>
                 <i className="bi bi-gear me-2"></i>
                 {t("requestDetails.serviceInfo")}
               </h2>
-              <i className="bi bi-arrow-right service-arrow"></i>
+              <i className={`bi bi-arrow-right ${styles.serviceArrow}`}></i>
             </div>
 
-            <div className="card-body">
-              <div className="service-details">
-                <div className="detail-item">
-                  <label className="detail-label">
+            <div className={styles.cardBody}>
+              <div className={styles.serviceDetails}>
+                <div className={styles.detailItem}>
+                  <label className={styles.detailLabel}>
                     {t("requestDetails.serviceName")}:
                   </label>
-                  <span className="detail-value service-name">
+                  <span
+                    className={`${styles.detailValue} ${styles.serviceName}`}
+                  >
                     {requestData.service.name}
                   </span>
                 </div>
 
-                <div className="detail-item">
-                  <label className="detail-label">
+                <div className={styles.detailItem}>
+                  <label className={styles.detailLabel}>
                     {t("requestDetails.serviceId")}:
                   </label>
-                  <span className="detail-value">
+                  <span className={styles.detailValue}>
                     #{requestData.service.id}
                   </span>
                 </div>
@@ -394,9 +401,9 @@ const RequestDetails = () => {
 
         {/* Other Party Details Card - Shows provider or requester based on type */}
         {requestData.other_party && (
-          <div className="request-card">
-            <div className="card-header">
-              <h2 className="card-title">
+          <div className={styles.requestCard}>
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitle}>
                 <i className="bi bi-person me-2"></i>
                 {requestData.other_party.type === "provider"
                   ? t("requestDetails.requesterInfo")
@@ -404,28 +411,30 @@ const RequestDetails = () => {
               </h2>
             </div>
 
-            <div className="card-body">
-              <div className="provider-details">
-                <div className="detail-item">
-                  <label className="detail-label">
+            <div className={styles.cardBody}>
+              <div className={styles.providerDetails}>
+                <div className={styles.detailItem}>
+                  <label className={styles.detailLabel}>
                     {requestData.other_party.type === "provider"
                       ? t("requestDetails.requesterName")
                       : t("requestDetails.providerName")}
                     :
                   </label>
-                  <span className="detail-value provider-name">
+                  <span
+                    className={`${styles.detailValue} ${styles.providerName}`}
+                  >
                     {requestData.other_party.name}
                   </span>
                 </div>
 
-                <div className="detail-item">
-                  <label className="detail-label">
+                <div className={styles.detailItem}>
+                  <label className={styles.detailLabel}>
                     {requestData.other_party.type === "provider"
                       ? t("requestDetails.requesterId")
                       : t("requestDetails.providerId")}
                     :
                   </label>
-                  <span className="detail-value">
+                  <span className={styles.detailValue}>
                     #{requestData.other_party.id}
                   </span>
                 </div>
@@ -436,14 +445,14 @@ const RequestDetails = () => {
 
         {/* Request Action Buttons - Only for company/individual_vendor when status is pending */}
         {canPerformActions() && (
-          <div className="request-action-buttons">
-            <h3 className="action-title">
+          <div className={styles.requestActionButtons}>
+            <h3 className={styles.actionTitle}>
               <i className="bi bi-gear me-2"></i>
               {t("requestDetails.actions.title") || "Request Actions"}
             </h3>
-            <div className="action-buttons-grid">
+            <div className={styles.actionButtonsGrid}>
               <button
-                className="btn btn-success action-btn"
+                className={`btn btn-success ${styles.actionBtn}`}
                 onClick={() => openConfirmModal("accept")}
                 disabled={actionLoading}
               >
@@ -465,7 +474,7 @@ const RequestDetails = () => {
               </button>
 
               <button
-                className="btn btn-danger action-btn"
+                className={`btn btn-danger ${styles.actionBtn}`}
                 onClick={() => openConfirmModal("reject")}
                 disabled={actionLoading}
               >
@@ -490,7 +499,7 @@ const RequestDetails = () => {
         )}
 
         {/* Navigation Action Buttons */}
-        <div className="action-buttons">
+        <div className={styles.actionButtons}>
           <button className="btn btn-secondary" onClick={() => navigate(-1)}>
             <i className="bi bi-arrow-left me-2"></i>
             {t("requestDetails.goBack")}
@@ -509,22 +518,25 @@ const RequestDetails = () => {
       {/* Confirmation Modal */}
       {showConfirmModal && (
         <div
-          className="modal-overlay"
+          className={styles.modalOverlay}
           onClick={() => setShowConfirmModal(false)}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h4 className="modal-title">
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <h4 className={styles.modalTitle}>
                 <i className="bi bi-question-circle me-2"></i>
                 {t("requestDetails.actions.confirmTitle") || "Confirm Action"}
               </h4>
               <button
                 type="button"
-                className="btn-close"
+                className={styles.btnClose}
                 onClick={() => setShowConfirmModal(false)}
               ></button>
             </div>
-            <div className="modal-body">
+            <div className={styles.modalBody}>
               <p>
                 {pendingAction === "accept"
                   ? t("requestDetails.actions.confirmAccept") ||
@@ -533,7 +545,7 @@ const RequestDetails = () => {
                     "Are you sure you want to reject this request?"}
               </p>
             </div>
-            <div className="modal-footer">
+            <div className={styles.modalFooter}>
               <button
                 type="button"
                 className="btn btn-secondary"

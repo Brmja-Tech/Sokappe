@@ -18,6 +18,8 @@
     "servicesMarket": "Services & Deals Market",
     "Profile": "Profile",
     "addProduct": "Add Product",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
     "cart": "Cart",
     "wishlist": "Wishlist"
   },
@@ -479,7 +481,17 @@
     "loading": "Loading...",
     "noDataFound": "No data found",
     "showing": "Showing",
-    "of": "of"
+    "of": "of",
+    "searchResults": "Search Results",
+    "noResults": "No Results Found",
+    "noResultsMessage": "Try adjusting your search terms or filters",
+    "error": "Error",
+    "retry": "Retry",
+    "previous": "Previous",
+    "next": "Next",
+    "viewDetails": "View Details",
+    "discountExpires": "Discount expires",
+    "lastUpdated": "Last Updated"
   },
   "service": {
     "deliveryWithin": "Delivery within",
@@ -677,6 +689,10 @@
     "serviceNoRelated": "No similar services available"
   },
   "aboutus": "About Us",
+  "privacyPolicy": "Privacy Policy",
+  "termsConditions": "Terms & Conditions",
+  "privacyDefaultContent": "This is the default privacy policy content. Please contact us for more information.",
+  "termsDefaultContent": "This is the default terms and conditions content. Please contact us for more information.",
   "about": {
     "title": "Your Trusted E-Commerce Platform",
     "paragraph1": "We offer you the best products from top brands at competitive prices with a safe and easy shopping experience. Discover everything you need and shop with a click, wherever you are.",
@@ -697,9 +713,16 @@
     "subject": "Subject",
     "message": "Enter your message",
     "submit": "Submit",
+    "sending": "Sending...",
     "stayInTouch": "Stay in Touch",
     "address": "Address: Nasr City, Cairo, Egypt",
-    "workingHours": "Working Hours: 10 AM to 10 PM"
+    "workingHours": "Working Hours: 10 AM to 10 PM",
+    "nameRequired": "Name is required",
+    "emailRequired": "Email is required",
+    "phoneRequired": "Phone is required",
+    "messageRequired": "Message is required",
+    "successMessage": "Message sent successfully",
+    "errorMessage": "Failed to send message. Please try again."
   },
   "addAd": {
     "title": "Add Your New Ad",
@@ -963,5 +986,6 @@
     "searchChats": "Search chats...",
     "chats": "Chats",
     "viewAll": "View all chats"
-  }
+  },
+  "service": "Service Provider"
 }

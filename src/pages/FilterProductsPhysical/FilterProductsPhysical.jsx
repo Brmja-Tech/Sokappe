@@ -192,7 +192,7 @@ const FilterProductsPhysical = () => {
                   {products.map((product) => (
                     <div key={product.id} className={styles.productCard}>
                       <Link
-                        to={`/productdetails/${product.id}`}
+                        to={`/productdetalis/${product.id}`}
                         className={styles.productLink}
                       >
                         <div className={styles.card}>

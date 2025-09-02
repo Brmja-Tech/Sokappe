@@ -1,0 +1,217 @@
+/* Privacy Section */
+.privacySection {
+  position: relative;
+  padding: 80px 0;
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.384)
+    ),
+    url("../../assests/imgs/Mask Group 1.png") center/cover no-repeat;
+  overflow-x: hidden;
+  min-height: 70vh;
+}
+
+/* Content Container */
+.privacyContent {
+  background: white;
+  padding: 50px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
+}
+
+/* Page Title */
+.pageTitle {
+  color: #0a6e58;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Page Description */
+.pageDescription {
+  color: #555;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  word-break: break-word;
+}
+
+.pageDescription p {
+  margin-bottom: 20px;
+}
+
+.pageDescription h2,
+.pageDescription h3,
+.pageDescription h4 {
+  color: #0a6e58;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.pageDescription ul,
+.pageDescription ol {
+  margin-bottom: 20px;
+  padding-left: 30px;
+}
+
+.pageDescription li {
+  margin-bottom: 8px;
+}
+
+/* Last Updated */
+.lastUpdated {
+  border-top: 2px solid #f0f0f0;
+  padding-top: 20px;
+  margin-top: 30px;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Skeleton Loading */
+.contentSkeleton {
+  margin-bottom: 30px;
+}
+
+.skeletonLine {
+  height: 20px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s infinite;
+  border-radius: 4px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.skeletonLine:nth-child(1) {
+  width: 60%;
+}
+
+.skeletonLine:nth-child(2) {
+  width: 100%;
+}
+
+.skeletonLine:nth-child(3) {
+  width: 85%;
+}
+
+.skeletonLine:nth-child(4) {
+  width: 90%;
+}
+
+.skeletonLine:nth-child(5) {
+  width: 75%;
+}
+
+.skeletonLine:nth-child(6) {
+  width: 95%;
+}
+
+@keyframes skeletonLoading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Dark Theme Support */
+[data-theme="dark"] .privacySection {
+  background: linear-gradient(rgba(26, 26, 26, 0.9), rgba(45, 45, 45, 0.384)),
+    url("../../assests/imgs/Mask Group 1.png") center/cover no-repeat;
+}
+
+[data-theme="dark"] .privacyContent {
+  background: #2d2d2d;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .pageTitle {
+  color: #4caf50;
+}
+
+[data-theme="dark"] .pageDescription {
+  color: #bbb;
+}
+
+[data-theme="dark"] .pageDescription h2,
+[data-theme="dark"] .pageDescription h3,
+[data-theme="dark"] .pageDescription h4 {
+  color: #4caf50;
+}
+
+[data-theme="dark"] .lastUpdated {
+  border-top-color: #555;
+  color: #999;
+}
+
+[data-theme="dark"] .skeletonLine {
+  background: linear-gradient(90deg, #3a3a3a 25%, #4a4a4a 50%, #3a3a3a 75%);
+  background-size: 200% 100%;
+}
+
+/* RTL Support */
+[dir="rtl"] .pageTitle {
+  text-align: center;
+}
+
+[dir="rtl"] .pageDescription ul,
+[dir="rtl"] .pageDescription ol {
+  padding-left: 0;
+  padding-right: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .pageTitle {
+    font-size: 2.2rem;
+  }
+
+  .privacyContent {
+    padding: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .privacySection {
+    padding: 60px 0;
+  }
+
+  .pageTitle {
+    font-size: 1.8rem;
+  }
+
+  .privacyContent {
+    padding: 30px;
+  }
+
+  .pageDescription {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+
+  .privacyContent {
+    padding: 20px;
+  }
+
+  .pageDescription {
+    font-size: 0.95rem;
+  }
+
+  .pageDescription ul,
+  .pageDescription ol {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
