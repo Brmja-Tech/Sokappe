@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -21,14 +21,7 @@ const AllSearchProducts = () => {
   const name = searchParams.get("name");
   const condition = searchParams.get("condition");
 
-  useEffect(() => {
-    if (name) {
-      setSearchQuery(name);
-      fetchSearchResults();
-    }
-  }, [name, type, condition, currentPage, i18n.language]);
-
-  const fetchSearchResults = async () => {
+  const fetchSearchResults = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -63,7 +56,14 @@ const AllSearchProducts = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [type, name, condition, currentPage, i18n.language]);
+
+  useEffect(() => {
+    if (name) {
+      setSearchQuery(name);
+      fetchSearchResults();
+    }
+  }, [name, fetchSearchResults]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -100,10 +100,15 @@ const AllSearchProducts = () => {
   };
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat("ar-EG", {
+    // تحويل السعر إلى رقم وإزالة الأصفار الزائدة
+    const numericPrice = parseFloat(price) || 0;
+    const locale = i18n.language === "ar" ? "ar-EG" : "en-US";
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: "EGP",
-    }).format(price);
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(numericPrice);
   };
 
   const renderServiceCard = (item) => {
@@ -134,7 +139,19 @@ const AllSearchProducts = () => {
       : item.center_gov?.name || "";
 
     return (
-      <div key={item.id} className={styles.serviceCard}>
+      <div
+        key={item.id}
+        className={styles.serviceCard}
+        dir={i18n.language === "ar" ? "rtl" : "ltr"}
+        onClick={() => {
+          if (isService) {
+            navigate(`/servicedetails/${item.id}`);
+          } else {
+            navigate(`/productdetalis/${item.id}`);
+          }
+        }}
+        style={{ cursor: "pointer" }}
+      >
         <div className={styles.cardImage}>
           <img
             src={item.main_image || "/placeholder-image.jpg"}
@@ -146,7 +163,7 @@ const AllSearchProducts = () => {
           {item.discount_price && (
             <div className={styles.discountBadge}>
               <FiTag />
-              <span>{t("service.discount")}</span>
+              <span>{t("discount")}</span>
             </div>
           )}
         </div>
@@ -172,7 +189,7 @@ const AllSearchProducts = () => {
               <div className={styles.detailItem}>
                 <FiClock />
                 <span>
-                  {item.delivery_days} {t("service.days")}
+                  {item.delivery_days} {t("days")}
                 </span>
               </div>
             ) : (
@@ -209,7 +226,17 @@ const AllSearchProducts = () => {
             )}
           </div>
 
-          <button className={styles.viewDetailsBtn}>
+          <button
+            className={styles.viewDetailsBtn}
+            onClick={(e) => {
+              e.stopPropagation(); // منع التكرار مع الكارت
+              if (isService) {
+                navigate(`/servicedetails/${item.id}`);
+              } else {
+                navigate(`/productdetalis/${item.id}`);
+              }
+            }}
+          >
             {t("common.viewDetails")}
           </button>
         </div>

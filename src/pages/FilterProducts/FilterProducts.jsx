@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import FliterPageHead from "../../component/FliterPageHead/FliterPageHead";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
@@ -12,6 +12,7 @@ export default function FilterProducts() {
   const isRTL = i18n.language === "ar";
 
   const [services, setServices] = useState([]);
+  const [serviceRatings, setServiceRatings] = useState({});
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -22,43 +23,91 @@ export default function FilterProducts() {
   const categoryId = searchParams.get("category_id");
   const market = searchParams.get("market");
 
+  // Fetch service ratings
+  const fetchServiceRatings = useCallback(
+    async (serviceIds) => {
+      if (!serviceIds || serviceIds.length === 0) return;
+
+      try {
+        const token = localStorage.getItem("token");
+        const ratingPromises = serviceIds.map(async (serviceId) => {
+          try {
+            const response = await axios.get(
+              `${process.env.REACT_APP_BASE_URL}/ratings/services/${serviceId}`,
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Accept-Language": i18n.language,
+                  ...(token && { Authorization: `Bearer ${token}` }),
+                },
+              }
+            );
+            return {
+              serviceId,
+              rating: response.data.data?.average_rating || 0,
+            };
+          } catch (error) {
+            console.error(
+              `Error fetching rating for service ${serviceId}:`,
+              error
+            );
+            return { serviceId, rating: 0 };
+          }
+        });
+
+        const ratings = await Promise.all(ratingPromises);
+        const ratingsMap = {};
+        ratings.forEach(({ serviceId, rating }) => {
+          ratingsMap[serviceId] = rating;
+        });
+        setServiceRatings(ratingsMap);
+      } catch (error) {
+        console.error("Error fetching service ratings:", error);
+      }
+    },
+    [i18n.language]
+  );
+
+  const fetchServices = useCallback(
+    async (page = 1) => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/services/allServicesByCategory?category_id=${categoryId}&page=${page}`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Accept-Language": i18n.language,
+            },
+          }
+        );
+
+        if (response.data.status === 200) {
+          const servicesData = response.data.data.data || [];
+          setServices(servicesData);
+          setPagination(response.data.data.pagination || {});
+
+          // Fetch ratings for all services
+          const serviceIds = servicesData.map((service) => service.id);
+          if (serviceIds.length > 0) {
+            fetchServiceRatings(serviceIds);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [categoryId, i18n.language, fetchServiceRatings]
+  );
+
   // Fetch services based on category and market
   useEffect(() => {
     if (categoryId && market === "service") {
       fetchServices();
     }
-  }, [categoryId, market, i18n.language]);
-
-  // Reset services when language changes
-  useEffect(() => {
-    if (categoryId && market === "service") {
-      fetchServices();
-    }
-  }, [i18n.language]);
-
-  const fetchServices = async (page = 1) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/services/allServicesByCategory?category_id=${categoryId}&page=${page}`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Accept-Language": i18n.language,
-          },
-        }
-      );
-
-      if (response.data.status === 200) {
-        setServices(response.data.data.data || []);
-        setPagination(response.data.data.pagination || {});
-      }
-    } catch (error) {
-      console.error("Error fetching services:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [categoryId, market, fetchServices]);
 
   const handlePageChange = (page) => {
     fetchServices(page);
@@ -149,6 +198,15 @@ export default function FilterProducts() {
                                 e.target.src = "/categories/1.png"; // Fallback image
                               }}
                             />
+                            {/* Service Rating Badge */}
+                            {serviceRatings[service.id] > 0 && (
+                              <div className={styles.ratingBadge}>
+                                <i className="bi bi-star-fill"></i>
+                                <span>
+                                  {serviceRatings[service.id].toFixed(1)}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           <div className={styles.cardContent}>
                             <h6 className={styles.serviceTitle}>

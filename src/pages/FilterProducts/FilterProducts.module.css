@@ -125,6 +125,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .card:hover {
@@ -151,6 +152,30 @@
 
 .card:hover .serviceImage {
   transform: scale(1.05);
+}
+
+/* Rating Badge */
+.ratingBadge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(255, 193, 7, 0.95);
+  color: #ffffff;
+  padding: 0.4rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  z-index: 2;
+}
+
+.ratingBadge i {
+  font-size: 0.75rem;
+  color: #ffffff;
 }
 
 /* Card content */
@@ -302,6 +327,22 @@
   .servicePrice {
     font-size: 1rem;
   }
+
+  .ratingBadge {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .ratingBadge i {
+    font-size: 0.65rem;
+  }
+
+  [dir="rtl"] .ratingBadge {
+    right: auto;
+    left: 0.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -320,6 +361,22 @@
   .priceInputs {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .ratingBadge {
+    top: 0.4rem;
+    right: 0.4rem;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .ratingBadge i {
+    font-size: 0.6rem;
+  }
+
+  [dir="rtl"] .ratingBadge {
+    right: auto;
+    left: 0.4rem;
   }
 }
 
@@ -372,6 +429,16 @@
   background: linear-gradient(135deg, #404040 0%, #2d2d2d 100%);
 }
 
+[data-theme="dark"] .ratingBadge {
+  background: rgba(255, 193, 7, 0.9);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .ratingBadge i {
+  color: #ffffff;
+}
+
 /* RTL support */
 [dir="rtl"] .serviceFooter {
   flex-direction: row-reverse;
@@ -380,6 +447,11 @@
 [dir="rtl"] .serviceLocation {
   text-align: left;
   max-width: 40%;
+}
+
+[dir="rtl"] .ratingBadge {
+  right: auto;
+  left: 0.75rem;
 }
 
 [dir="rtl"] .pagination {

@@ -125,6 +125,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .card:hover {
@@ -234,6 +235,30 @@
   margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid #f1f3f4;
+}
+
+/* Rating Badge */
+.ratingBadge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(255, 193, 7, 0.95);
+  color: #fff;
+  padding: 0.4rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.ratingBadge i {
+  font-size: 0.7rem;
+  color: #fff;
 }
 
 .productPrice {
@@ -352,6 +377,17 @@
     font-size: 1rem;
   }
 
+  .ratingBadge {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .ratingBadge i {
+    font-size: 0.65rem;
+  }
+
   /* Stack price inputs vertically on small screens */
   .priceInputs {
     flex-direction: column;
@@ -375,6 +411,17 @@
 
   .imageContainer {
     height: 160px;
+  }
+
+  .ratingBadge {
+    top: 0.4rem;
+    right: 0.4rem;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .ratingBadge i {
+    font-size: 0.6rem;
   }
 
   .priceInputs {
@@ -443,6 +490,16 @@
   border-color: #555555;
 }
 
+[data-theme="dark"] .ratingBadge {
+  background: rgba(255, 193, 7, 0.9);
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .ratingBadge i {
+  color: #1a1a1a;
+}
+
 /* RTL support */
 [dir="rtl"] .productFooter {
   flex-direction: row-reverse;
@@ -455,6 +512,11 @@
 
 [dir="rtl"] .priceInputs {
   flex-direction: row-reverse;
+}
+
+[dir="rtl"] .ratingBadge {
+  right: auto;
+  left: 0.75rem;
 }
 
 /* Smooth animations */

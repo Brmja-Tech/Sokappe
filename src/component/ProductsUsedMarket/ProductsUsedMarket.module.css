@@ -116,12 +116,17 @@
   display: block !important;
 }
 
-/* Badge Styles for Warranty and Delivery */
+/* Badge Styles for Rating, Warranty and Delivery */
 .productBadges {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
   margin-top: auto;
+}
+
+/* RTL Support for badges order */
+[dir="rtl"] .productBadges {
+  flex-direction: row-reverse;
 }
 
 .badge {
@@ -152,6 +157,12 @@
 .badge.noWarranty {
   background: rgba(108, 117, 125, 0.1);
   color: #6c757d;
+}
+
+.badge.rating {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  font-weight: 600;
 }
 
 /* Product Action Buttons */

@@ -16,6 +16,7 @@ const ProductsUsedMarket = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [productRatings, setProductRatings] = useState({});
 
   // Handle add to cart
   const handleAddToCart = (product) => {
@@ -25,6 +26,46 @@ const ProductsUsedMarket = () => {
   // Handle add to wishlist
   const handleAddToWishlist = (product) => {
     addToWishlist(product);
+  };
+
+  // Fetch ratings for all products
+  const fetchProductRatings = async (productIds) => {
+    try {
+      const ratingPromises = productIds.map(async (productId) => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BASE_URL}/ratings/products/${productId}`,
+            {
+              headers: {
+                Accept: "application/json",
+                "Accept-Language": i18n.language,
+              },
+            }
+          );
+          if (response.data?.status === 200) {
+            return {
+              productId,
+              average_rating: response.data.data?.average_rating || 0,
+            };
+          }
+        } catch (error) {
+          console.error(
+            `Error fetching rating for product ${productId}:`,
+            error
+          );
+        }
+        return { productId, average_rating: 0 };
+      });
+
+      const ratings = await Promise.all(ratingPromises);
+      const ratingsMap = {};
+      ratings.forEach(({ productId, average_rating }) => {
+        ratingsMap[productId] = average_rating;
+      });
+      setProductRatings(ratingsMap);
+    } catch (error) {
+      console.error("Error fetching product ratings:", error);
+    }
   };
 
   useEffect(() => {
@@ -43,6 +84,9 @@ const ProductsUsedMarket = () => {
 
         if (response.data?.status === 200) {
           setProducts(response.data.data);
+          // Fetch ratings for all products
+          const productIds = response.data.data.map((product) => product.id);
+          fetchProductRatings(productIds);
         } else {
           setError(response.data?.message || "Failed to fetch products");
         }
@@ -53,9 +97,15 @@ const ProductsUsedMarket = () => {
             "Products endpoint not found. Please check the API configuration."
           );
         } else if (error.response?.status >= 500) {
-          setError(t("settings.serverError") + ". " + t("settings.pleaseTryAgainLater"));
+          setError(
+            t("settings.serverError") + ". " + t("settings.pleaseTryAgainLater")
+          );
         } else {
-                      setError(t("settings.failedToLoadProducts") + ". " + t("settings.pleaseTryAgainLater"));
+          setError(
+            t("settings.failedToLoadProducts") +
+              ". " +
+              t("settings.pleaseTryAgainLater")
+          );
         }
       } finally {
         setLoading(false);
@@ -125,10 +175,10 @@ const ProductsUsedMarket = () => {
                 i18n.language === "ar" ? "float-start" : "float-end"
               }`}
             >
-              <button className={styles.btnCategories}
+              <button
+                className={styles.btnCategories}
                 onClick={() => (window.location.href = "/requestcategories")}
-                
-                >
+              >
                 {t("products.allcategories")}
               </button>
             </div>
@@ -255,10 +305,18 @@ const ProductsUsedMarket = () => {
                       </span>
                     </div>
 
-                    {/* Warranty and Delivery */}
+                    {/* Rating, Warranty and Delivery */}
                     <div
                       className={styles.productBadges + " d-flex gap-2 mt-3"}
                     >
+                      {/* Rating Badge */}
+                      {productRatings[product.id] > 0 && (
+                        <span className={`${styles.badge} ${styles.rating}`}>
+                          <i className="bi bi-star-fill me-1"></i>
+                          {productRatings[product.id].toFixed(1)}
+                        </span>
+                      )}
+
                       {/* Warranty Badge */}
                       <span
                         className={`${styles.badge} ${

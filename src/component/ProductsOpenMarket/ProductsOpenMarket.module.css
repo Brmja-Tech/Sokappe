@@ -247,6 +247,11 @@
   margin-top: auto;
 }
 
+/* RTL Support for badges order */
+[dir="rtl"] .product-badges {
+  flex-direction: row-reverse;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -275,6 +280,12 @@
 .badge.no-warranty {
   background: rgba(108, 117, 125, 0.1);
   color: #6c757d;
+}
+
+.badge.rating {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  font-weight: 600;
 }
 
 /* التكيف مع الوضع المظلم */

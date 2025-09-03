@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -26,37 +26,78 @@ const ProductsServices = ({
 
   // state
   const [services, setServices] = useState([]);
-  const [pagination, setPagination] = useState({
-    current_page: 1,
-    last_page: 1,
-    per_page: 5,
-    total: 0,
-  });
   const [loading, setLoading] = useState(false);
+  const [serviceRatings, setServiceRatings] = useState({});
+
+  // fetch service ratings
+  const fetchServiceRatings = useCallback(
+    async (serviceIds) => {
+      try {
+        const ratingPromises = serviceIds.map((serviceId) =>
+          axios
+            .get(
+              `${process.env.REACT_APP_BASE_URL}/ratings/services/${serviceId}`,
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Accept-Language": i18n.language,
+                },
+              }
+            )
+            .catch(() => ({ data: { data: { average_rating: 0 } } }))
+        );
+
+        const ratingResponses = await Promise.all(ratingPromises);
+        const ratings = {};
+
+        serviceIds.forEach((serviceId, index) => {
+          const response = ratingResponses[index];
+          if (response?.data?.status === 200) {
+            ratings[serviceId] = response.data.data?.average_rating || 0;
+          } else {
+            ratings[serviceId] = 0;
+          }
+        });
+
+        setServiceRatings(ratings);
+      } catch (error) {
+        console.error("Error fetching service ratings:", error);
+      }
+    },
+    [i18n.language]
+  );
 
   // fetch services
-  const fetchServices = async (page = 1) => {
-    try {
-      setLoading(true);
-      const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/services/allServices`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Accept-Language": i18n.language,
-          },
+  const fetchServices = useCallback(
+    async (page = 1) => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/services/allServices`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Accept-Language": i18n.language,
+            },
+          }
+        );
+        if (res.data?.status === 200) {
+          const servicesData = res.data.data.data || res.data.data || [];
+          setServices(servicesData);
+
+          // Fetch ratings for services
+          if (servicesData.length > 0) {
+            fetchServiceRatings(servicesData.map((service) => service.id));
+          }
         }
-      );
-      if (res.data?.status === 200) {
-        setServices(res.data.data.data || res.data.data || []);
-        setPagination(res.data.data.pagination);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching services:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [i18n.language, fetchServiceRatings]
+  );
 
   useEffect(() => {
     // If relatedServices are provided, use them directly
@@ -67,20 +108,24 @@ const ProductsServices = ({
     ) {
       setServices(relatedServices);
       setLoading(false);
+
+      // Fetch ratings for related services
+      if (dataType === "services") {
+        fetchServiceRatings(relatedServices.map((service) => service.id));
+      }
     } else if (!relatedServices) {
       // Only fetch from API if no related data is provided
       fetchServices(1);
     } else {
       fetchServices(1);
     }
-  }, [i18n.language, relatedServices, dataType]);
-
-  // Handle page change
-  const handlePageChange = (page) => {
-    if (!relatedServices && dataType === "services") {
-      fetchServices(page);
-    }
-  };
+  }, [
+    i18n.language,
+    relatedServices,
+    dataType,
+    fetchServices,
+    fetchServiceRatings,
+  ]);
 
   // If relatedServices are provided and empty, don't render anything
   if (
@@ -221,6 +266,17 @@ const ProductsServices = ({
                                 </span>
                               )}
                             </div>
+
+                            {/* Service Rating Badge */}
+                            {dataType === "services" &&
+                              serviceRatings[service.id] > 0 && (
+                                <div className="rating-badge">
+                                  <i className="bi bi-star-fill text-warning me-1"></i>
+                                  <span className="fw-bold text-warning">
+                                    {serviceRatings[service.id].toFixed(1)}
+                                  </span>
+                                </div>
+                              )}
                           </div>
                         </div>
                       </div>

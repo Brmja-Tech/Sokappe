@@ -26,6 +26,16 @@ export default function ProductsDetalis() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Rating states
+  const [ratings, setRatings] = useState({
+    average_rating: 0,
+    ratings: [],
+  });
+  const [userRating, setUserRating] = useState(0);
+  const [userComment, setUserComment] = useState("");
+  const [ratingLoading, setRatingLoading] = useState(false);
+  const [showRatingForm, setShowRatingForm] = useState(false);
+
   // Handle add to cart
   const handleAddToCart = () => {
     addToCart(product);
@@ -47,6 +57,106 @@ export default function ProductsDetalis() {
 
     // Navigate to chat with owner
     navigate(`/chats/new?other_user_id=${ownerId}`);
+  };
+
+  // Fetch product ratings
+  const fetchRatings = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/ratings/products/${id}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 200) {
+        const data = response.data.data || {};
+        setRatings({
+          average_rating: data.average_rating || 0,
+          ratings: data.ratings || [],
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching ratings:", error);
+      // Set default values on error
+      setRatings({
+        average_rating: 0,
+        ratings: [],
+      });
+    }
+  };
+
+  // Submit rating
+  const submitRating = async () => {
+    if (userRating === 0) {
+      toast.error(t("productDetails.ratingRequired"));
+      return;
+    }
+
+    try {
+      setRatingLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      if (!userData || !userData.token) {
+        toast.error(t("sign.login") + " " + t("sign.haveAccount"));
+        return;
+      }
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/ratings/products`,
+        {
+          product_id: id,
+          rating: userRating,
+          comment: userComment,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 201) {
+        toast.success(t("productDetails.ratingSubmitted"));
+        setUserRating(0);
+        setUserComment("");
+        setShowRatingForm(false);
+        fetchRatings(); // Refresh ratings
+      }
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(t("productDetails.ratingError"));
+      }
+    } finally {
+      setRatingLoading(false);
+    }
+  };
+
+  // Star rating component
+  const StarRating = ({ rating, onRatingChange, interactive = false }) => {
+    return (
+      <div className={styles.starRating}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`${styles.star} ${
+              star <= rating ? styles.starFilled : styles.starEmpty
+            } ${interactive ? styles.starInteractive : ""}`}
+            onClick={() => interactive && onRatingChange(star)}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
   };
 
   // Helper function to check if delivery/warranty is available
@@ -88,6 +198,7 @@ export default function ProductsDetalis() {
 
     if (id) {
       fetchProductDetails();
+      fetchRatings(); // Fetch ratings when component mounts
     }
   }, [id, i18n.language]);
 
@@ -420,6 +531,151 @@ export default function ProductsDetalis() {
                 <i className={`bi bi-geo-alt-fill ${styles.addressIcon}`}></i>
                 <span>{product.address}</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ratings Section */}
+      <section className={styles.ratingsSection}>
+        <div className="container">
+          <div className={styles.ratingsContainer}>
+            <div className={styles.ratingsHeader}>
+              <h2 className={styles.ratingsTitle}>
+                <i className="bi bi-star-fill me-2"></i>
+                {t("productDetails.ratings")}
+              </h2>
+
+              {/* Average Rating Display */}
+              <div className={styles.averageRating}>
+                <div className={styles.averageScore}>
+                  <span className={styles.scoreNumber}>
+                    {(ratings.average_rating || 0).toFixed(1)}
+                  </span>
+                  <span className={styles.scoreMax}>/5</span>
+                </div>
+                <StarRating rating={Math.round(ratings.average_rating || 0)} />
+                <span className={styles.ratingCount}>
+                  ({(ratings.ratings || []).length}{" "}
+                  {t("productDetails.reviews")})
+                </span>
+              </div>
+            </div>
+
+            {/* Rating Form */}
+            <div className={styles.ratingForm}>
+              <button
+                className={styles.rateButton}
+                onClick={() => setShowRatingForm(!showRatingForm)}
+              >
+                <i className="bi bi-star me-2"></i>
+                {t("productDetails.rateProduct")}
+              </button>
+
+              {showRatingForm && (
+                <div className={styles.ratingFormContent}>
+                  <div className={styles.ratingInput}>
+                    <label className={styles.ratingLabel}>
+                      {t("productDetails.yourRating")}:
+                    </label>
+                    <StarRating
+                      rating={userRating}
+                      onRatingChange={setUserRating}
+                      interactive={true}
+                    />
+                  </div>
+
+                  <div className={styles.commentInput}>
+                    <label className={styles.commentLabel}>
+                      {t("productDetails.yourComment")}:
+                    </label>
+                    <textarea
+                      className={styles.commentTextarea}
+                      value={userComment}
+                      onChange={(e) => setUserComment(e.target.value)}
+                      placeholder={t("productDetails.commentPlaceholder")}
+                      rows="3"
+                    />
+                  </div>
+
+                  <div className={styles.ratingActions}>
+                    <button
+                      className={styles.submitRatingBtn}
+                      onClick={submitRating}
+                      disabled={ratingLoading || userRating === 0}
+                    >
+                      {ratingLoading ? (
+                        <>
+                          <i className="bi bi-hourglass-split me-2"></i>
+                          {t("productDetails.submitting")}
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-check-circle me-2"></i>
+                          {t("productDetails.submitRating")}
+                        </>
+                      )}
+                    </button>
+                    <button
+                      className={styles.cancelRatingBtn}
+                      onClick={() => {
+                        setShowRatingForm(false);
+                        setUserRating(0);
+                        setUserComment("");
+                      }}
+                    >
+                      {t("productDetails.cancel")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Reviews List */}
+            <div className={styles.reviewsList}>
+              <h3 className={styles.reviewsTitle}>
+                {t("productDetails.customerReviews")}
+              </h3>
+
+              {(ratings.ratings || []).length > 0 ? (
+                <div className={styles.reviewsContainer}>
+                  {(ratings.ratings || []).map((review) => (
+                    <div key={review.id} className={styles.reviewItem}>
+                      <div className={styles.reviewHeader}>
+                        <div className={styles.reviewerInfo}>
+                          <div className={styles.reviewerAvatar}>
+                            {review.user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className={styles.reviewerDetails}>
+                            <h4 className={styles.reviewerName}>
+                              {review.user.name}
+                            </h4>
+                            <div className={styles.reviewRating}>
+                              <StarRating rating={review.rating} />
+                              <span className={styles.reviewDate}>
+                                {new Date(
+                                  review.created_at
+                                ).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {review.comment && (
+                        <div className={styles.reviewComment}>
+                          <p>{review.comment}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noReviews}>
+                  <i className="bi bi-star"></i>
+                  <p>{t("productDetails.noReviews")}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

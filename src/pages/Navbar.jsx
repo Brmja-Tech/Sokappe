@@ -159,6 +159,27 @@ const Navbar = () => {
     window.location.href = "/";
   };
 
+  const handleNotificationClick = async (notification) => {
+    if (!notification.read_at) {
+      markAsRead(notification.id);
+    }
+
+    // Navigate to request details page
+    if (notification.service_request_id) {
+      try {
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        if (userData && userData.token) {
+          navigate(`/request-details/${notification.service_request_id}`);
+        } else {
+          // If not logged in, show login message
+          toast.error(t("notifications.loginRequired"));
+        }
+      } catch (error) {
+        console.error("Error navigating to request details:", error);
+      }
+    }
+  };
+
   const getProfileRoute = () => {
     if (!userData) return "/login";
 
@@ -392,7 +413,9 @@ const Navbar = () => {
                             className={`${styles.notificationItem} ${
                               !notification.read_at ? styles.unread : ""
                             }`}
-                            onClick={() => markAsRead(notification.id)}
+                            onClick={() =>
+                              handleNotificationClick(notification)
+                            }
                             title={
                               notification.service_request_id
                                 ? t("notifications.clickToViewDetails")
@@ -687,7 +710,9 @@ const Navbar = () => {
                             className={`${styles.notificationItem} ${
                               !notification.read_at ? styles.unread : ""
                             }`}
-                            onClick={() => markAsRead(notification.id)}
+                            onClick={() =>
+                              handleNotificationClick(notification)
+                            }
                             title={
                               notification.service_request_id
                                 ? t("notifications.clickToViewDetails")

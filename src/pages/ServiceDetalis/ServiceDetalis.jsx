@@ -27,6 +27,16 @@ export default function ServiceDetalis() {
   const [requestLoading, setRequestLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
 
+  // Rating states
+  const [ratings, setRatings] = useState({
+    average_rating: 0,
+    ratings: [],
+  });
+  const [userRating, setUserRating] = useState(0);
+  const [userComment, setUserComment] = useState("");
+  const [ratingLoading, setRatingLoading] = useState(false);
+  const [showRatingForm, setShowRatingForm] = useState(false);
+
   // Fetch service details
   const fetchServiceDetails = async () => {
     try {
@@ -267,12 +277,113 @@ export default function ServiceDetalis() {
     }
   };
 
+  // Fetch service ratings
+  const fetchRatings = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/ratings/services/${id}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 200) {
+        setRatings({
+          average_rating: response.data.data?.average_rating || 0,
+          ratings: response.data.data?.ratings || [],
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching service ratings:", error);
+      // Set default values if error occurs
+      setRatings({
+        average_rating: 0,
+        ratings: [],
+      });
+    }
+  };
+
+  // Submit rating
+  const submitRating = async () => {
+    if (userRating === 0) {
+      toast.error(t("productDetails.ratingRequired"));
+      return;
+    }
+
+    try {
+      setRatingLoading(true);
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      if (!userData || !userData.token) {
+        toast.error(t("sign.login") + " " + t("sign.haveAccount"));
+        return;
+      }
+
+      const response = await axios.post(
+        `${
+          process.env.REACT_APP_BASE_URL
+        }/ratings/services?service_id=${id}&rating=${userRating}&comment=${encodeURIComponent(
+          userComment
+        )}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 201) {
+        toast.success(t("productDetails.ratingSubmitted"));
+        setUserRating(0);
+        setUserComment("");
+        setShowRatingForm(false);
+        // Refresh ratings
+        await fetchRatings();
+      }
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(t("productDetails.ratingError"));
+      }
+    } finally {
+      setRatingLoading(false);
+    }
+  };
+
+  // Star Rating Component
+  const StarRating = ({ rating, onRatingChange, interactive = false }) => {
+    return (
+      <div className={styles.starRating}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`${styles.star} ${
+              star <= rating ? styles.starFilled : styles.starEmpty
+            } ${interactive ? styles.starInteractive : ""}`}
+            onClick={interactive ? () => onRatingChange(star) : undefined}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   // Chat functions
 
   useEffect(() => {
     if (id) {
       fetchServiceDetails();
       checkRequestStatus();
+      fetchRatings();
     }
   }, [id, i18n.language]);
 
@@ -371,69 +482,46 @@ export default function ServiceDetalis() {
                 )}
               </div>
 
-              {/* Service Request Buttons */}
-              {!requestStatus ? (
-                <button
-                  className={styles.requestBtn}
-                  onClick={sendServiceRequest}
-                  disabled={requestLoading}
-                >
-                  <i className={`bi bi-send-fill ${styles.btnIcon}`}></i>
-                  {requestLoading
-                    ? t("servicePage.sending")
-                    : t("servicePage.sendRequest")}
-                </button>
-              ) : requestStatus === "pending" ? (
-                <button
-                  className={styles.cancelRequestBtn}
-                  onClick={cancelServiceRequest}
-                  disabled={cancelLoading}
-                >
-                  <i className={`bi bi-x-circle-fill ${styles.btnIcon}`}></i>
-                  {cancelLoading
-                    ? t("servicePage.cancelling")
-                    : t("servicePage.cancelRequest")}
-                </button>
-              ) : null}
+              {/* Service Request Button - Always visible */}
+              <button
+                className={styles.requestBtn}
+                onClick={sendServiceRequest}
+                disabled={requestLoading || requestStatus === "pending"}
+              >
+                <i className={`bi bi-send-fill ${styles.btnIcon}`}></i>
+                {requestLoading
+                  ? t("servicePage.sending")
+                  : t("servicePage.sendRequest")}
+              </button>
 
               {/* Display current request status */}
               {requestStatus && (
-                <div
-                  className={`${styles.requestStatus} ${styles[requestStatus]}`}
-                >
-                  {requestStatus === "pending" && (
-                    <div className={styles.statusPending}>
-                      <i className="bi bi-clock-fill me-2"></i>
-                      <span>{t("servicePage.requestSent")}</span>
-                    </div>
-                  )}
-                  {requestStatus === "accepted" && (
-                    <div className={styles.statusAccepted}>
-                      <i className="bi bi-check-circle-fill me-2"></i>
-                      <span>{t("servicePage.requestAccepted")}</span>
-                    </div>
-                  )}
-                  {requestStatus === "rejected" && (
-                    <div className={styles.statusRejected}>
-                      <i className="bi bi-x-circle-fill me-2"></i>
-                      <span>{t("servicePage.requestRejected")}</span>
-                    </div>
-                  )}
-                  {requestStatus === "completed" && (
-                    <div className={styles.statusCompleted}>
-                      <i className="bi bi-check2-all me-2"></i>
-                      <span>{t("servicePage.requestCompleted")}</span>
-                    </div>
-                  )}
+                <div className={styles.requestStatusContainer}>
+                  <div className={styles.statusLabel}>
+                    Status:{" "}
+                    <span
+                      className={`${styles.statusValue} ${styles[requestStatus]}`}
+                    >
+                      {requestStatus === "pending" && "Pending"}
+                      {requestStatus === "accepted" && "Accepted"}
+                      {requestStatus === "rejected" && "Rejected"}
+                      {requestStatus === "completed" && "Completed"}
+                    </span>
+                  </div>
 
-                  {/* Refresh Status Button - Only show for pending requests */}
+                  {/* Cancel button for pending requests */}
                   {requestStatus === "pending" && (
                     <button
-                      className={styles.refreshStatusBtn}
-                      onClick={() => checkRequestStatusFromServer(requestId)}
-                      title={t("servicePage.refreshStatus")}
+                      className={styles.cancelRequestBtn}
+                      onClick={cancelServiceRequest}
+                      disabled={cancelLoading}
                     >
-                      <i className="bi bi-arrow-clockwise"></i>
+                      <i
+                        className={`bi bi-x-circle-fill ${styles.btnIcon}`}
+                      ></i>
+                      {cancelLoading
+                        ? t("servicePage.cancelling")
+                        : t("servicePage.cancelRequest")}
                     </button>
                   )}
                 </div>
@@ -598,6 +686,152 @@ export default function ServiceDetalis() {
             </div>
           </div>
         </div>
+
+        {/* Ratings Section */}
+        <section className={styles.ratingsSection}>
+          <div className="container">
+            <div className={styles.ratingsContainer}>
+              <div className={styles.ratingsHeader}>
+                <h2 className={styles.ratingsTitle}>
+                  <i className="bi bi-star-fill me-2"></i>
+                  {t("productDetails.ratings")}
+                </h2>
+
+                {/* Average Rating Display */}
+                <div className={styles.averageRating}>
+                  <div className={styles.averageScore}>
+                    <span className={styles.scoreNumber}>
+                      {(ratings.average_rating || 0).toFixed(1)}
+                    </span>
+                    <span className={styles.scoreMax}>/5</span>
+                  </div>
+                  <StarRating
+                    rating={Math.round(ratings.average_rating || 0)}
+                  />
+                  <span className={styles.ratingCount}>
+                    ({(ratings.ratings || []).length}{" "}
+                    {t("productDetails.reviews")})
+                  </span>
+                </div>
+              </div>
+
+              {/* Rating Form */}
+              <div className={styles.ratingForm}>
+                <button
+                  className={styles.rateButton}
+                  onClick={() => setShowRatingForm(!showRatingForm)}
+                >
+                  <i className="bi bi-star me-2"></i>
+                  {t("productDetails.rateProduct")}
+                </button>
+
+                {showRatingForm && (
+                  <div className={styles.ratingFormContent}>
+                    <div className={styles.ratingInput}>
+                      <label className={styles.ratingLabel}>
+                        {t("productDetails.yourRating")}:
+                      </label>
+                      <StarRating
+                        rating={userRating}
+                        onRatingChange={setUserRating}
+                        interactive={true}
+                      />
+                    </div>
+
+                    <div className={styles.commentInput}>
+                      <label className={styles.commentLabel}>
+                        {t("productDetails.yourComment")}:
+                      </label>
+                      <textarea
+                        className={styles.commentTextarea}
+                        value={userComment}
+                        onChange={(e) => setUserComment(e.target.value)}
+                        placeholder={t("productDetails.commentPlaceholder")}
+                        rows="3"
+                      />
+                    </div>
+
+                    <div className={styles.ratingActions}>
+                      <button
+                        className={styles.submitRatingBtn}
+                        onClick={submitRating}
+                        disabled={ratingLoading || userRating === 0}
+                      >
+                        {ratingLoading ? (
+                          <>
+                            <i className="bi bi-hourglass-split me-2"></i>
+                            {t("productDetails.submitting")}
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-check-circle me-2"></i>
+                            {t("productDetails.submitRating")}
+                          </>
+                        )}
+                      </button>
+                      <button
+                        className={styles.cancelRatingBtn}
+                        onClick={() => {
+                          setShowRatingForm(false);
+                          setUserRating(0);
+                          setUserComment("");
+                        }}
+                      >
+                        {t("productDetails.cancel")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Reviews List */}
+              <div className={styles.reviewsList}>
+                <h3 className={styles.reviewsTitle}>
+                  {t("productDetails.customerReviews")}
+                </h3>
+                <div className={styles.reviewsContainer}>
+                  {ratings.ratings && ratings.ratings.length > 0 ? (
+                    ratings.ratings.map((review) => (
+                      <div key={review.id} className={styles.reviewItem}>
+                        <div className={styles.reviewHeader}>
+                          <div className={styles.reviewerInfo}>
+                            <div className={styles.reviewerAvatar}>
+                              {review.user?.name?.charAt(0)?.toUpperCase() ||
+                                "U"}
+                            </div>
+                            <div className={styles.reviewerDetails}>
+                              <div className={styles.reviewerName}>
+                                {review.user?.name || "Anonymous"}
+                              </div>
+                              <div className={styles.reviewRating}>
+                                <StarRating rating={review.rating} />
+                                <div className={styles.reviewDate}>
+                                  {new Date(
+                                    review.created_at
+                                  ).toLocaleDateString()}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {review.comment && (
+                          <div className={styles.reviewComment}>
+                            <p>{review.comment}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.noReviews}>
+                      <i className="bi bi-chat-square-text"></i>
+                      <p>{t("productDetails.noReviews")}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </section>
 
       {service.related && service.related.length > 0 && (

@@ -174,3 +174,47 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Rating Badge Styles */
+.rating-badge {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rating-badge i {
+  font-size: 0.75rem;
+}
+
+/* RTL/LTR Alignment for rating badge */
+[dir="rtl"] .text-sm.d-flex {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .rating-badge {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+[dir="ltr"] .rating-badge {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .rating-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .rating-badge i {
+    font-size: 0.7rem;
+  }
+}

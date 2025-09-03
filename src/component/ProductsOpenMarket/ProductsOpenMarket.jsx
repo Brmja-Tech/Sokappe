@@ -17,6 +17,7 @@ const ProductsOpenMarket = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [productRatings, setProductRatings] = useState({});
 
   // Helper function to check if delivery/warranty is available
   const isAvailable = (value) => {
@@ -30,6 +31,49 @@ const ProductsOpenMarket = () => {
   const handleAddToWishlist = (product) => {
     addToWishlist(product);
   };
+
+  // Fetch ratings for all products
+  const fetchProductRatings = useCallback(
+    async (productIds) => {
+      try {
+        const ratingPromises = productIds.map(async (productId) => {
+          try {
+            const response = await axios.get(
+              `${process.env.REACT_APP_BASE_URL}/ratings/products/${productId}`,
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Accept-Language": i18n.language,
+                },
+              }
+            );
+            if (response.data?.status === 200) {
+              return {
+                productId,
+                average_rating: response.data.data?.average_rating || 0,
+              };
+            }
+          } catch (error) {
+            console.error(
+              `Error fetching rating for product ${productId}:`,
+              error
+            );
+          }
+          return { productId, average_rating: 0 };
+        });
+
+        const ratings = await Promise.all(ratingPromises);
+        const ratingsMap = {};
+        ratings.forEach(({ productId, average_rating }) => {
+          ratingsMap[productId] = average_rating;
+        });
+        setProductRatings(ratingsMap);
+      } catch (error) {
+        console.error("Error fetching product ratings:", error);
+      }
+    },
+    [i18n.language]
+  );
 
   const fetchProducts = useCallback(
     async (page = 1) => {
@@ -48,6 +92,9 @@ const ProductsOpenMarket = () => {
           // Handle different possible data structures
           const productsData = res.data.data?.data || res.data.data || [];
           setProducts(productsData);
+          // Fetch ratings for all products
+          const productIds = productsData.map((product) => product.id);
+          fetchProductRatings(productIds);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -56,7 +103,7 @@ const ProductsOpenMarket = () => {
         setLoading(false);
       }
     },
-    [i18n.language]
+    [i18n.language, fetchProductRatings]
   );
 
   useEffect(() => {
@@ -78,9 +125,9 @@ const ProductsOpenMarket = () => {
                 i18n.language === "ar" ? "float-start" : "float-end"
               }`}
             >
-              <button className={styles["btn-categories"]}
-              
-              onClick={() => (window.location.href = "/requestcategories")}
+              <button
+                className={styles["btn-categories"]}
+                onClick={() => (window.location.href = "/requestcategories")}
               >
                 {t("products.allcategories")}
               </button>
@@ -217,6 +264,14 @@ const ProductsOpenMarket = () => {
                         </div>
                       </div>
                       <div className={styles["product-badges"]}>
+                        {/* Rating Badge */}
+                        {productRatings[product.id] > 0 && (
+                          <span className={`${styles.badge} ${styles.rating}`}>
+                            <i className="bi bi-star-fill"></i>
+                            {productRatings[product.id].toFixed(1)}
+                          </span>
+                        )}
+
                         <span
                           className={`${styles.badge} ${
                             isAvailable(product.has_delivery)
