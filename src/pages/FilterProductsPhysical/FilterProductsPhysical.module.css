@@ -526,6 +526,76 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Filter Actions */
+.filterActions {
+  padding: 1.5rem;
+  border-top: 1px solid #f1f3f4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.applyFiltersBtn,
+.clearFiltersBtn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.applyFiltersBtn {
+  background: linear-gradient(135deg, #0a6e58 0%, #0d8a6f 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(10, 110, 88, 0.3);
+}
+
+.applyFiltersBtn:hover {
+  background: linear-gradient(135deg, #0d8a6f 0%, #0a6e58 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(10, 110, 88, 0.4);
+}
+
+.clearFiltersBtn {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+}
+
+.clearFiltersBtn:hover {
+  background: #e9ecef;
+  color: #495057;
+  transform: translateY(-2px);
+}
+
+/* Loading Spinner */
+.loadingSpinner {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+/* Disabled state for governorate select */
+.filterSelect:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Filter block with relative positioning for loading spinner */
+.filterBlock {
+  position: relative;
+}
+
 /* Focus states for accessibility */
 .card:focus-within {
   outline: 2px solid #0a6e58;

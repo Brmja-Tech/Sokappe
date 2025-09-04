@@ -20,8 +20,78 @@ export default function FilterProducts() {
     total: 0,
   });
 
+  // Filter states
+  const [filters, setFilters] = useState({
+    min_price: "",
+    delivery_days: "",
+    country_id: "",
+    governorate_id: "",
+  });
+
+  // Filter data states
+  const [countries, setCountries] = useState([]);
+  const [governorates, setGovernorates] = useState([]);
+  const [loadingFilters, setLoadingFilters] = useState(false);
+
   const categoryId = searchParams.get("category_id");
   const market = searchParams.get("market");
+
+  // Fetch countries
+  const fetchCountries = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/countries`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 200) {
+        setCountries(response.data.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  }, [i18n.language]);
+
+  // Fetch governorates
+  const fetchGovernorates = useCallback(
+    async (countryId) => {
+      if (!countryId) {
+        setGovernorates([]);
+        return;
+      }
+
+      try {
+        setLoadingFilters(true);
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/governorates`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Accept-Language": i18n.language,
+            },
+            params: {
+              country_id: countryId,
+            },
+          }
+        );
+
+        if (response.data?.status === 200) {
+          setGovernorates(response.data.data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching governorates:", error);
+        setGovernorates([]);
+      } finally {
+        setLoadingFilters(false);
+      }
+    },
+    [i18n.language]
+  );
 
   // Fetch service ratings
   const fetchServiceRatings = useCallback(
@@ -69,23 +139,58 @@ export default function FilterProducts() {
   );
 
   const fetchServices = useCallback(
-    async (page = 1) => {
+    async (page = 1, filterParams = {}) => {
       try {
         setLoading(true);
+
+        // Build query parameters
+        const queryParams = {
+          page,
+          category_id: categoryId,
+          ...filterParams,
+        };
+
+        // Remove empty values
+        Object.keys(queryParams).forEach((key) => {
+          if (
+            queryParams[key] === "" ||
+            queryParams[key] === null ||
+            queryParams[key] === undefined
+          ) {
+            delete queryParams[key];
+          }
+        });
+
         const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/services/allServicesByCategory?category_id=${categoryId}&page=${page}`,
+          `${process.env.REACT_APP_BASE_URL}/filters/services`,
           {
             headers: {
               Accept: "application/json",
               "Accept-Language": i18n.language,
             },
+            params: queryParams,
           }
         );
 
         if (response.data.status === 200) {
           const servicesData = response.data.data.data || [];
           setServices(servicesData);
-          setPagination(response.data.data.pagination || {});
+
+          // Handle pagination
+          const meta = response.data.data.meta;
+          if (meta) {
+            setPagination({
+              current_page: meta.current_page || 1,
+              last_page: meta.last_page || 1,
+              total: meta.total || servicesData.length,
+            });
+          } else {
+            setPagination({
+              current_page: 1,
+              last_page: 1,
+              total: servicesData.length,
+            });
+          }
 
           // Fetch ratings for all services
           const serviceIds = servicesData.map((service) => service.id);
@@ -95,6 +200,12 @@ export default function FilterProducts() {
         }
       } catch (error) {
         console.error("Error fetching services:", error);
+        setServices([]);
+        setPagination({
+          current_page: 1,
+          last_page: 1,
+          total: 0,
+        });
       } finally {
         setLoading(false);
       }
@@ -102,15 +213,52 @@ export default function FilterProducts() {
     [categoryId, i18n.language, fetchServiceRatings]
   );
 
+  // Handle filter changes
+  const handleFilterChange = (filterName, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [filterName]: value,
+    }));
+
+    // If country changes, reset governorate
+    if (filterName === "country_id") {
+      setFilters((prev) => ({
+        ...prev,
+        country_id: value,
+        governorate_id: "",
+      }));
+      fetchGovernorates(value);
+    }
+  };
+
+  // Apply filters
+  const applyFilters = () => {
+    fetchServices(1, filters);
+  };
+
+  // Clear filters
+  const clearFilters = () => {
+    const clearedFilters = {
+      min_price: "",
+      delivery_days: "",
+      country_id: "",
+      governorate_id: "",
+    };
+    setFilters(clearedFilters);
+    setGovernorates([]);
+    fetchServices(1, clearedFilters);
+  };
+
   // Fetch services based on category and market
   useEffect(() => {
     if (categoryId && market === "service") {
+      fetchCountries();
       fetchServices();
     }
-  }, [categoryId, market, fetchServices]);
+  }, [categoryId, market, fetchServices, fetchCountries]);
 
   const handlePageChange = (page) => {
-    fetchServices(page);
+    fetchServices(page, filters);
   };
 
   // Helper function to get display value for location fields
@@ -134,39 +282,88 @@ export default function FilterProducts() {
           {/* Sidebar Filters */}
           <div className={`col-lg-3 p-3 ${styles.filtersBox}`}>
             <div className={styles.filterBlock}>
-              <h6>{t("filter.sortby")}</h6>
-              <select className={`form-select ${styles.filterSelect}`}>
-                <option>{t("sort.latest")}</option>
-                <option>{t("sort.lowest")}</option>
-                <option>{t("sort.highest")}</option>
-                <option>{t("sort.topRated")}</option>
+              <h6>{t("filterProducts.minPrice")}</h6>
+              <input
+                type="number"
+                className={`form-control ${styles.priceInput}`}
+                placeholder={t("filterProducts.minPrice")}
+                value={filters.min_price}
+                onChange={(e) =>
+                  handleFilterChange("min_price", e.target.value)
+                }
+              />
+            </div>
+
+            <div className={styles.filterBlock}>
+              <h6>{t("filterProducts.deliveryDays")}</h6>
+              <input
+                type="number"
+                className={`form-control ${styles.priceInput}`}
+                placeholder={t("filterProducts.deliveryDays")}
+                value={filters.delivery_days}
+                onChange={(e) =>
+                  handleFilterChange("delivery_days", e.target.value)
+                }
+              />
+            </div>
+
+            <div className={styles.filterBlock}>
+              <h6>{t("filterProducts.country")}</h6>
+              <select
+                className={`form-select ${styles.filterSelect}`}
+                value={filters.country_id}
+                onChange={(e) =>
+                  handleFilterChange("country_id", e.target.value)
+                }
+              >
+                <option value="">{t("filterProducts.allCountries")}</option>
+                {countries.map((country) => (
+                  <option key={country.id} value={country.id}>
+                    {country.name}
+                  </option>
+                ))}
               </select>
             </div>
 
             <div className={styles.filterBlock}>
-              <h6>{t("filter.price")}</h6>
-              <div className={styles.priceInputs}>
-                <input
-                  type="number"
-                  className={`form-control ${styles.priceInput}`}
-                  placeholder={t("filter.from")}
-                />
-                <input
-                  type="number"
-                  className={`form-control ${styles.priceInput}`}
-                  placeholder={t("filter.to")}
-                />
-              </div>
+              <h6>{t("filterProducts.governorate")}</h6>
+              <select
+                className={`form-select ${styles.filterSelect}`}
+                value={filters.governorate_id}
+                onChange={(e) =>
+                  handleFilterChange("governorate_id", e.target.value)
+                }
+                disabled={!filters.country_id || loadingFilters}
+              >
+                <option value="">{t("filterProducts.allGovernorates")}</option>
+                {governorates.map((governorate) => (
+                  <option key={governorate.id} value={governorate.id}>
+                    {governorate.name}
+                  </option>
+                ))}
+              </select>
+              {loadingFilters && (
+                <div className={styles.loadingSpinner}>
+                  <div
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className={styles.filterBlock}>
-              <h6>{t("filter.governorate")}</h6>
-              <select className={`form-select ${styles.filterSelect}`}>
-                <option>{t("cities.cairo")}</option>
-                <option>{t("cities.giza")}</option>
-                <option>{t("cities.alex")}</option>
-                <option>{t("cities.mansoura")}</option>
-              </select>
+            {/* Filter Actions */}
+            <div className={styles.filterActions}>
+              <button className={styles.applyFiltersBtn} onClick={applyFilters}>
+                <i className="bi bi-search me-2"></i>
+                {t("filterProducts.applyFilters")}
+              </button>
+              <button className={styles.clearFiltersBtn} onClick={clearFilters}>
+                <i className="bi bi-x-circle me-2"></i>
+                {t("filterProducts.clearFilters")}
+              </button>
             </div>
           </div>
 
@@ -216,13 +413,43 @@ export default function FilterProducts() {
                               {service.description}
                             </p>
                             <div className={styles.serviceFooter}>
-                              <span className={styles.servicePrice}>
-                                {service.price} {t("products.currency")}
-                              </span>
-                              <small className={styles.serviceLocation}>
-                                {getDisplayValue(service.country)} -{" "}
-                                {getDisplayValue(service.governorate)}
-                              </small>
+                              <div className={styles.priceSection}>
+                                {service.discount_price &&
+                                service.discount_price !== "0.00" ? (
+                                  <div className={styles.priceWithDiscount}>
+                                    <span className={styles.originalPrice}>
+                                      {parseFloat(
+                                        service.price
+                                      ).toLocaleString()}{" "}
+                                      {t("products.currency")}
+                                    </span>
+                                    <span className={styles.discountPrice}>
+                                      {parseFloat(
+                                        service.discount_price
+                                      ).toLocaleString()}{" "}
+                                      {t("products.currency")}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className={styles.servicePrice}>
+                                    {parseFloat(service.price).toLocaleString()}{" "}
+                                    {t("products.currency")}
+                                  </span>
+                                )}
+                              </div>
+                              <div className={styles.serviceInfo}>
+                                <small className={styles.serviceLocation}>
+                                  {getDisplayValue(service.country)} -{" "}
+                                  {getDisplayValue(service.governorate)}
+                                </small>
+                                {service.delivery_days && (
+                                  <small className={styles.deliveryDays}>
+                                    <i className="bi bi-clock me-1"></i>
+                                    {service.delivery_days}{" "}
+                                    {t("filterProducts.days")}
+                                  </small>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>

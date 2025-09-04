@@ -234,9 +234,9 @@ const Cart = () => {
         </div>
 
         <div className={styles.cartActions}>
-          <button className={styles.clearCartBtn} onClick={handleClearCart}>
+          {/* <button className={styles.clearCartBtn} onClick={handleClearCart}>
             {t("cart.clearCart")}
-          </button>
+          </button> */}
           <Link to="/" className={styles.continueShoppingBtn}>
             {t("cart.continueShopping")}
           </Link>

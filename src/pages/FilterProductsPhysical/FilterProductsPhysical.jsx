@@ -16,8 +16,81 @@ const FilterProductsPhysical = () => {
   });
   const [productRatings, setProductRatings] = useState({});
 
+  // Filter states
+  const [filters, setFilters] = useState({
+    min_price: "",
+    max_price: "",
+    condition: "",
+    has_warranty: "",
+    has_delivery: "",
+    country_id: "",
+    governorate_id: "",
+  });
+
+  // Filter data states
+  const [countries, setCountries] = useState([]);
+  const [governorates, setGovernorates] = useState([]);
+  const [loadingFilters, setLoadingFilters] = useState(false);
+
   const categoryId = searchParams.get("category_id");
   const market = searchParams.get("market");
+
+  // Fetch countries
+  const fetchCountries = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/countries`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Language": i18n.language,
+          },
+        }
+      );
+
+      if (response.data?.status === 200) {
+        setCountries(response.data.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  }, [i18n.language]);
+
+  // Fetch governorates
+  const fetchGovernorates = useCallback(
+    async (countryId) => {
+      if (!countryId) {
+        setGovernorates([]);
+        return;
+      }
+
+      try {
+        setLoadingFilters(true);
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/governorates`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Accept-Language": i18n.language,
+            },
+            params: {
+              country_id: countryId,
+            },
+          }
+        );
+
+        if (response.data?.status === 200) {
+          setGovernorates(response.data.data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching governorates:", error);
+        setGovernorates([]);
+      } finally {
+        setLoadingFilters(false);
+      }
+    },
+    [i18n.language]
+  );
 
   // Fetch product ratings
   const fetchProductRatings = useCallback(
@@ -58,29 +131,41 @@ const FilterProductsPhysical = () => {
   );
 
   const fetchProducts = useCallback(
-    async (page = 1) => {
+    async (page = 1, filterParams = {}) => {
       try {
         setLoading(true);
+
+        // Build query parameters
+        const queryParams = {
+          page,
+          category_id: categoryId,
+          ...filterParams,
+        };
+
+        // Remove empty values
+        Object.keys(queryParams).forEach((key) => {
+          if (
+            queryParams[key] === "" ||
+            queryParams[key] === null ||
+            queryParams[key] === undefined
+          ) {
+            delete queryParams[key];
+          }
+        });
+
         const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/products/show-by-category?page=${page}`,
+          `${process.env.REACT_APP_BASE_URL}/filters/products`,
           {
             headers: {
               Accept: "application/json",
               "Accept-Language": i18n.language,
             },
-            params: {
-              category_id: categoryId,
-            },
+            params: queryParams,
           }
         );
 
         if (response.data.status === 200) {
-          console.log("API Response:", response.data);
-
-          // Handle both nested and flat response structures
-          const productsData =
-            response.data.data.data || response.data.data || [];
-          console.log("Products Data:", productsData);
+          const productsData = response.data.data.data || [];
           setProducts(productsData);
 
           // Fetch ratings for products
@@ -88,41 +173,21 @@ const FilterProductsPhysical = () => {
             fetchProductRatings(productsData.map((product) => product.id));
           }
 
-          // Handle pagination if it exists
-          const paginationData =
-            response.data.data.pagination || response.data.pagination;
-          console.log("Pagination Data:", paginationData);
-
-          if (paginationData) {
+          // Handle pagination
+          const meta = response.data.data.meta;
+          if (meta) {
             setPagination({
-              currentPage: paginationData.current_page || 1,
-              lastPage: paginationData.last_page || 1,
-              total: paginationData.total || productsData.length,
+              currentPage: meta.current_page || 1,
+              lastPage: meta.last_page || 1,
+              total: meta.total || productsData.length,
             });
           } else {
-            // If no pagination, set defaults based on data
             setPagination({
               currentPage: 1,
               lastPage: 1,
               total: productsData.length,
             });
           }
-
-          console.log("Final Products State:", productsData);
-          console.log(
-            "Final Pagination State:",
-            paginationData
-              ? {
-                  currentPage: paginationData.current_page || 1,
-                  lastPage: paginationData.last_page || 1,
-                  total: paginationData.total || productsData.length,
-                }
-              : {
-                  currentPage: 1,
-                  lastPage: 1,
-                  total: productsData.length,
-                }
-          );
         }
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -139,15 +204,55 @@ const FilterProductsPhysical = () => {
     [categoryId, fetchProductRatings, i18n.language]
   );
 
+  // Handle filter changes
+  const handleFilterChange = (filterName, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [filterName]: value,
+    }));
+
+    // If country changes, reset governorate
+    if (filterName === "country_id") {
+      setFilters((prev) => ({
+        ...prev,
+        country_id: value,
+        governorate_id: "",
+      }));
+      fetchGovernorates(value);
+    }
+  };
+
+  // Apply filters
+  const applyFilters = () => {
+    fetchProducts(1, filters);
+  };
+
+  // Clear filters
+  const clearFilters = () => {
+    const clearedFilters = {
+      min_price: "",
+      max_price: "",
+      condition: "",
+      has_warranty: "",
+      has_delivery: "",
+      country_id: "",
+      governorate_id: "",
+    };
+    setFilters(clearedFilters);
+    setGovernorates([]);
+    fetchProducts(1, clearedFilters);
+  };
+
   useEffect(() => {
     if (categoryId && market === "physical") {
+      fetchCountries();
       fetchProducts();
     }
-  }, [categoryId, market, fetchProducts]);
+  }, [categoryId, market, fetchProducts, fetchCountries]);
 
   const handlePageChange = (page) => {
     if (page && page > 0) {
-      fetchProducts(page);
+      fetchProducts(page, filters);
     }
   };
 
@@ -181,18 +286,32 @@ const FilterProductsPhysical = () => {
                     type="number"
                     placeholder={t("filterProducts.min")}
                     className={styles.priceInput}
+                    value={filters.min_price}
+                    onChange={(e) =>
+                      handleFilterChange("min_price", e.target.value)
+                    }
                   />
                   <input
                     type="number"
                     placeholder={t("filterProducts.max")}
                     className={styles.priceInput}
+                    value={filters.max_price}
+                    onChange={(e) =>
+                      handleFilterChange("max_price", e.target.value)
+                    }
                   />
                 </div>
               </div>
 
               <div className={styles.filterBlock}>
                 <h6>{t("filterProducts.condition")}</h6>
-                <select className={styles.filterSelect}>
+                <select
+                  className={styles.filterSelect}
+                  value={filters.condition}
+                  onChange={(e) =>
+                    handleFilterChange("condition", e.target.value)
+                  }
+                >
                   <option value="">{t("filterProducts.allConditions")}</option>
                   <option value="new">{t("filterProducts.new")}</option>
                   <option value="used">{t("filterProducts.used")}</option>
@@ -201,7 +320,13 @@ const FilterProductsPhysical = () => {
 
               <div className={styles.filterBlock}>
                 <h6>{t("filterProducts.delivery")}</h6>
-                <select className={styles.filterSelect}>
+                <select
+                  className={styles.filterSelect}
+                  value={filters.has_delivery}
+                  onChange={(e) =>
+                    handleFilterChange("has_delivery", e.target.value)
+                  }
+                >
                   <option value="">{t("filterProducts.all")}</option>
                   <option value="1">{t("filterProducts.withDelivery")}</option>
                   <option value="0">
@@ -212,7 +337,13 @@ const FilterProductsPhysical = () => {
 
               <div className={styles.filterBlock}>
                 <h6>{t("filterProducts.warranty")}</h6>
-                <select className={styles.filterSelect}>
+                <select
+                  className={styles.filterSelect}
+                  value={filters.has_warranty}
+                  onChange={(e) =>
+                    handleFilterChange("has_warranty", e.target.value)
+                  }
+                >
                   <option value="">{t("filterProducts.all")}</option>
                   <option value="1">{t("filterProducts.withWarranty")}</option>
                   <option value="0">
@@ -220,14 +351,78 @@ const FilterProductsPhysical = () => {
                   </option>
                 </select>
               </div>
+
+              <div className={styles.filterBlock}>
+                <h6>{t("filterProducts.country")}</h6>
+                <select
+                  className={styles.filterSelect}
+                  value={filters.country_id}
+                  onChange={(e) =>
+                    handleFilterChange("country_id", e.target.value)
+                  }
+                >
+                  <option value="">{t("filterProducts.allCountries")}</option>
+                  {countries.map((country) => (
+                    <option key={country.id} value={country.id}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.filterBlock}>
+                <h6>{t("filterProducts.governorate")}</h6>
+                <select
+                  className={styles.filterSelect}
+                  value={filters.governorate_id}
+                  onChange={(e) =>
+                    handleFilterChange("governorate_id", e.target.value)
+                  }
+                  disabled={!filters.country_id || loadingFilters}
+                >
+                  <option value="">
+                    {t("filterProducts.allGovernorates")}
+                  </option>
+                  {governorates.map((governorate) => (
+                    <option key={governorate.id} value={governorate.id}>
+                      {governorate.name}
+                    </option>
+                  ))}
+                </select>
+                {loadingFilters && (
+                  <div className={styles.loadingSpinner}>
+                    <div
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Filter Actions */}
+              <div className={styles.filterActions}>
+                <button
+                  className={styles.applyFiltersBtn}
+                  onClick={applyFilters}
+                >
+                  <i className="bi bi-search me-2"></i>
+                  {t("filterProducts.applyFilters")}
+                </button>
+                <button
+                  className={styles.clearFiltersBtn}
+                  onClick={clearFilters}
+                >
+                  <i className="bi bi-x-circle me-2"></i>
+                  {t("filterProducts.clearFilters")}
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Products Grid */}
           <div className="col-lg-9">
-            {console.log("Render - Loading:", loading)}
-            {console.log("Render - Products:", products)}
-            {console.log("Render - Products Length:", products?.length)}
             {loading ? (
               <div className={styles.loadingContainer}>
                 <div className="spinner-border text-primary" role="status">
@@ -239,11 +434,6 @@ const FilterProductsPhysical = () => {
               </div>
             ) : products && products.length > 0 ? (
               <>
-                {console.log(
-                  "Rendering products grid with",
-                  products.length,
-                  "products"
-                )}
                 <div className={styles.productsGrid}>
                   {products.map((product) => (
                     <div key={product.id} className={styles.productCard}>
@@ -420,12 +610,6 @@ const FilterProductsPhysical = () => {
               </>
             ) : (
               <>
-                {console.log(
-                  "No products to render. Products:",
-                  products,
-                  "Length:",
-                  products?.length
-                )}
                 <div className={styles.emptyState}>
                   <p className="text-muted">
                     {t("filterProducts.noProductsFound")}
