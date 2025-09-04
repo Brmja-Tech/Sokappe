@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./ProductsDetalis.module.css";
 import { useTranslation } from "react-i18next";
@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { toast } from "react-toastify";
 
 // Icons
@@ -19,7 +20,8 @@ export default function ProductsDetalis() {
   const { t, i18n } = useTranslation("global");
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
+  const { addToCart, isInCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -41,9 +43,9 @@ export default function ProductsDetalis() {
     addToCart(product);
   };
 
-  // Handle add to wishlist
-  const handleAddToWishlist = () => {
-    addToWishlist(product);
+  // Handle toggle wishlist
+  const handleToggleWishlist = () => {
+    toggleWishlist(product);
   };
 
   // Handle chat with product owner
@@ -60,7 +62,7 @@ export default function ProductsDetalis() {
   };
 
   // Fetch product ratings
-  const fetchRatings = async () => {
+  const fetchRatings = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}/ratings/products/${id}`,
@@ -87,7 +89,7 @@ export default function ProductsDetalis() {
         ratings: [],
       });
     }
-  };
+  }, [id, i18n.language]);
 
   // Submit rating
   const submitRating = async () => {
@@ -200,7 +202,7 @@ export default function ProductsDetalis() {
       fetchProductDetails();
       fetchRatings(); // Fetch ratings when component mounts
     }
-  }, [id, i18n.language]);
+  }, [id, i18n.language, fetchRatings, t]);
 
   // Show loading state
   if (loading) {
@@ -304,11 +306,10 @@ export default function ProductsDetalis() {
                     className={`${styles.actionBtn} ${styles.wishlistBtn} ${
                       isInWishlist(product.id) ? styles.inWishlist : ""
                     }`}
-                    onClick={handleAddToWishlist}
-                    disabled={isInWishlist(product.id)}
+                    onClick={handleToggleWishlist}
                     title={
                       isInWishlist(product.id)
-                        ? t("products.alreadyInWishlist")
+                        ? t("wishlist.removeFromWishlist")
                         : t("products.addToWishlist")
                     }
                   >
@@ -353,11 +354,10 @@ export default function ProductsDetalis() {
                     className={`${styles.actionBtn} ${styles.wishlistBtn} ${
                       isInWishlist(product.id) ? styles.inWishlist : ""
                     }`}
-                    onClick={handleAddToWishlist}
-                    disabled={isInWishlist(product.id)}
+                    onClick={handleToggleWishlist}
                     title={
                       isInWishlist(product.id)
-                        ? t("products.alreadyInWishlist")
+                        ? t("wishlist.removeFromWishlist")
                         : t("products.addToWishlist")
                     }
                   >

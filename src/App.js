@@ -8,6 +8,7 @@ import CartProvider from "./context/CartContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import { BannerProvider } from "./context/BannerContext";
 import { ChatProvider } from "./context/ChatContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import ScrollToTop from "./component/ScrollToTop/ScrollToTop";
 import "./App.css";
 import AOS from "aos";
@@ -25,22 +26,24 @@ function App() {
       <NotificationProvider>
         <BannerProvider>
           <ChatProvider>
-            <BrowserRouter>
-              <AppRoutes />
-              <ScrollToTop />
-              <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-              />
-            </BrowserRouter>
+            <WishlistProvider>
+              <BrowserRouter>
+                <AppRoutes />
+                <ScrollToTop />
+                <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme="light"
+                />
+              </BrowserRouter>
+            </WishlistProvider>
           </ChatProvider>
         </BannerProvider>
       </NotificationProvider>

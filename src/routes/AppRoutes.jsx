@@ -72,7 +72,7 @@ export default function Applayout() {
     <>
       {!shouldHideNavbarFooter && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home/>} />
         <Route
           path="/offer-request-service"
           element={<OfferRequestService />}

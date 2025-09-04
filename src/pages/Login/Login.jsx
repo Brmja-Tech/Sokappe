@@ -34,24 +34,7 @@ const Login = () => {
   const generateTemporaryFCMToken = () => {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
-    const tempToken = `temp_fcm_${timestamp}_${randomString}`;
-    return tempToken;
-  };
-
-  // دالة للتحقق من نوع المتصفح
-  const getBrowserInfo = () => {
-    const userAgent = navigator.userAgent;
-    if (userAgent.includes("Chrome") && !userAgent.includes("Brave")) {
-      return "chrome";
-    } else if (userAgent.includes("Brave")) {
-      return "brave";
-    } else if (userAgent.includes("Firefox")) {
-      return "firefox";
-    } else if (userAgent.includes("Safari")) {
-      return "safari";
-    } else {
-      return "other";
-    }
+    return `temp_fcm_${timestamp}_${randomString}`;
   };
 
   const handleSubmit = async (e) => {
@@ -59,27 +42,12 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Get FCM token dynamically with better error handling
-      const browserType = getBrowserInfo();
+      // حاول تجيب الـ token
       const fcmResult = await initPushAndGetToken();
+      let fcmToken = fcmResult?.token || localStorage.getItem("fcm_token");
 
-      let fcmToken = "no_token_available";
-
-      if (fcmResult.token) {
-        fcmToken = fcmResult.token;
-      } else {
-        if (browserType === "brave") {
-          // متصفح Brave - استخدام token مؤقت
-        }
-
-        // محاولة الحصول على token من localStorage إذا كان موجود
-        const storedToken = localStorage.getItem("fcm_token");
-        if (storedToken) {
-          fcmToken = storedToken;
-        } else {
-          // توليد token مؤقت إذا لم يكن هناك token محفوظ
-          fcmToken = generateTemporaryFCMToken();
-        }
+      if (!fcmToken) {
+        fcmToken = generateTemporaryFCMToken();
       }
 
       const formDataToSend = new FormData();
@@ -104,18 +72,36 @@ const Login = () => {
         localStorage.setItem("userType", response.data.data.type);
         localStorage.setItem("userData", JSON.stringify(response.data.data));
 
-        // حفظ FCM token إذا تم الحصول عليه بنجاح
-        if (fcmResult.token) {
+        // حفظ FCM token إذا اتجاب
+        if (fcmResult?.token) {
           localStorage.setItem("fcm_token", fcmResult.token);
         }
 
         toast.success(response.data.message || "Login successful!");
-
-        // Redirect to home page
         window.location.href = "/";
+      } else {
+        toast.error(response.data.message || "Login failed!");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed!");
+      console.error("Login error:", error);
+
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message ||
+          error.response.data?.error ||
+          `Server error: ${error.response.status}`;
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error(
+          t("sign.networkError") ||
+            "Network error. Please check your connection."
+        );
+      } else {
+        toast.error(
+          t("sign.unexpectedError") ||
+            "An unexpected error occurred. Please try again."
+        );
+      }
     } finally {
       setLoading(false);
     }

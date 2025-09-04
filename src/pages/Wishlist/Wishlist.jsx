@@ -1,26 +1,21 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { Link } from "react-router-dom";
 import styles from "./Wishlist.module.css";
 
 const Wishlist = () => {
-  const { t, i18n } = useTranslation("global");
-  const {
-    wishlistItems,
-    loading,
-    error,
-    removeFromWishlist,
-    addToCart,
-    isInCart,
-  } = useCart();
+  const { t } = useTranslation("global");
+  const { addToCart, isInCart } = useCart();
+  const { wishlistItems, loading, error, removeFromWishlist } = useWishlist();
 
   const handleAddToCart = (product) => {
     addToCart(product);
   };
 
-  const handleRemoveFromWishlist = (productId) => {
-    removeFromWishlist(productId);
+  const handleRemoveFromWishlist = async (productId) => {
+    await removeFromWishlist(productId);
   };
 
   if (loading) {
@@ -140,7 +135,8 @@ const Wishlist = () => {
 
                 {/* Warranty and Delivery Badges */}
                 <div className={styles.productBadges}>
-                  {product.has_warranty && (
+                  {(product.has_warranty === 1 ||
+                    product.has_warranty === true) && (
                     <span
                       className={`${styles.badge} ${styles.wishlistWarranty}`}
                     >
@@ -148,7 +144,8 @@ const Wishlist = () => {
                       {t("products.warranty")}
                     </span>
                   )}
-                  {product.has_delivery && (
+                  {(product.has_delivery === 1 ||
+                    product.has_delivery === true) && (
                     <span
                       className={`${styles.badge} ${styles.wishlistDelivery}`}
                     >
@@ -161,7 +158,8 @@ const Wishlist = () => {
                 {/* Price */}
                 <div className={styles.productPrice}>
                   <span className={styles.price}>
-                    {product.price} {t("products.currency")}
+                    {parseFloat(product.price).toLocaleString()}{" "}
+                    {t("products.currency")}
                   </span>
                 </div>
               </div>

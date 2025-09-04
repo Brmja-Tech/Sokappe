@@ -8,10 +8,12 @@ import styles from "./ProductsOpenMarket.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 
 const ProductsOpenMarket = () => {
   const { t, i18n } = useTranslation("global");
-  const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
+  const { addToCart, isInCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
   const isRTL = i18n.language === "ar";
 
@@ -28,8 +30,8 @@ const ProductsOpenMarket = () => {
     addToCart(product);
   };
 
-  const handleAddToWishlist = (product) => {
-    addToWishlist(product);
+  const handleToggleWishlist = (product) => {
+    toggleWishlist(product);
   };
 
   // Fetch ratings for all products
@@ -108,7 +110,7 @@ const ProductsOpenMarket = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [i18n.language]);
+  }, [fetchProducts]);
 
   return (
     <div className={styles.products}>
@@ -210,12 +212,11 @@ const ProductsOpenMarket = () => {
                           }`}
                           onClick={(e) => {
                             e.preventDefault();
-                            handleAddToWishlist(product);
+                            handleToggleWishlist(product);
                           }}
-                          disabled={isInWishlist(product.id)}
                           title={
                             isInWishlist(product.id)
-                              ? t("products.alreadyInWishlist")
+                              ? t("wishlist.removeFromWishlist")
                               : t("products.addToWishlist")
                           }
                         >

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { FiUser, FiSearch, FiX } from "react-icons/fi";
+import { FiUser, FiX } from "react-icons/fi";
 import { FiChevronDown } from "react-icons/fi";
 import { useRef } from "react";
 import axios from "axios";
 import logo from "../assests/imgs/logo.svg";
 import { useCart } from "../context/CartContext";
 import { useNotifications } from "../context/NotificationContext";
+import { useWishlist } from "../context/WishlistContext";
 import ChatIcon from "../component/ChatIcon/ChatIcon";
 
 import styles from "./Navbar.module.css";
@@ -16,14 +17,13 @@ import styles from "./Navbar.module.css";
 const Navbar = () => {
   const { t, i18n } = useTranslation("global");
   const navigate = useNavigate();
-  const { cartCount, wishlistItems } = useCart();
+  const { cartCount } = useCart();
+  const { wishlistItems } = useWishlist();
   const { unreadCount, notifications, markAsRead, formatNotificationTime } =
     useNotifications();
 
   const [isMobileScrolled, setIsMobileScrolled] = useState(false);
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "light"
-  );
+  const [theme] = useState(() => localStorage.getItem("theme") || "light");
   const [userData, setUserData] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -122,9 +122,9 @@ const Navbar = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
+  // const toggleTheme = () => {
+  //   setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  // };
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -244,17 +244,16 @@ const Navbar = () => {
                 </Link>
               </li>
               <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle d-flex align-items-center gap-1"
+                <button
+                  className="nav-link dropdown-toggle d-flex align-items-center gap-1 bg-transparent border-0"
                   id="navbarDropdown"
-                  role="button"
                   data-bs-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
                   {t("navbar.categories")}
                   <FiChevronDown />
-                </a>
+                </button>
                 <div
                   className="dropdown-menu custom-dropdown"
                   style={{

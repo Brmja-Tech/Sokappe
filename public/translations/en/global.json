@@ -138,7 +138,13 @@
     "inCart": "In Cart",
     "viewDetails": "View Details",
     "continueShopping": "Continue Shopping",
-    "viewCart": "View Cart"
+    "viewCart": "View Cart",
+    "addedToWishlist": "Added to wishlist",
+    "removedFromWishlist": "Removed from wishlist",
+    "alreadyInWishlist": "Already in wishlist",
+    "addError": "Failed to add to wishlist",
+    "removeError": "Failed to remove from wishlist",
+    "fetchError": "Failed to load wishlist"
   },
   "productUpdated": "Product updated successfully!",
   "productDeleted": "Product deleted successfully!",
@@ -185,6 +191,9 @@
     "address": "Address",
     "noImageSelected": "No image selected",
     "registering": "Registering...",
+    "loggingIn": "Logging in...",
+    "networkError": "Network error. Please check your connection.",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
     "profile": {
       "name": "Name",
       "age": "Age",

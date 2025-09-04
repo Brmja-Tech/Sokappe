@@ -7,10 +7,12 @@ import styles from "./ProductsUsedMarket.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 
 const ProductsUsedMarket = () => {
   const { t, i18n } = useTranslation("global");
-  const { addToCart, addToWishlist, isInCart, isInWishlist } = useCart();
+  const { addToCart, isInCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const swiperKey = useMemo(() => `swiper-${i18n.language}`, [i18n.language]);
   const isRTL = i18n.language === "ar";
   const [products, setProducts] = useState([]);
@@ -23,9 +25,9 @@ const ProductsUsedMarket = () => {
     addToCart(product);
   };
 
-  // Handle add to wishlist
-  const handleAddToWishlist = (product) => {
-    addToWishlist(product);
+  // Handle toggle wishlist
+  const handleToggleWishlist = (product) => {
+    toggleWishlist(product);
   };
 
   // Fetch ratings for all products
@@ -257,12 +259,11 @@ const ProductsUsedMarket = () => {
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
-                          handleAddToWishlist(product);
+                          handleToggleWishlist(product);
                         }}
-                        disabled={isInWishlist(product.id)}
                         title={
                           isInWishlist(product.id)
-                            ? t("products.alreadyInWishlist")
+                            ? t("wishlist.removeFromWishlist")
                             : t("products.addToWishlist")
                         }
                       >
