@@ -146,9 +146,9 @@
 }
 
 /* RTL Support for detail items */
-[dir="rtl"] .detailItem {
+/* [dir="rtl"] .detailItem {
   flex-direction: row-reverse;
-}
+} */
 
 .detailItem:last-child {
   border-bottom: none;
