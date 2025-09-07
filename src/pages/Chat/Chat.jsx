@@ -40,12 +40,19 @@ const Chat = () => {
       );
       fetchMessages(chatId);
     }
+    // Scroll to top when chat opens
+    window.scrollTo(0, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId, fetchMessages, setCurrentChat]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Scroll to top when component mounts or otherUserId changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [otherUserId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

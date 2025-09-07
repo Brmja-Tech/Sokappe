@@ -9,6 +9,7 @@ import "swiper/css/pagination";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useChat } from "../../context/ChatContext";
 
 // Icons
 import ProductsServices from "../../component/ProductsServices/ProductsServices";
@@ -17,6 +18,7 @@ export default function ServiceDetalis() {
   const { t, i18n } = useTranslation("global");
   const { id } = useParams();
   const navigate = useNavigate();
+  const { chats } = useChat();
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -75,8 +77,35 @@ export default function ServiceDetalis() {
       return;
     }
 
-    // Navigate to chat with owner
-    navigate(`/chats/new?other_user_id=${ownerId}`);
+    // Check if there's an existing chat with this owner
+    const existingChat = findExistingChat(ownerId);
+
+    if (existingChat) {
+      // Navigate to existing chat
+      navigate(`/chats/${existingChat.chat_id}`, {
+        state: {
+          otherUserId: ownerId,
+          otherUserName: existingChat.other_user_name,
+        },
+      });
+    } else {
+      // Navigate to new chat
+      navigate(`/chats/new?other_user_id=${ownerId}`);
+    }
+
+    // Scroll to top of the page
+    window.scrollTo(0, 0);
+  };
+
+  // Find existing chat with specific user
+  const findExistingChat = (otherUserId) => {
+    // Search in the chats from context
+    return chats.find(
+      (chat) =>
+        chat.other_user_id === otherUserId ||
+        chat.other_user_id === parseInt(otherUserId) ||
+        String(chat.other_user_id) === String(otherUserId)
+    );
   };
 
   // Send service request

@@ -925,7 +925,13 @@
     "storeName": "Store Name",
     "storeNamePlaceholder": "Enter store name",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "arabic": "العربية",
+    "english": "الانجليزية",
+    "storeName": "اسم المتجر",
+    "storeNamePlaceholder": "ادخل اسم المتجر",
+    "whatsappNumber": "رقم الواتساب",
+    "whatsappNumberPlaceholder": "ادخل رقم الواتساب"
   },
   "identity": {
     "taxNumber": "Tax Number",

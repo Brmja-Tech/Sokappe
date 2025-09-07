@@ -899,7 +899,13 @@
     "failedToLoadProductDetails": "فشل في تحميل تفاصيل المنتج",
     "failedToLoadServiceDetails": "فشل في تحميل تفاصيل الخدمة",
     "previous": "السابق",
-    "next": "التالي"
+    "next": "التالي",
+    "arabic": "العربية",
+    "english": "الانجليزية",
+    "storeName": "اسم المتجر",
+    "storeNamePlaceholder": "ادخل اسم المتجر",
+    "whatsappNumber": "رقم الواتساب",
+    "whatsappNumberPlaceholder": "ادخل رقم الواتساب"
   },
   "arabic": "العربية",
   "english": "الانجليزية",
