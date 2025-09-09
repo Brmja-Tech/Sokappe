@@ -163,7 +163,7 @@ export default function ContactUS() {
                     </div>
                     <div className="col-lg-12">
                       <input
-                        type="tel"
+                        type="number"
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}

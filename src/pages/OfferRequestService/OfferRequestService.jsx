@@ -57,7 +57,7 @@ export default function OfferRequestService() {
     } else if (action === "buy" && type === "service") {
       navigate("/requestservice");
     } else if (action === "buy" && type === "product") {
-      navigate("/requestproduct"); // Placeholder route
+      navigate("/requestcategories"); // Placeholder route
     }
   };
 
@@ -67,8 +67,8 @@ export default function OfferRequestService() {
       // For buy service, redirect to requestservice regardless of user type
       navigate("/requestservice");
     } else if (action === "buy" && type === "product") {
-      // For buy product, redirect to requestproduct regardless of user type
-      navigate("/requestproduct");
+      // For buy product, redirect to requestcategories regardless of user type
+      navigate("/requestcategories");
     } else if (action === "sell") {
       // For sell actions, redirect to create account or register
       if (!isAuthenticated) {

@@ -41,6 +41,7 @@ import AllSearchProducts from "../pages/AllSearchProducts/AllSearchProducts";
 import Privacy from "../pages/Privacy/Privacy";
 import Terms from "../pages/Terms/Terms";
 import FAQ from "../pages/FAQ/FAQ";
+import NotFound from "../pages/NotFound/NotFound";
 
 export default function Applayout() {
   const location = useLocation();
@@ -64,15 +65,17 @@ export default function Applayout() {
     "/resetpassword",
     "/otpforgetpassword",
   ];
-  const shouldHideNavbarFooter = hideNavbarFooterPaths.includes(
-    location.pathname
-  );
+
+  // إخفاء النافبار والفوتر فقط للشات الفردي وليس قائمة الشاتات
+  const shouldHideNavbarFooter =
+    hideNavbarFooterPaths.includes(location.pathname) ||
+    (location.pathname.startsWith("/chats/") && location.pathname !== "/chats");
 
   return (
     <>
       {!shouldHideNavbarFooter && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home/>} />
+        <Route path="/" element={<Home />} />
         <Route
           path="/offer-request-service"
           element={<OfferRequestService />}
@@ -126,6 +129,9 @@ export default function Applayout() {
         {/* <Route path="/verify-account" element={<VerifyAccount />} /> */}
         {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
         {/* <Route path="/change-password" element={<ChangePassword />} />  */}
+
+        {/* 404 Page - يجب أن يكون في النهاية */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {!shouldHideNavbarFooter && <Footer />}
     </>
